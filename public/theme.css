@@ -222,6 +222,12 @@ textarea.x-input, select.x-input {
 .surface { background: var(--surface); }
 .bordered { border: 1px solid var(--border); }
 
+/* Footer brand mark */
+.footer-mark {
+  display: inline-block; vertical-align: -3px;
+  width: 14px; height: 14px; margin-right: 4px;
+}
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
