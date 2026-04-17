@@ -583,9 +583,11 @@
     }
     .steps {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 0;
       position: relative;
+      max-width: 1080px;
+      margin: 0 auto;
     }
     .steps::before {
       content: '';
@@ -594,7 +596,7 @@
       left: calc(16.66% + 20px);
       right: calc(16.66% + 20px);
       height: 1px;
-      border-top: 2px dashed rgba(29,155,240,0.25);
+      border-top: 2px dashed rgba(90,120,255,0.25);
       z-index: 0;
     }
     .step {
