@@ -7,32 +7,16 @@
   <meta name="description" content="XGrowthNow gives you the exact tools to unfollow dead weight, post at the right time, spy on competitors, and recycle your best content — all in one place." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/theme.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #000;
-      --surface: #0a0a0a;
-      --card: #111;
-      --border: #1f1f1f;
-      --blue: #1d9bf0;
-      --purple: #7b61ff;
       --green: #00ba7c;
       --red: #f4212e;
-      --text: #e7e9ea;
-      --muted: #71767b;
-      --muted2: #888;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 16px;
-      line-height: 1.6;
       overflow-x: hidden;
     }
 
@@ -45,9 +29,6 @@
       pointer-events: none;
       z-index: 0;
     }
-
-    /* ─── TYPOGRAPHY ─── */
-    h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -1px; }
 
     /* ─── FADE-IN ─── */
     .fade-in {
@@ -84,7 +65,7 @@
     .nav-logo {
       font-size: 28px;
       font-weight: 900;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Bricolage Grotesque', 'Geist', sans-serif;
       color: #fff;
       text-decoration: none;
       letter-spacing: -1px;
@@ -109,47 +90,6 @@
       transition: color 0.2s;
     }
     .nav-links a:hover { color: #fff; }
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 28px;
-      border-radius: 100px;
-      background: linear-gradient(135deg, #1d9bf0, #7b61ff);
-      box-shadow: 0 0 24px rgba(29,155,240,0.3);
-      color: #fff;
-      font-size: 15px;
-      font-weight: 700;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: inherit;
-      white-space: nowrap;
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 40px rgba(29,155,240,0.5);
-    }
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 28px;
-      border-radius: 100px;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .btn-secondary:hover {
-      border-color: rgba(29,155,240,0.4);
-      background: rgba(29,155,240,0.05);
-    }
     .nav-mobile-toggle {
       display: none;
       background: none;
@@ -193,7 +133,7 @@
     }
     .orb-2 {
       width: 608px; height: 608px;
-      background: radial-gradient(circle, rgba(123,97,255,0.59) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(90,120,255,0.35) 0%, transparent 70%);
       top: 60px; right: -100px;
       animation-duration: 17s;
       animation-delay: -5s;
@@ -258,16 +198,8 @@
       font-weight: 600;
       margin-bottom: 28px;
     }
-    .hero h1 em { font-style: normal; -webkit-text-fill-color: #1d9bf0; color: #1d9bf0; }
+    .hero h1 em { font-style: normal; }
     .hero h1 {
-      font-size: 46px;
-      font-weight: 900;
-      line-height: 1.15;
-      letter-spacing: -2px;
-      background: linear-gradient(135deg, #fff 0%, #a8d4f8 60%, #1d9bf0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
       max-width: 800px;
       margin: 0 0 24px;
       text-align: left;
@@ -289,8 +221,8 @@
     .hero-testimonial { margin-top: 32px; max-width: 460px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px 28px; }
     .testimonial-text { font-size: 16px; color: rgba(255,255,255,0.9); line-height: 1.6; font-style: italic; margin-bottom: 20px; font-weight: 500; }
     .testimonial-byline { display: flex; align-items: center; gap: 14px; }
-    .testimonial-accent { width: 32px; height: 3px; background: linear-gradient(90deg, #1d9bf0, #7b61ff); border-radius: 2px; flex-shrink: 0; }
-    .testimonial-avatar-circle { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #1d9bf0, #7b61ff); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .testimonial-accent { width: 32px; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-hi)); border-radius: 2px; flex-shrink: 0; }
+    .testimonial-avatar-circle { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-hi)); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #fff; flex-shrink: 0; }
     .testimonial-name { font-size: 15px; font-weight: 800; color: #fff; }
     .testimonial-handle { font-size: 13px; color: var(--blue); font-weight: 500; }
 
@@ -329,7 +261,7 @@
     .db-feed-title { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
     .db-feed { display: flex; flex-direction: column; gap: 6px; }
     .db-feed-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; background: rgba(255,255,255,0.03); transition: opacity 0.3s ease, transform 0.3s ease; }
-    .db-feed-avatar { width: 24px; height: 24px; border-radius: 50%; background: #1d9bf0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .db-feed-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0; }
     .db-feed-name { flex: 1; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.85); }
     .db-feed-name span { font-weight: 400; color: rgba(255,255,255,0.4); }
     .db-feed-time { font-size: 10px; color: rgba(255,255,255,0.3); white-space: nowrap; }
@@ -542,12 +474,12 @@
     }
     .nav-handle-input::placeholder { color: #555; }
     .nav-handle-btn {
-      background: linear-gradient(135deg, #1d9bf0, #7b61ff); color: #fff;
+      background: var(--accent); color: #fff;
       border: none; border-radius: 100px; font-size: 15px; font-weight: 700;
       padding: 12px 22px; cursor: pointer; font-family: inherit; white-space: nowrap;
       transition: all 0.15s; flex-shrink: 0;
     }
-    .nav-handle-btn:hover { opacity: 0.9; }
+    .nav-handle-btn:hover { background: var(--accent-hi); opacity: 0.9; }
     @media (max-width: 1080px) { .nav-handle-form { display: none; } }
 
     /* Hero buttons */
@@ -630,7 +562,7 @@
     .section-title {
       font-size: clamp(28px, 4vw, 48px);
       font-weight: 800;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Bricolage Grotesque', 'Geist', sans-serif;
       letter-spacing: -1px;
       color: #fff;
       line-height: 1.15;
@@ -914,7 +846,7 @@
       font-size: 20px;
       flex-shrink: 0;
     }
-    .icon-tracker { background: linear-gradient(135deg,#1d3a5c,#1d9bf0); }
+    .icon-tracker { background: linear-gradient(135deg,#1d3a5c,var(--accent)); }
     .icon-unfollow { background: linear-gradient(135deg,#3d1515,#f4212e); }
     .icon-time { background: linear-gradient(135deg,#3d3000,#ffd400); }
     .icon-unreplied { background: linear-gradient(135deg,#003d2a,#00ba7c); }
@@ -922,7 +854,7 @@
     .icon-spy { background: linear-gradient(135deg,#1a1a3d,#6366f1); }
     .icon-recycler { background: linear-gradient(135deg,#003d1a,#00ba7c); }
     .icon-ai { background: linear-gradient(135deg,#2d1a4a,#ec4899); }
-    .icon-dashboard { background: linear-gradient(135deg,#001a3d,#1d9bf0); }
+    .icon-dashboard { background: linear-gradient(135deg,#001a3d,var(--accent)); }
     .tool-info { flex: 1; }
     .tool-name {
       font-size: 15px;
@@ -1069,9 +1001,9 @@
     .cta-banner {
       padding: 100px 24px;
       text-align: center;
-      background: linear-gradient(135deg, rgba(29,155,240,0.12) 0%, rgba(123,97,255,0.1) 50%, rgba(29,155,240,0.06) 100%);
-      box-shadow: 0 0 60px rgba(29,155,240,0.08);
-      border-top: 1px solid rgba(29,155,240,0.12);
+      background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent-glow) 50%, var(--accent-soft) 100%);
+      box-shadow: 0 0 60px var(--accent-soft);
+      border-top: 1px solid var(--accent-soft);
     }
     .cta-banner h2 {
       font-size: clamp(28px, 4vw, 52px);
@@ -1097,7 +1029,7 @@
     /* ─── SECTION DIVIDER ─── */
     .section-divider {
       height: 1px;
-      background: linear-gradient(90deg, transparent 0%, rgba(29,155,240,0.2) 30%, rgba(123,97,255,0.2) 70%, transparent 100%);
+      background: linear-gradient(90deg, transparent 0%, var(--accent-glow) 50%, transparent 100%);
       margin: 0;
       border: none;
     }
@@ -1106,7 +1038,7 @@
     footer { border-top: 1px solid var(--border); background: #050505; padding: 60px 40px 32px; }
     .footer-inner { max-width: 1400px; margin: 0 auto 48px; display: flex; gap: 64px; flex-wrap: wrap; }
     .footer-brand { flex: 0 0 240px; }
-    .footer-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800; color: var(--text); text-decoration: none; }
+    .footer-logo { font-family: 'Bricolage Grotesque', 'Geist', sans-serif; font-size: 20px; font-weight: 800; color: var(--text); text-decoration: none; }
     .footer-logo span { color: var(--blue); }
     .footer-tagline { font-size: 13px; color: var(--muted2); margin-top: 10px; line-height: 1.6; }
     .footer-social { margin-top: 16px; }
@@ -1145,7 +1077,7 @@
       <li><a href="/pricing">Pricing</a></li>
       <li><a href="/dashboard">Dashboard</a></li>
       <li>
-        <a href="/api/auth/login" class="btn-primary">Sign in with 𝕏</a>
+        <a href="/api/auth/login" class="btn btn-primary">Sign in with 𝕏</a>
       </li>
     </ul>
     <button class="nav-mobile-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
@@ -1153,15 +1085,15 @@
 </nav>
 
 <!-- ─── HERO ─── -->
-<section class="hero" style="position:relative;z-index:1;">
+<section class="hero hero-glow" style="position:relative;z-index:1;">
   <!-- Left column: text + CTA -->
   <div class="hero-text">
     <div class="hero-stars fade-in">⭐⭐⭐⭐⭐ <span>Trusted by 500+ X creators</span></div>
-    <h1 class="fade-in">Grow on X Organically<br/>&amp; Get Monetized <em>FASTER</em></h1>
+    <h1 class="fade-in">Grow on X Organically<br/>&amp; Get Monetized <em class="text-gradient">FASTER</em></h1>
     <p class="fade-in hero-sub-p">No bots. Just real growth through proven tools to help get monetized.</p>
     <div class="hero-buttons fade-in">
-      <a href="/pricing" class="btn-primary">Get Started →</a>
-      <a href="/growth-predictor" class="btn-secondary">Preview My Growth →</a>
+      <a href="/pricing" class="btn btn-primary">Get Started →</a>
+      <a href="/growth-predictor" class="btn btn-secondary">Preview My Growth →</a>
     </div>
     <div class="hero-testimonial fade-in">
       <div class="testimonial-text">"Gained 800 followers in my first month and hit monetization within 60 days."</div>
@@ -1195,7 +1127,7 @@
           <div class="db-stat-label">Growth Rate</div>
         </div>
         <div class="db-stat">
-          <div class="db-stat-val" style="color:#1d9bf0">82</div>
+          <div class="db-stat-val" style="color:var(--accent)">82</div>
           <div class="db-stat-label">Score</div>
         </div>
       </div>
@@ -1539,7 +1471,7 @@
       <div class="plan-pill featured">X Growth Elite</div>
       <div class="plan-pill">Monthly or Annual</div>
     </div>
-    <a href="/pricing" class="btn-primary" style="padding:16px 40px;font-size:16px;border-radius:100px;">View All Plans →</a>
+    <a href="/pricing" class="btn btn-primary" style="padding:16px 40px;font-size:16px;border-radius:100px;">View All Plans →</a>
     <p class="pricing-note">All paid plans include every tool + all future tools</p>
   </div>
 </section>
@@ -1610,7 +1542,7 @@
 <section class="cta-banner fade-in">
   <h2>Ready to grow smarter on X?</h2>
   <p>Join thousands of creators who use XGrowthNow to build a real audience.</p>
-  <a href="/api/auth/login" class="btn-primary">Sign in with 𝕏 →</a>
+  <a href="/api/auth/login" class="btn btn-primary">Sign in with 𝕏 →</a>
 </section>
 
 <!-- ─── FOOTER ─── -->
