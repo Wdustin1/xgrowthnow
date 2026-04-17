@@ -5,28 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Bitcoin Calculator — DCA & CAGR</title>
   <meta name="description" content="Calculate your Bitcoin APR and see what 15%, 20%, or 25% CAGR looks like over 3 years from your entry price."/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/theme.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #080808;
-      --card: #0f0f0f;
-      --card2: #111;
-      --border: #1a1a1a;
-      --border2: #222;
+      --card2: var(--card-hi);
+      --border2: var(--border-hi);
       --orange: #F7931A;
       --orange-dim: rgba(247,147,26,0.12);
       --orange-dim2: rgba(247,147,26,0.06);
-      --green: #22c55e;
-      --red: #ef4444;
-      --text: #e0e0e0;
-      --muted: #555;
-      --radius: 10px;
-    }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg); color: var(--text);
-      min-height: 100vh;
+      --green: var(--success);
+      --red: var(--danger);
     }
 
     /* Header */
@@ -49,9 +37,9 @@
 
     /* Hero */
     .hero { text-align: center; padding: 52px 24px 40px; }
-    .hero h1 { font-size: 42px; font-weight: 700; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 12px; }
+    .hero h1 { font-size: 42px; font-weight: 800; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 12px; }
     .hero h1 span { color: var(--orange); }
-    .hero p { font-size: 16px; color: var(--muted); max-width: 480px; margin: 0 auto; line-height: 1.6; font-weight: 400; }
+    .hero p { font-size: 16px; color: var(--text-mute); max-width: 480px; margin: 0 auto; line-height: 1.6; font-weight: 400; }
 
     /* Main */
     .main { max-width: 1000px; margin: 0 auto; padding: 0 24px 80px; }
@@ -59,33 +47,26 @@
     /* Calculator card */
     .calc-card {
       background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 28px;
+      border-radius: var(--radius-lg); padding: 28px;
       display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px;
       margin-bottom: 28px;
     }
     @media (max-width: 720px) { .calc-card { grid-template-columns: 1fr; } }
 
     .field { display: flex; flex-direction: column; gap: 7px; }
-    .field label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+    .field label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-mute); }
     .input-wrap { position: relative; }
-    .input-prefix { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; font-weight: 600; color: var(--orange); pointer-events: none; }
-    .field input {
-      width: 100%; background: var(--bg); border: 1px solid var(--border2);
-      border-radius: 6px; color: var(--text); font-size: 17px; font-weight: 600;
-      padding: 10px 12px 10px 30px; outline: none; transition: border-color 0.15s;
-      font-family: 'Inter', sans-serif;
-    }
-    .field input:focus { border-color: var(--orange); }
-    .field input.no-prefix { padding-left: 12px; }
-    .field .hint { font-size: 11px; color: var(--muted); }
+    .input-prefix { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; font-weight: 600; color: var(--orange); pointer-events: none; z-index: 1; }
+    .field input.input { padding-left: 30px; font-size: 17px; font-weight: 600; }
+    .field input.input.no-prefix { padding-left: 14px; }
+    .field input.input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(247,147,26,0.15); }
+    .field .hint { font-size: 11px; color: var(--text-mute); }
 
     .calc-btn {
       grid-column: 1 / -1; background: var(--orange); color: #000;
-      border: none; border-radius: 6px; font-size: 15px; font-weight: 700;
-      padding: 14px; cursor: pointer; transition: all 0.15s; letter-spacing: 0.2px;
-      font-family: 'Inter', sans-serif;
+      border: 1px solid var(--orange);
     }
-    .calc-btn:hover { background: #ff9f1a; }
+    .calc-btn:hover { background: #ff9f1a; border-color: #ff9f1a; color: #000; }
 
     /* Results */
     #results { display: none; }
@@ -93,14 +74,14 @@
     /* Stats row */
     .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 12px; margin-bottom: 24px; }
     .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
-    .stat-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
-    .stat-value { font-size: 26px; font-weight: 700; line-height: 1; letter-spacing: -0.5px; }
-    .stat-sub { font-size: 11px; color: var(--muted); margin-top: 5px; }
-    .up   { color: var(--green); }
-    .down { color: var(--red); }
+    .stat-card .stat-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-faint); margin-bottom: 8px; font-weight: 600; }
+    .stat-card .stat-value { font-family: 'Geist Mono', monospace; font-size: 26px; font-weight: 600; line-height: 1; letter-spacing: -0.5px; color: var(--text); font-feature-settings: "tnum" 1; }
+    .stat-card .stat-sub { font-size: 11px; color: var(--text-mute); margin-top: 5px; }
+    .up   { color: var(--success); }
+    .down { color: var(--danger); }
 
     /* Section title */
-    .section-title { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 14px; margin-top: 28px; }
+    .section-title { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-mute); margin-bottom: 14px; margin-top: 28px; }
 
     /* Projection cards */
     .proj-grid { display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); }
@@ -110,20 +91,20 @@
       background: var(--card); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 20px; position: relative; overflow: hidden;
     }
-    .proj-card.c15 { border-top: 2px solid #ffd400; }
-    .proj-card.c20 { border-top: 2px solid #888; background: var(--orange-dim2); }
-    .proj-card.c25 { border-top: 2px solid var(--green); }
+    .proj-card.c15 { border-top: 2px solid var(--warning); }
+    .proj-card.c20 { border-top: 2px solid var(--text-mute); background: var(--orange-dim2); }
+    .proj-card.c25 { border-top: 2px solid var(--success); }
 
     .proj-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
-    .proj-label.c15 { color: #ffd400; }
-    .proj-label.c20 { color: #888; }
-    .proj-label.c25 { color: var(--green); }
+    .proj-label.c15 { color: var(--warning); }
+    .proj-label.c20 { color: var(--text-mute); }
+    .proj-label.c25 { color: var(--success); }
 
     .proj-year { display: flex; flex-direction: column; gap: 3px; padding: 11px 0; border-bottom: 1px solid var(--border); }
     .proj-year:last-child { border-bottom: none; padding-bottom: 0; }
-    .proj-year-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 500; }
+    .proj-year-label { font-size: 0.68rem; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 500; }
     .proj-btc-price  { font-size: 19px; font-weight: 700; letter-spacing: -0.5px; }
-    .proj-portfolio  { font-size: 12px; color: var(--muted); }
+    .proj-portfolio  { font-size: 12px; color: var(--text-mute); }
     .proj-gain       { font-size: 11px; font-weight: 600; }
 
     /* Chart */
@@ -132,20 +113,13 @@
 
     /* Share */
     .share-row { display: flex; align-items: center; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
-    .share-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 8px 18px; font-size: 13px; font-weight: 600;
-      cursor: pointer; border: none; transition: all 0.15s;
-      font-family: 'Inter', sans-serif; border-radius: 6px;
-    }
-    .share-x   { background: #000; color: #fff; border: 1px solid #333; }
-    .share-x:hover { border-color: #666; }
-    .share-copy { background: var(--card); color: var(--text); border: 1px solid var(--border2); }
+    .share-x   { background: #000; color: #fff; border-color: var(--border-hi); }
+    .share-x:hover { border-color: var(--text-mute); background: #000; color: #fff; }
     .share-copy:hover { border-color: var(--orange); color: var(--orange); }
 
     /* Footer */
-    footer { text-align: center; padding: 36px 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); }
-    footer a { color: var(--muted); text-decoration: none; }
+    footer { text-align: center; padding: 36px 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-mute); }
+    footer a { color: var(--text-mute); text-decoration: none; }
     footer a:hover { color: var(--orange); }
   </style>
 </head>
@@ -160,7 +134,7 @@
   </div>
 </header>
 
-<div class="hero">
+<div class="hero hero-glow">
   <h1>Know Your Bitcoin<br><span>Returns.</span></h1>
   <p>Enter your entry price and see your real APR — plus what 15%, 20%, and 25% CAGR looks like for your stack over 3 years.</p>
 </div>
@@ -172,7 +146,7 @@
       <label>Your Entry Price</label>
       <div class="input-wrap">
         <span class="input-prefix">$</span>
-        <input type="number" id="entryPrice" placeholder="82,000" min="1" />
+        <input class="input" type="number" id="entryPrice" placeholder="82,000" min="1" />
       </div>
       <div class="hint">Price you paid per BTC</div>
     </div>
@@ -180,18 +154,18 @@
       <label>Amount Invested</label>
       <div class="input-wrap">
         <span class="input-prefix">$</span>
-        <input type="number" id="amountInvested" placeholder="10,000" min="1" />
+        <input class="input" type="number" id="amountInvested" placeholder="10,000" min="1" />
       </div>
       <div class="hint">Total USD invested</div>
     </div>
     <div class="field">
       <label>Purchase Date <span style="font-weight:400;opacity:0.6;">(optional)</span></label>
       <div class="input-wrap">
-        <input type="date" id="purchaseDate" class="no-prefix" />
+        <input class="input no-prefix" type="date" id="purchaseDate" />
       </div>
       <div class="hint">Used to calculate exact APR</div>
     </div>
-    <button class="calc-btn" onclick="calculate()">Calculate My Returns →</button>
+    <button class="btn btn-lg calc-btn" onclick="calculate()">Calculate My Returns →</button>
   </div>
 
   <!-- Results -->
@@ -211,25 +185,18 @@
     <!-- Custom CAGR -->
     <div style="margin-top:20px;">
       <div class="section-title">🎯 Custom CAGR Calculator</div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
+      <div class="card">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
           <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:13px;color:var(--muted);font-weight:600;">Enter your CAGR estimate:</span>
+            <span style="font-size:13px;color:var(--text-mute);font-weight:600;">Enter your CAGR estimate:</span>
             <div style="position:relative;display:flex;align-items:center;">
-              <input type="number" id="customCagr" min="1" max="1000" placeholder="e.g. 50"
-                style="background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);
-                       font-size:17px;font-weight:600;padding:9px 28px 9px 12px;width:110px;outline:none;
-                       font-family:'Inter',sans-serif;"
-                onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='var(--border2)'"
+              <input class="input" type="number" id="customCagr" min="1" max="1000" placeholder="e.g. 50"
+                style="font-size:17px;font-weight:600;padding-right:28px;width:110px;"
                 onkeydown="if(event.key==='Enter') calcCustomCagr()" />
               <span style="position:absolute;right:10px;font-size:14px;font-weight:700;color:var(--orange);">%</span>
             </div>
           </div>
-          <button onclick="calcCustomCagr()"
-            style="background:var(--orange);color:#000;border:none;border-radius:6px;
-                   padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;
-                   font-family:'Inter',sans-serif;transition:background 0.15s;"
-            onmouseover="this.style.background='#ff9f1a'" onmouseout="this.style.background='var(--orange)'">
+          <button class="btn calc-btn" style="grid-column:auto;padding:10px 20px;min-height:40px;" onclick="calcCustomCagr()">
             Calculate →
           </button>
         </div>
@@ -245,9 +212,9 @@
 
     <!-- Share -->
     <div class="share-row">
-      <span style="font-size:13px;color:var(--muted);">Share your results:</span>
-      <button class="share-btn share-x" onclick="shareToX()">𝕏 Post to X</button>
-      <button class="share-btn share-copy" onclick="copyLink()">🔗 Copy Link</button>
+      <span style="font-size:13px;color:var(--text-mute);">Share your results:</span>
+      <button class="btn btn-sm share-x" onclick="shareToX()">𝕏 Post to X</button>
+      <button class="btn btn-sm btn-secondary share-copy" onclick="copyLink()">🔗 Copy Link</button>
     </div>
   </div>
 </div>
@@ -421,6 +388,11 @@ function renderChart(r) {
 
   ctx.clearRect(0, 0, W, H);
 
+  // Resolve theme tokens
+  const rootStyles = getComputedStyle(document.documentElement);
+  const borderCol  = rootStyles.getPropertyValue('--border-hi').trim() || 'rgba(255,255,255,0.14)';
+  const tickCol    = rootStyles.getPropertyValue('--text-mute').trim() || '#8c90a3';
+
   const PAD = { top: 20, right: 20, bottom: 40, left: 60 };
   const chartW = W - PAD.left - PAD.right;
   const chartH = H - PAD.top  - PAD.bottom;
@@ -438,14 +410,14 @@ function renderChart(r) {
   const xLabels = ['Now', 'Yr 1', 'Yr 2', 'Yr 3', 'Yr 4', 'Yr 5'];
 
   // Grid lines
-  ctx.strokeStyle = 'rgba(26,26,26,0.9)';
+  ctx.strokeStyle = borderCol;
   ctx.lineWidth   = 1;
   for (let i = 0; i <= 4; i++) {
     const y = PAD.top + (i / 4) * chartH;
     ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(PAD.left + chartW, y); ctx.stroke();
     const val = maxV - (i / 4) * (maxV - minV);
-    ctx.fillStyle  = '#555';
-    ctx.font       = '10px Inter, sans-serif';
+    ctx.fillStyle  = tickCol;
+    ctx.font       = '10px Geist, sans-serif';
     ctx.textAlign  = 'right';
     ctx.fillText(fmtDollar(val), PAD.left - 6, y + 4);
   }
@@ -477,7 +449,7 @@ function renderChart(r) {
       ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
       if (i > 0) {
         ctx.fillStyle = seriesColors[si];
-        ctx.font      = 'bold 11px sans-serif';
+        ctx.font      = 'bold 11px Geist, sans-serif';
         ctx.textAlign = 'center';
         const offset  = si === 0 ? -14 : si === 1 ? 0 : 14;
         ctx.fillText(fmtDollar(proj.years[i - 1].portfolio), p.x + offset, p.y - 10);
@@ -486,8 +458,8 @@ function renderChart(r) {
   });
 
   // X-axis labels
-  ctx.fillStyle = '#555';
-  ctx.font      = '11px Inter, sans-serif';
+  ctx.fillStyle = tickCol;
+  ctx.font      = '11px Geist, sans-serif';
   ctx.textAlign = 'center';
   xLabels.forEach((l, i) => ctx.fillText(l, xPositions[i], H - PAD.bottom + 16));
 
@@ -497,8 +469,8 @@ function renderChart(r) {
     const lx = PAD.left + (i * 110);
     ctx.fillStyle = seriesColors[i];
     ctx.fillRect(lx, H - 14, 18, 3);
-    ctx.fillStyle = '#555';
-    ctx.font      = '10px Inter, sans-serif';
+    ctx.fillStyle = tickCol;
+    ctx.font      = '10px Geist, sans-serif';
     ctx.textAlign = 'left';
     ctx.fillText(label, lx + 22, H - 10);
   });
@@ -526,11 +498,11 @@ function calcCustomCagr() {
     `<span style="color:${color};">${raw}% CAGR</span> — 3-Year Projection`;
 
   document.getElementById('customCagrCards').innerHTML = cards.map(y => `
-    <div style="background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:14px;border-top:2px solid ${color};">
-      <div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;font-weight:500;margin-bottom:6px;">Year ${y.year} (${new Date().getFullYear() + y.year})</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;border-top:2px solid ${color};">
+      <div style="font-size:0.68rem;color:var(--text-mute);text-transform:uppercase;letter-spacing:0.6px;font-weight:500;margin-bottom:6px;">Year ${y.year} (${new Date().getFullYear() + y.year})</div>
       <div style="font-size:19px;font-weight:700;letter-spacing:-0.5px;color:var(--orange);">$${fmt(y.btcPrice)}</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:3px;">Portfolio: <strong style="color:var(--text);">${fmtDollar(y.portfolio)}</strong></div>
-      <div style="font-size:11px;font-weight:600;margin-top:3px;color:${y.gainFromEntry >= 0 ? '#22c55e' : '#ef4444'};">${fmtPct(y.gainFromEntry)} from entry</div>
+      <div style="font-size:12px;color:var(--text-mute);margin-top:3px;">Portfolio: <strong style="color:var(--text);">${fmtDollar(y.portfolio)}</strong></div>
+      <div style="font-size:11px;font-weight:600;margin-top:3px;color:${y.gainFromEntry >= 0 ? 'var(--success)' : 'var(--danger)'};">${fmtPct(y.gainFromEntry)} from entry</div>
     </div>
   `).join('');
 
@@ -552,6 +524,12 @@ function calcCustomCagr() {
   const cW   = W - PAD.left - PAD.right;
   const cH   = H - PAD.top  - PAD.bottom;
 
+  // Resolve theme tokens
+  const rootStyles2 = getComputedStyle(document.documentElement);
+  const borderCol2  = rootStyles2.getPropertyValue('--border-hi').trim() || 'rgba(255,255,255,0.14)';
+  const tickCol2    = rootStyles2.getPropertyValue('--text-mute').trim() || '#8c90a3';
+  const textCol2    = rootStyles2.getPropertyValue('--text').trim() || '#fafbff';
+
   const portfolioVals = [r.invested, ...cards.map(c => c.portfolio)];
   const minV = Math.min(...portfolioVals) * 0.9;
   const maxV = Math.max(...portfolioVals) * 1.05;
@@ -560,12 +538,12 @@ function calcCustomCagr() {
   const xlbls = ['Now', 'Yr 1', 'Yr 2', 'Yr 3', 'Yr 4', 'Yr 5'];
 
   // Grid
-  ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 1;
+  ctx.strokeStyle = borderCol2; ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
     const y = PAD.top + (i/4)*cH;
     ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(PAD.left+cW, y); ctx.stroke();
     const val = maxV - (i/4)*(maxV-minV);
-    ctx.fillStyle = '#555'; ctx.font = '10px Inter,sans-serif'; ctx.textAlign = 'right';
+    ctx.fillStyle = tickCol2; ctx.font = '10px Geist,sans-serif'; ctx.textAlign = 'right';
     ctx.fillText(fmtDollar(val), PAD.left-6, y+4);
   }
 
@@ -593,12 +571,12 @@ function calcCustomCagr() {
   pts.forEach((p,i) => {
     ctx.fillStyle = color;
     ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#e0e0e0'; ctx.font = 'bold 11px Inter,sans-serif'; ctx.textAlign = 'center';
+    ctx.fillStyle = textCol2; ctx.font = 'bold 11px Geist,sans-serif'; ctx.textAlign = 'center';
     ctx.fillText(fmtDollar(portfolioVals[i]), p.x, p.y - 10);
   });
 
   // X labels
-  ctx.fillStyle = '#555'; ctx.font = '11px Inter,sans-serif'; ctx.textAlign = 'center';
+  ctx.fillStyle = tickCol2; ctx.font = '11px Geist,sans-serif'; ctx.textAlign = 'center';
   xlbls.forEach((l,i) => ctx.fillText(l, xPos[i], H - PAD.bottom + 14));
 }
 

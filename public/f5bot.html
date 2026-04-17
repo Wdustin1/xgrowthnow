@@ -4,162 +4,120 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>F5 Bot — XGrowth</title>
+  <link rel="stylesheet" href="/theme.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #000; --surface: #0f0f0f; --card: #16181c; --border: #2f3336;
-      --text: #e7e9ea; --muted: #71767b; --blue: #1d9bf0;
-      --blue-dim: rgba(29,155,240,0.1); --green: #00ba7c;
-      --yellow: #ffd400; --red: #f4212e; --radius: 16px;
+      --blue-dim: var(--accent-soft);
+      --green: var(--success);
+      --yellow: var(--warning);
+      --red: var(--danger);
     }
-    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
-
-    header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 28px; border-bottom: 1px solid var(--border);
-      background: rgba(0,0,0,0.9); backdrop-filter: blur(12px);
-      position: sticky; top: 0; z-index: 100;
-    }
-    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .logo-icon { width: 30px; height: 30px; background: var(--blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; }
-    .logo-text { font-size: 17px; font-weight: 800; color: var(--text); }
-    .logo-text span { color: var(--blue); }
-    .home-btn { display: flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 50px; padding: 7px 16px; font-size: 13px; color: var(--text); text-decoration: none; transition: border-color 0.2s; }
-    .home-btn:hover { border-color: var(--blue); }
 
     main { max-width: 820px; margin: 0 auto; padding: 40px 24px 80px; }
     .page-header { margin-bottom: 32px; }
     .page-header h1 { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 6px; }
-    .page-header p { font-size: 14px; color: var(--muted); }
+    .page-header p { font-size: 14px; color: var(--text-mute); }
 
     /* Status bar */
     .status-bar {
       display: flex; align-items: center; justify-content: space-between;
       background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 18px 24px; margin-bottom: 24px;
+      border-radius: var(--radius-lg); padding: 18px 24px; margin-bottom: 24px;
     }
     .status-left { display: flex; align-items: center; gap: 14px; }
     .pulse-ring {
       width: 14px; height: 14px; border-radius: 50%;
-      background: var(--border); position: relative; flex-shrink: 0;
+      background: var(--border-hi); position: relative; flex-shrink: 0;
     }
-    .pulse-ring.active { background: var(--green); }
+    .pulse-ring.active { background: var(--success); }
     .pulse-ring.active::before {
       content: ''; position: absolute; inset: -4px; border-radius: 50%;
-      border: 2px solid var(--green); animation: ripple 1.4s ease-out infinite; opacity: 0;
+      border: 2px solid var(--success); animation: ripple 1.4s ease-out infinite; opacity: 0;
     }
     @keyframes ripple { 0%{transform:scale(0.8);opacity:0.8} 100%{transform:scale(2);opacity:0} }
     .status-text { font-size: 15px; font-weight: 700; }
-    .status-sub  { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .toggle-btn {
-      border: none; border-radius: 50px; font-size: 14px; font-weight: 700;
-      padding: 10px 24px; cursor: pointer; transition: all 0.2s;
-      background: var(--blue); color: #fff;
-    }
-    .toggle-btn:hover { background: #1a8cd8; }
-    .toggle-btn.stop { background: transparent; color: var(--red); border: 1px solid var(--red); }
-    .toggle-btn.stop:hover { background: rgba(244,33,46,0.08); }
+    .status-sub  { font-size: 12px; color: var(--text-mute); margin-top: 2px; }
+    .toggle-btn.stop { background: transparent; color: var(--danger); border-color: var(--danger); }
+    .toggle-btn.stop:hover { background: rgba(255,95,95,0.08); border-color: var(--danger); color: var(--danger); }
 
     /* Alert counter */
     .alert-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
-    .alert-stat { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; }
-    .alert-stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .alert-stat { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; }
+    .alert-stat-label { font-size: 11px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
     .alert-stat-value { font-size: 26px; font-weight: 900; }
-    .alert-stat-value.green { color: var(--green); }
-    .alert-stat-value.yellow { color: var(--yellow); }
-    .alert-stat-value.blue { color: var(--blue); }
+    .alert-stat-value.green { color: var(--success); }
+    .alert-stat-value.yellow { color: var(--warning); }
+    .alert-stat-value.blue { color: var(--accent); }
 
     /* Sections */
     .section { margin-bottom: 24px; }
     .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+    .section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-mute); }
 
-    .config-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+    .config-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
 
     /* Keywords */
     .keyword-input-row { display: flex; gap: 10px; margin-bottom: 14px; }
-    .keyword-input {
-      flex: 1; background: var(--bg); border: 1px solid var(--border);
-      border-radius: 50px; color: var(--text); font-size: 14px;
-      padding: 10px 18px; outline: none; transition: border-color 0.2s;
-    }
-    .keyword-input:focus { border-color: var(--blue); }
-    .add-keyword-btn {
-      background: var(--blue); color: #fff; border: none; border-radius: 50px;
-      font-size: 14px; font-weight: 700; padding: 10px 20px; cursor: pointer;
-    }
     .keyword-tags { display: flex; flex-wrap: wrap; gap: 8px; }
     .keyword-tag {
       display: flex; align-items: center; gap: 6px;
-      background: var(--blue-dim); border: 1px solid rgba(29,155,240,0.3);
+      background: var(--accent-soft); border: 1px solid rgba(90,120,255,0.3);
       border-radius: 50px; padding: 5px 14px 5px 14px;
-      font-size: 13px; font-weight: 600; color: var(--blue);
+      font-size: 13px; font-weight: 600; color: var(--accent-hi);
     }
     .keyword-tag-remove {
-      cursor: pointer; color: var(--muted); font-size: 15px; line-height: 1;
+      cursor: pointer; color: var(--text-mute); font-size: 15px; line-height: 1;
       margin-left: 2px; transition: color 0.15s;
     }
-    .keyword-tag-remove:hover { color: var(--red); }
-    .empty-keywords { font-size: 14px; color: var(--muted); font-style: italic; }
+    .keyword-tag-remove:hover { color: var(--danger); }
+    .empty-keywords { font-size: 14px; color: var(--text-mute); font-style: italic; }
 
     /* Platforms */
     .platform-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
     .platform-card {
-      background: var(--bg); border: 2px solid var(--border); border-radius: 12px;
+      background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius);
       padding: 14px 10px; text-align: center; cursor: pointer; transition: all 0.15s;
     }
-    .platform-card:hover { border-color: var(--muted); }
-    .platform-card.active { border-color: var(--blue); background: var(--blue-dim); }
+    .platform-card:hover { border-color: var(--border-hi); }
+    .platform-card.active { border-color: var(--accent); background: var(--accent-soft); }
     .platform-card.soon { opacity: 0.4; cursor: default; }
     .platform-icon { font-size: 28px; margin-bottom: 6px; }
     .platform-name { font-size: 12px; font-weight: 700; color: var(--text); }
-    .platform-badge { font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .platform-badge { font-size: 10px; color: var(--text-mute); margin-top: 2px; }
 
     /* Notifications */
     .notif-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
     .notif-row:last-child { border-bottom: none; padding-bottom: 0; }
     .notif-left label { font-size: 14px; font-weight: 600; display: block; }
-    .notif-left span { font-size: 12px; color: var(--muted); }
-    .notif-input {
-      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-      color: var(--text); font-size: 13px; padding: 8px 12px; outline: none;
-      width: 260px; transition: border-color 0.2s;
-    }
-    .notif-input:focus { border-color: var(--blue); }
+    .notif-left span { font-size: 12px; color: var(--text-mute); }
+    .notif-input { width: 260px; }
 
     /* Toggle switch */
-    .sw { width: 40px; height: 22px; background: var(--border); border-radius: 11px; position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
-    .sw.on { background: var(--blue); }
+    .sw { width: 40px; height: 22px; background: var(--border-hi); border-radius: 11px; position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+    .sw.on { background: var(--accent); }
     .sw::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
     .sw.on::after { transform: translateX(18px); }
 
     /* Alert feed */
     .alert-feed { display: flex; flex-direction: column; gap: 10px; }
     .alert-item {
-      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
       padding: 14px 18px; display: flex; gap: 12px; align-items: flex-start;
     }
     .alert-platform { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
     .alert-body { flex: 1; }
     .alert-keyword {
-      display: inline-block; background: rgba(29,155,240,0.15); color: var(--blue);
+      display: inline-block; background: var(--accent-soft); color: var(--accent-hi);
       border-radius: 20px; font-size: 11px; font-weight: 700; padding: 2px 8px; margin-bottom: 6px;
     }
     .alert-text { font-size: 14px; line-height: 1.4; margin-bottom: 4px; }
-    .alert-meta { font-size: 12px; color: var(--muted); }
-    .alert-link { font-size: 12px; color: var(--blue); text-decoration: none; float: right; }
+    .alert-meta { font-size: 12px; color: var(--text-mute); }
+    .alert-link { font-size: 12px; color: var(--accent); text-decoration: none; float: right; }
     .alert-link:hover { text-decoration: underline; }
-    .empty-feed { text-align: center; padding: 40px; font-size: 14px; color: var(--muted); }
+    .empty-feed { text-align: center; padding: 40px; font-size: 14px; color: var(--text-mute); }
 
-    .save-btn {
-      width: 100%; background: var(--green); color: #fff; border: none;
-      border-radius: 12px; font-size: 15px; font-weight: 700; padding: 14px;
-      cursor: pointer; transition: background 0.2s; margin-top: 8px;
-    }
-    .save-btn:hover { background: #00a36c; }
-
-    footer { border-top: 1px solid var(--border); padding: 24px; text-align: center; font-size: 12px; color: var(--muted); }
-    footer a { color: var(--muted); text-decoration: none; }
+    footer { border-top: 1px solid var(--border); padding: 24px; text-align: center; font-size: 12px; color: var(--text-mute); }
+    footer a { color: var(--text-mute); text-decoration: none; }
   </style>
 </head>
 <body class="has-sidebar">
@@ -180,7 +138,7 @@
         <div class="status-sub"  id="statusSub">Add keywords and activate to start</div>
       </div>
     </div>
-    <button class="toggle-btn" id="toggleBtn" onclick="toggleMonitor()">▶ Start Monitoring</button>
+    <button class="btn btn-accent toggle-btn" id="toggleBtn" onclick="toggleMonitor()">▶ Start Monitoring</button>
   </div>
 
   <!-- Stats -->
@@ -206,8 +164,8 @@
     </div>
     <div class="config-card">
       <div class="keyword-input-row">
-        <input class="keyword-input" id="keywordInput" placeholder='Add keyword e.g. "bitcoin", "investing", your brand name...' onkeydown="if(event.key==='Enter')addKeyword()"/>
-        <button class="add-keyword-btn" onclick="addKeyword()">+ Add</button>
+        <input class="input keyword-input" id="keywordInput" placeholder='Add keyword e.g. "bitcoin", "investing", your brand name...' onkeydown="if(event.key==='Enter')addKeyword()"/>
+        <button class="btn btn-primary" onclick="addKeyword()">+ Add</button>
       </div>
       <div class="keyword-tags" id="keywordTags">
         <span class="empty-keywords">No keywords yet — add one above</span>
@@ -274,25 +232,25 @@
           <label>Email Alerts</label>
           <span>Digest sent every hour when matches found</span>
         </div>
-        <input class="notif-input" type="email" id="emailInput" placeholder="you@email.com" />
+        <input class="input notif-input" type="email" id="emailInput" placeholder="you@email.com" />
       </div>
       <div class="notif-row">
         <div class="notif-left">
           <label>Discord Webhook</label>
           <span>Post alerts to your Discord channel instantly</span>
         </div>
-        <input class="notif-input" type="text" id="webhookInput" placeholder="https://discord.com/api/webhooks/..." />
+        <input class="input notif-input" type="text" id="webhookInput" placeholder="https://discord.com/api/webhooks/..." />
       </div>
     </div>
   </div>
 
-  <button class="save-btn" onclick="saveSettings()">💾 Save Settings</button>
+  <button class="btn btn-accent btn-lg save-btn" style="width:100%;margin-top:8px;" onclick="saveSettings()">💾 Save Settings</button>
 
   <!-- Alert Feed -->
   <div class="section" style="margin-top:36px;">
     <div class="section-header">
       <div class="section-title">Recent Alerts</div>
-      <span style="font-size:12px;color:var(--muted);" id="lastChecked">Not checked yet</span>
+      <span style="font-size:12px;color:var(--text-mute);" id="lastChecked">Not checked yet</span>
     </div>
     <div class="alert-feed" id="alertFeed">
       <div class="empty-feed">🔄 Activate monitoring to start seeing mentions here</div>
@@ -447,7 +405,7 @@ function saveSettings() {
   localStorage.setItem('f5bot_v2', JSON.stringify(settings));
   const btn = document.querySelector('.save-btn');
   btn.textContent = '✅ Saved!';
-  btn.style.background = '#1d9bf0';
+  btn.style.background = 'var(--accent)';
   setTimeout(() => { btn.textContent = '💾 Save Settings'; btn.style.background = ''; }, 2000);
 }
 
