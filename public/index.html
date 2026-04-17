@@ -266,160 +266,189 @@
     .db-feed-name span { font-weight: 400; color: rgba(255,255,255,0.4); }
     .db-feed-time { font-size: 10px; color: rgba(255,255,255,0.3); white-space: nowrap; }
 
-    /* ─── IPHONE MOCKUP (PathSocial style) ─── */
+    /* ─── IPHONE 15 PRO MOCKUP ─── */
     .iphone-frame {
       position: absolute;
       right: -30px;
       bottom: -120px;
       z-index: 3;
-      width: 210px;
-      height: 430px;
-      border-radius: 36px;
-      background: linear-gradient(145deg, #2a3a4a, #1a2535);
-      border: 1px solid rgba(255,255,255,0.15);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.5), inset 0 0 0 2px rgba(255,255,255,0.08), 0 30px 80px rgba(0,0,0,0.8);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      width: 215px;
+      height: 455px;
+      border-radius: 44px;
+      padding: 6px;
+      background:
+        linear-gradient(135deg,
+          #4a4a4a 0%,
+          #1a1a1a 8%,
+          #2f2f2f 18%,
+          #0d0d0d 42%,
+          #1f1f1f 62%,
+          #0a0a0a 100%);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.08),
+        inset 0 0 0 2px #0a0a0a,
+        inset 0 1px 0 rgba(255,255,255,0.18),
+        0 0 0 1px rgba(0,0,0,0.8),
+        0 40px 80px rgba(0,0,0,0.7),
+        0 10px 30px rgba(0,0,0,0.5);
     }
-    /* Side buttons */
+    /* Side buttons — milled titanium look */
     .iphone-btn-silent {
       position: absolute;
-      left: -3px;
-      top: 90px;
+      left: -2.5px;
+      top: 82px;
       width: 3px;
-      height: 26px;
-      background: #1a2535;
-      border-radius: 3px 0 0 3px;
+      height: 28px;
+      background: linear-gradient(90deg, #0a0a0a 0%, #3a3a3a 50%, #0a0a0a 100%);
+      border-radius: 2px 0 0 2px;
+      box-shadow: -1px 0 2px rgba(0,0,0,0.7);
     }
     .iphone-btn-vol-up {
       position: absolute;
-      left: -3px;
-      top: 130px;
+      left: -2.5px;
+      top: 128px;
       width: 3px;
-      height: 44px;
-      background: #1a2535;
-      border-radius: 3px 0 0 3px;
+      height: 48px;
+      background: linear-gradient(90deg, #0a0a0a 0%, #3a3a3a 50%, #0a0a0a 100%);
+      border-radius: 2px 0 0 2px;
+      box-shadow: -1px 0 2px rgba(0,0,0,0.7);
     }
     .iphone-btn-vol-dn {
       position: absolute;
-      left: -3px;
-      top: 184px;
+      left: -2.5px;
+      top: 188px;
       width: 3px;
-      height: 44px;
-      background: #1a2535;
-      border-radius: 3px 0 0 3px;
+      height: 48px;
+      background: linear-gradient(90deg, #0a0a0a 0%, #3a3a3a 50%, #0a0a0a 100%);
+      border-radius: 2px 0 0 2px;
+      box-shadow: -1px 0 2px rgba(0,0,0,0.7);
     }
     .iphone-btn-power {
       position: absolute;
-      right: -3px;
-      top: 140px;
+      right: -2.5px;
+      top: 150px;
       width: 3px;
-      height: 60px;
-      background: #1a2535;
-      border-radius: 0 3px 3px 0;
+      height: 70px;
+      background: linear-gradient(270deg, #0a0a0a 0%, #3a3a3a 50%, #0a0a0a 100%);
+      border-radius: 0 2px 2px 0;
+      box-shadow: 1px 0 2px rgba(0,0,0,0.7);
     }
-    /* Notch */
+    /* Dynamic Island — modern iPhone pill */
     .iphone-notch {
       position: absolute;
-      top: 0;
+      top: 14px;
       left: 50%;
       transform: translateX(-50%);
       width: 100px;
-      height: 24px;
-      border-radius: 0 0 16px 16px;
-      background: #0d1117;
+      height: 30px;
+      border-radius: 999px;
+      background: #000;
       z-index: 10;
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.03);
     }
     /* Inner screen */
     .iphone-screen {
-      position: absolute;
-      inset: 6px;
+      position: relative;
+      width: 100%;
+      height: 100%;
       border-radius: 38px;
       overflow: hidden;
       background:
-        radial-gradient(ellipse 90% 75% at 88% 8%, rgba(65, 105, 220, 0.9) 0%, rgba(40, 70, 180, 0.45) 40%, transparent 65%),
-        radial-gradient(ellipse 85% 90% at 8% 92%, rgba(18, 155, 115, 0.9) 0%, rgba(10, 110, 90, 0.45) 40%, transparent 65%),
-        radial-gradient(ellipse 55% 45% at 50% 48%, rgba(25, 45, 95, 0.6) 0%, transparent 70%),
-        linear-gradient(175deg, #040c18 0%, #060f1e 40%, #050c16 100%);
+        radial-gradient(ellipse 85% 55% at 85% 15%, rgba(120, 60, 200, 0.5) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 60% at 15% 90%, rgba(30, 80, 180, 0.55) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 50% 50%, rgba(20, 30, 80, 0.3) 0%, transparent 70%),
+        linear-gradient(175deg, #08061a 0%, #04040f 50%, #0a0420 100%);
       display: flex;
       flex-direction: column;
     }
+    /* Fine subsurface grain on screen */
+    .iphone-screen::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.015) 0px, transparent 1px),
+        radial-gradient(circle at 70% 70%, rgba(255,255,255,0.01) 0px, transparent 1px);
+      background-size: 3px 3px;
+      pointer-events: none;
+      mix-blend-mode: overlay;
+    }
+    /* Status bar icons (wifi + battery only — lock screen style) */
+    .iphone-status {
+      position: relative;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 17px 24px 0;
+      gap: 5px;
+      z-index: 5;
+    }
+    .iphone-status svg { display: block; }
     /* Home indicator */
     .iphone-home-bar {
       position: absolute;
-      bottom: 14px;
+      bottom: 8px;
       left: 50%;
       transform: translateX(-50%);
-      width: 80px;
+      width: 108px;
       height: 4px;
-      background: rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.75);
       border-radius: 2px;
       z-index: 10;
     }
-    /* Lock screen content */
+    /* Lock screen clock */
+    .phone-date {
+      font-size: 13px;
+      font-weight: 500;
+      color: #fff;
+      text-align: center;
+      margin-top: 16px;
+      letter-spacing: -0.01em;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+      flex-shrink: 0;
+    }
     .phone-time {
-      font-size: 38px;
+      font-size: 66px;
       font-weight: 300;
       color: #fff;
       text-align: center;
-      margin-top: 28px;
-      letter-spacing: -2px;
+      margin-top: 2px;
+      margin-bottom: 14px;
+      letter-spacing: -3px;
+      line-height: 1;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      font-family: -apple-system, "SF Pro Display", "Helvetica Neue", sans-serif;
       flex-shrink: 0;
     }
-    .phone-date {
-      font-size: 11px;
-      color: rgba(255,255,255,0.7);
-      text-align: center;
-      margin-bottom: 10px;
-      flex-shrink: 0;
-    }
-    /* Notification center panel */
+    /* Notification stack (no center-header wrapper) */
     .notif-center {
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 16px;
-      margin: 0 10px;
-      padding: 0;
-      overflow: hidden;
+      margin: 0 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
       flex-shrink: 0;
     }
-    .notif-center-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 14px;
-      font-size: 12px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.55);
-      letter-spacing: 0.2px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-    .notif-close {
-      font-size: 12px;
-      color: rgba(255,255,255,0.5);
-      cursor: pointer;
-    }
-    /* Notification cards inside the center */
+    /* iOS notification cards */
     .notif-card {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      background: rgba(255,255,255,0.04);
+      gap: 9px;
+      padding: 9px 11px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.16);
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 1px 8px rgba(0,0,0,0.15);
       transition: opacity 0.4s ease, transform 0.4s ease;
     }
     .notif-app-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
       background: #000;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 15px;
       flex-shrink: 0;
       color: #fff;
       font-weight: 900;
@@ -429,32 +458,34 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
     .notif-app-name {
-      font-size: 10px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.6);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.75);
+      letter-spacing: -0.01em;
+      font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif;
     }
-    .notif-time { font-size: 10px; color: rgba(255,255,255,0.4); }
+    .notif-time { font-size: 10px; color: rgba(255,255,255,0.55); font-weight: 400; }
     .notif-body {
       font-size: 12px;
-      color: rgba(255,255,255,0.9);
+      color: #fff;
       font-weight: 500;
-      line-height: 1.3;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif;
     }
     /* Phone glow */
     .phone-glow {
       position: absolute;
-      bottom: -20px;
+      bottom: -25px;
       left: 50%;
       transform: translateX(-50%);
-      width: 180px;
-      height: 50px;
-      background: rgba(29,155,240,0.4);
-      filter: blur(24px);
+      width: 185px;
+      height: 55px;
+      background: rgba(90,120,255,0.35);
+      filter: blur(28px);
       border-radius: 50%;
       pointer-events: none;
     }
@@ -1180,17 +1211,26 @@
       <div class="iphone-btn-vol-up"></div>
       <div class="iphone-btn-vol-dn"></div>
       <div class="iphone-btn-power"></div>
-      <!-- Notch -->
-      <div class="iphone-notch"></div>
       <!-- Screen -->
       <div class="iphone-screen">
-        <div class="phone-time">9:41</div>
+        <!-- Dynamic Island -->
+        <div class="iphone-notch"></div>
+        <!-- Status bar icons (wifi, battery) -->
+        <div class="iphone-status">
+          <svg width="15" height="11" viewBox="0 0 15 11" fill="#fff" aria-hidden="true">
+            <path d="M7.5 10.5a1 1 0 100-2 1 1 0 000 2zM4 7.7c.97-.83 2.17-1.3 3.5-1.3s2.53.47 3.5 1.3l.97-.97C10.78 5.62 9.2 4.9 7.5 4.9s-3.28.72-4.47 1.83l.97.97zM1.6 5.3C3.2 3.7 5.25 2.9 7.5 2.9s4.3.8 5.9 2.4l.97-.97C12.56 2.47 10.13 1.4 7.5 1.4S2.44 2.47.63 4.33l.97.97z"/>
+          </svg>
+          <svg width="26" height="12" viewBox="0 0 26 12" fill="none" aria-hidden="true">
+            <rect x="0.5" y="0.5" width="22" height="11" rx="3" stroke="#fff" stroke-opacity="0.5"/>
+            <rect x="2" y="2" width="17" height="8" rx="1.5" fill="#fff"/>
+            <rect x="23.25" y="4" width="1.5" height="4" rx="0.5" fill="#fff" fill-opacity="0.5"/>
+          </svg>
+        </div>
+        <!-- Lock screen clock -->
         <div class="phone-date">Wednesday, April 8</div>
+        <div class="phone-time">9:41</div>
+        <!-- Notifications -->
         <div class="notif-center">
-          <div class="notif-center-header">
-            <span>Notification Center</span>
-            <span class="notif-close">✕</span>
-          </div>
           <div id="notifCards"></div>
         </div>
       </div>
