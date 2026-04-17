@@ -14,6 +14,7 @@
       --border2: var(--border-hi);
     }
     html { scroll-behavior: smooth; }
+    #core, #elite, #billing { scroll-margin-top: 90px; }
     body {
       min-height: 100vh; overflow-x: hidden;
     }
@@ -223,7 +224,7 @@
 </div>
 
 <!-- BILLING TOGGLE -->
-<div class="toggle-section">
+<div class="toggle-section" id="billing">
   <span class="toggle-label" id="label-monthly">Monthly</span>
   <div class="toggle-switch on" id="billingToggle" onclick="toggleBilling()">
     <div class="toggle-knob"></div>
@@ -236,7 +237,7 @@
   <div class="pricing-grid">
 
     <!-- X Growth Core -->
-    <div class="pricing-card card card-hover fade-in">
+    <div class="pricing-card card card-hover fade-in" id="core">
       <div class="plan-name">X Growth Core</div>
       <div class="plan-tagline">Everything you need to start growing.</div>
       <div class="plan-price-wrap">
@@ -262,7 +263,7 @@
     </div>
 
     <!-- X Growth Elite -->
-    <div class="pricing-card card card-hover card-accent featured fade-in" style="transition-delay:0.1s;">
+    <div class="pricing-card card card-hover card-accent featured fade-in" id="elite" style="transition-delay:0.1s;">
       <div class="badge badge-accent badge-dot plan-badge">MOST POPULAR</div>
       <div class="plan-name elite">X Growth Elite</div>
       <div class="plan-tagline">The full toolkit for serious growers.</div>

@@ -949,13 +949,39 @@
       color: #fff;
       font-size: 15px;
       font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.18s, border-color 0.18s, background 0.18s;
+      cursor: pointer;
+    }
+    .plan-pill::after {
+      content: "→";
+      font-size: 14px;
+      color: var(--text-mute);
+      transition: transform 0.18s, color 0.18s;
+    }
+    .plan-pill:hover {
+      border-color: var(--border-hi);
+      background: var(--card-hi);
+      transform: translateY(-1px);
+      color: #fff;
+    }
+    .plan-pill:hover::after {
+      color: var(--accent);
+      transform: translateX(3px);
     }
     .plan-pill span {
       color: var(--blue);
     }
     .plan-pill.featured {
-      border-color: rgba(29,155,240,0.4);
-      background: rgba(29,155,240,0.08);
+      border-color: rgba(90,120,255,0.4);
+      background: rgba(90,120,255,0.08);
+    }
+    .plan-pill.featured:hover {
+      border-color: rgba(90,120,255,0.6);
+      background: rgba(90,120,255,0.14);
     }
     .pricing-note {
       margin-top: 20px;
@@ -1512,9 +1538,9 @@
     <h2 class="section-title">Simple pricing. Serious results.</h2>
     <p class="section-subtitle">Upgrade anytime. Cancel anytime.</p>
     <div class="plan-pills">
-      <div class="plan-pill">X Growth Core</div>
-      <div class="plan-pill featured">X Growth Elite</div>
-      <div class="plan-pill">Monthly or Annual</div>
+      <a href="/pricing#core" class="plan-pill">X Growth Core</a>
+      <a href="/pricing#elite" class="plan-pill featured">X Growth Elite</a>
+      <a href="/pricing#billing" class="plan-pill">Monthly or Annual</a>
     </div>
     <a href="/pricing" class="btn btn-primary" style="padding:16px 40px;font-size:16px;border-radius:100px;">View All Plans →</a>
     <p class="pricing-note">All paid plans include every tool + all future tools</p>
