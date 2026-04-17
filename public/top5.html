@@ -26,7 +26,6 @@
     }
     .rank-bar { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
     .rank-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-    .rank-medal { font-size: 22px; }
     .rank-label { font-size: 13px; font-weight: 700; }
     .rank-num {
       font-family: 'Geist Mono', monospace;
@@ -82,10 +81,10 @@
   <div id="stateContent" style="display:none;">
     <div id="tweetList"></div>
     <div class="insights-box">
-      <div class="insights-title">💡 What to take away</div>
+      <div class="insights-title">What to take away</div>
       <div id="insights"></div>
     </div>
-    <button class="btn btn-secondary refresh-btn" onclick="load()">🔄 Refresh</button>
+    <button class="btn btn-secondary refresh-btn" onclick="load()">Refresh</button>
   </div>
 </main>
 
@@ -95,7 +94,6 @@
 <script>
 initLayout().then(() => { load(); });
 
-const medals     = ['🥇','🥈','🥉','4️⃣','5️⃣'];
 const rankColors = ['#f5a623','#aaaaaa','#cd7f32','#555','#555'];
 
 function fmt(n) {
@@ -120,8 +118,7 @@ function renderTweets(tweets) {
     <div class="card card-hover tweet-card">
       <div class="rank-bar" style="background:${rankColors[i]};opacity:0.8;"></div>
       <div class="rank-header">
-        <span class="rank-medal">${medals[i]}</span>
-        <span class="rank-num">#${i+1}</span>
+        <span class="rank-num">${String(i+1).padStart(2,'0')}</span>
         <span class="rank-label" style="color:${rankColors[i]==='#555'?'var(--text-mute)':rankColors[i]}">Rank</span>
         <span class="rank-date">${timeAgo(t.createdAt)}</span>
       </div>
@@ -136,7 +133,7 @@ function renderTweets(tweets) {
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <a class="btn btn-sm btn-secondary" href="${t.tweetUrl}" target="_blank">View on 𝕏 ↗</a>
-        <button class="btn btn-sm btn-ghost" onclick="copyText(this,\`${escJs(t.text)}\`)">📋 Copy Text</button>
+        <button class="btn btn-sm btn-ghost" onclick="copyText(this,\`${escJs(t.text)}\`)">Copy Text</button>
       </div>
     </div>
   `).join('');

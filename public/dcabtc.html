@@ -174,7 +174,7 @@
     <div class="stats-row" id="statsRow"></div>
 
     <!-- 3-year projections -->
-    <div class="section-title">📈 3-Year Projection — What CAGR Means for Your Stack</div>
+    <div class="section-title">3-Year Projection — What CAGR Means for Your Stack</div>
     <div class="proj-grid" id="projGrid"></div>
 
     <!-- Chart -->
@@ -184,7 +184,7 @@
 
     <!-- Custom CAGR -->
     <div style="margin-top:20px;">
-      <div class="section-title">🎯 Custom CAGR Calculator</div>
+      <div class="section-title">Custom CAGR Calculator</div>
       <div class="card">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
           <div style="display:flex;align-items:center;gap:8px;">
@@ -214,7 +214,7 @@
     <div class="share-row">
       <span style="font-size:13px;color:var(--text-mute);">Share your results:</span>
       <button class="btn btn-sm share-x" onclick="shareToX()">𝕏 Post to X</button>
-      <button class="btn btn-sm btn-secondary share-copy" onclick="copyLink()">🔗 Copy Link</button>
+      <button class="btn btn-sm btn-secondary share-copy" onclick="copyLink()">Copy Link</button>
     </div>
   </div>
 </div>
@@ -600,7 +600,7 @@ function copyLink() {
   navigator.clipboard.writeText(location.href).then(() => {
     const btn = event.target;
     btn.textContent = '✓ Copied!';
-    setTimeout(() => btn.textContent = '🔗 Copy Link', 2000);
+    setTimeout(() => btn.textContent = 'Copy Link', 2000);
   });
 }
 

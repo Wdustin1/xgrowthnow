@@ -280,7 +280,11 @@
     .insight-card.warning { border-left-color: var(--orange); }
     .insight-card.good    { border-left-color: var(--success); }
     .insight-card.tip     { border-left-color: var(--accent); }
-    .insight-icon { margin-right: 6px; }
+    .insight-icon { display: inline-flex; margin-right: 8px; vertical-align: -4px; }
+    .insight-icon svg { width: 18px; height: 18px; }
+    .insight-card.warning .insight-icon { color: var(--orange); }
+    .insight-card.good    .insight-icon { color: var(--success); }
+    .insight-card.tip     .insight-icon { color: var(--accent); }
 
     /* CTA */
     .chart-card { margin-bottom: 24px; }
@@ -455,9 +459,12 @@ function animateRings() {
 }
 
 function insightIcon(type) {
-  if (type === 'warning') return '⚠️';
-  if (type === 'good')    return '✅';
-  return '💡';
+  const w = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>';
+  const g = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>';
+  const t = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>';
+  if (type === 'warning') return w;
+  if (type === 'good')    return g;
+  return t;
 }
 
 function renderResults(data) {
@@ -481,7 +488,7 @@ function renderResults(data) {
     <div class="card insight-card ${esc(ins.type)} fade-in">
       <span class="insight-icon">${insightIcon(ins.type)}</span>${esc(ins.text)}
     </div>
-  `).join('') || '<div class="card insight-card tip fade-in">💡 Keep growing — every account starts somewhere!</div>';
+  `).join('') || `<div class="card insight-card tip fade-in"><span class="insight-icon">${insightIcon('tip')}</span>Keep growing — every account starts somewhere!</div>`;
 
   const html = `
     <div class="card profile-card fade-in">
@@ -496,18 +503,18 @@ function renderResults(data) {
 
     <div class="scores-row">
       <div class="card score-card fade-in">
-        <div class="score-card-label">🎯 Growth Score</div>
+        <div class="score-card-label">Growth Score</div>
         ${ringHTML('ring-growth', data.growthScore, growthColor)}
       </div>
       <div class="card score-card fade-in">
-        <div class="score-card-label">👥 Follow Ratio</div>
+        <div class="score-card-label">Follow Ratio</div>
         <div class="stat" style="padding: 14px 0;">
           <div class="stat-value val-num" style="color:${ratioColor}">${data.followRatio}</div>
           <div class="stat-label val-sub">followers ÷ following</div>
         </div>
       </div>
       <div class="card score-card fade-in">
-        <div class="score-card-label">📊 Tweets / Day</div>
+        <div class="score-card-label">Tweets / Day</div>
         <div class="stat" style="padding: 14px 0;">
           <div class="stat-value val-num" style="color:${tpdColor}">${data.tweetsPerDay}</div>
           <div class="stat-label val-sub">avg posts per day</div>

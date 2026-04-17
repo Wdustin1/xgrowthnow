@@ -16,7 +16,7 @@
     .slot-card.gold   { border-color: var(--warning); background: rgba(255,200,70,0.06); }
     .slot-card.silver { border-color: var(--border-hi); background: rgba(170,170,170,0.05); }
     .slot-card.bronze { border-color: #cd7f32; background: rgba(205,127,50,0.05); }
-    .slot-rank  { font-size: 20px; margin-bottom: 6px; }
+    .slot-rank  { font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 600; color: var(--text-mute); margin-bottom: 6px; letter-spacing: 0.05em; }
     .slot-day   { font-size: 16px; font-weight: 800; margin-bottom: 2px; }
     .slot-time  { font-size: 22px; font-weight: 900; color: var(--accent); margin-bottom: 4px; }
     .slot-sample { font-size: 11px; color: var(--text-mute); }
@@ -86,10 +86,10 @@
 
   <div id="stateContent" style="display:none;">
     <div class="stats-row" id="statsRow"></div>
-    <div class="section-title">🏆 Your Top 5 Best Times</div>
+    <div class="section-title">Your Top 5 Best Times</div>
     <div class="top-slots" id="topSlots"></div>
 
-    <div class="section-title">📊 Engagement Heatmap</div>
+    <div class="section-title">Engagement Heatmap</div>
     <div class="heatmap-wrap">
       <div id="heatmapGrid"></div>
       <div class="legend">
@@ -191,7 +191,6 @@ function renderStats(data) {
 }
 
 const rankStyles = ['gold','silver','bronze','',''];
-const rankEmojis = ['🥇','🥈','🥉','4️⃣','5️⃣'];
 
 function renderTopSlots(slots) {
   const el = document.getElementById('topSlots');
@@ -200,7 +199,7 @@ function renderTopSlots(slots) {
     const localDay  = shiftDay(s.day, s.hour);
     return `
       <div class="slot-card ${rankStyles[i]}">
-        <div class="slot-rank">${rankEmojis[i]}</div>
+        <div class="slot-rank">${String(i+1).padStart(2,'0')}</div>
         <div class="slot-day">${DAY_NAMES[localDay]}</div>
         <div class="slot-time">${formatHour(localHour)}</div>
         <div class="slot-sample">${s.sampleSize} post${s.sampleSize !== 1 ? 's' : ''} sampled</div>
@@ -311,7 +310,7 @@ function renderHourChart(byHour) {
       <div class="bar-row">
         <div class="bar-label">${HOUR_LABELS[h]}</div>
         <div class="bar-track"><div class="bar-fill ${isTop ? 'top' : ''}" style="width:${pct}%"></div></div>
-        <div class="bar-val" style="${isTop ? 'color:var(--yellow);font-weight:700' : ''}">${isTop ? '🔥' : ''}</div>
+        <div class="bar-val" style="${isTop ? 'color:var(--accent);font-weight:700' : ''}">${isTop ? 'PEAK' : ''}</div>
       </div>
     `;
   }).join('');
@@ -329,7 +328,7 @@ function renderDayChart(byDay) {
       <div class="bar-row">
         <div class="bar-label">${name}</div>
         <div class="bar-track"><div class="bar-fill ${isTop ? 'top' : ''}" style="width:${pct}%"></div></div>
-        <div class="bar-val" style="${isTop ? 'color:var(--yellow);font-weight:700' : ''}">${isTop ? '🔥' : ''}</div>
+        <div class="bar-val" style="${isTop ? 'color:var(--accent);font-weight:700' : ''}">${isTop ? 'PEAK' : ''}</div>
       </div>
     `;
   }).join('');

@@ -169,7 +169,7 @@
       <div class="actions-right">
         <button class="btn btn-sm btn-secondary" onclick="toggleSelectAll()">Select All</button>
         <button class="btn btn-primary unfollow-btn" id="unfollowBtn" onclick="doUnfollow()" disabled>
-          🗑 Unfollow Selected
+          Unfollow Selected
         </button>
       </div>
     </div>
@@ -238,7 +238,7 @@ function renderList() {
 
   const list = document.getElementById('userList');
   if (filtered.length === 0) {
-    list.innerHTML = `<div class="state-box"><span class="state-icon">✅</span><div class="state-title">No accounts match this filter</div></div>`;
+    list.innerHTML = `<div class="state-box"><span class="state-icon state-success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></span><div class="state-title">No accounts match this filter</div></div>`;
     return;
   }
 
@@ -290,7 +290,7 @@ function updateUnfollowBtn() {
   const count = [...selected].filter(id => filtered.find(u => u.id === id)).length;
   const btn = document.getElementById('unfollowBtn');
   btn.disabled = count === 0 || isUnfollowing;
-  btn.textContent = count > 0 ? `🗑 Unfollow ${count} Account${count > 1 ? 's' : ''}` : '🗑 Unfollow Selected';
+  btn.textContent = count > 0 ? `Unfollow ${count} Account${count > 1 ? 's' : ''}` : 'Unfollow Selected';
 }
 
 async function doUnfollow() {
@@ -328,7 +328,7 @@ async function doUnfollow() {
   }
 
   isUnfollowing = false;
-  showToast(`✅ Unfollowed ${done} accounts`);
+  showToast(`Unfollowed ${done} accounts`);
   renderList();
 }
 

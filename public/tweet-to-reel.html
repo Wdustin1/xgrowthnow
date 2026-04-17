@@ -122,13 +122,13 @@
           <div class="theme-opt active" onclick="setTheme('dark',this)"><div class="theme-swatch" style="background:#000;border:1px solid #2f3336;"></div>Dark</div>
           <div class="theme-opt" onclick="setTheme('midnight',this)"><div class="theme-swatch" style="background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);"></div>Midnight</div>
           <div class="theme-opt" onclick="setTheme('sunrise',this)"><div class="theme-swatch" style="background:linear-gradient(135deg,#f7971e,#ffd200);"></div>Sunrise</div>
-          <div class="theme-opt" onclick="setTheme('bitcoin',this)"><div class="theme-swatch" style="background:linear-gradient(135deg,#f7931a,#ff6b00);"></div>Bitcoin 🟠</div>
+          <div class="theme-opt" onclick="setTheme('bitcoin',this)"><div class="theme-swatch" style="background:linear-gradient(135deg,#f7931a,#ff6b00);"></div>Bitcoin</div>
         </div>
       </div>
 
       <div class="action-row">
         <button class="btn btn-secondary btn-dl-img" onclick="downloadImage()">⬇ Image</button>
-        <button class="btn btn-primary btn-lg btn-dl-vid" id="vidBtn" onclick="startRecording()">🎬 Export 15s Video</button>
+        <button class="btn btn-primary btn-lg btn-dl-vid" id="vidBtn" onclick="startRecording()">Export 15s Video</button>
       </div>
 
       <div class="record-progress" id="recordProgress">
@@ -141,7 +141,7 @@
         <div style="font-size:12px;color:var(--text-mute);text-align:center;">Recording complete — choose your format:</div>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-secondary btn-dl-img" style="flex:1;" id="dlWebm" onclick="downloadWebm()">⬇ WebM <span style="font-size:10px;opacity:0.6;">(YouTube)</span></button>
-          <button class="btn btn-accent btn-dl-vid" style="flex:2;" id="dlMp4" onclick="convertToMp4()">🔄 Convert → MP4 <span style="font-size:10px;opacity:0.8;">(TikTok · Reels)</span></button>
+          <button class="btn btn-accent btn-dl-vid" style="flex:2;" id="dlMp4" onclick="convertToMp4()">Convert → MP4 <span style="font-size:10px;opacity:0.8;">(TikTok · Reels)</span></button>
         </div>
         <div id="convertStatus" style="font-size:12px;color:var(--text-mute);text-align:center;min-height:16px;"></div>
         <div class="progress-bar-wrap" id="convertProgressWrap" style="display:none;"><div class="progress-bar-fill" id="convertFill"></div></div>
@@ -487,7 +487,7 @@ function startRecording() {
 
     isRecording     = false;
     btn.disabled    = false;
-    btn.textContent = '🔁 Record Again';
+    btn.textContent = 'Record Again';
     prog.classList.remove('visible');
     exports.style.display = 'flex';
   };

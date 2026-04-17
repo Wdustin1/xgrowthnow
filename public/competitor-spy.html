@@ -54,7 +54,8 @@
     .tweet-rank { font-size: 11px; font-weight: 700; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
     .tweet-text { font-size: 14px; line-height: 1.5; margin-bottom: 10px; word-break: break-word; }
     .tweet-stats { display: flex; gap: 16px; font-size: 12px; color: var(--text-mute); }
-    .tweet-stats span { display: flex; align-items: center; gap: 4px; }
+    .tweet-stats span { display: inline-flex; align-items: center; gap: 6px; }
+    .stat-ico { width: 14px; height: 14px; flex-shrink: 0; }
     .tweet-link { font-size: 12px; color: var(--accent); text-decoration: none; margin-left: auto; }
     .tweet-link:hover { text-decoration: underline; }
     .tweet-footer { display: flex; align-items: center; }
@@ -65,7 +66,7 @@
 
 <main>
   <div class="page-header">
-    <h1>🔍 Competitor Spy</h1>
+    <h1>Competitor Spy</h1>
     <p>Analyze any public Twitter account's engagement, best content, and posting patterns</p>
   </div>
 
@@ -137,9 +138,9 @@ function renderResults({ profile, stats, top5 }) {
       <div class="tweet-text">${escHtml(t.text)}</div>
       <div class="tweet-footer">
         <div class="tweet-stats">
-          <span>❤️ <span class="mono">${fmt(t.likes)}</span></span>
-          <span>🔁 <span class="mono">${fmt(t.retweets)}</span></span>
-          <span>💬 <span class="mono">${fmt(t.replies)}</span></span>
+          <span><svg class="stat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg><span class="mono">${fmt(t.likes)}</span></span>
+          <span><svg class="stat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg><span class="mono">${fmt(t.retweets)}</span></span>
+          <span><svg class="stat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg><span class="mono">${fmt(t.replies)}</span></span>
         </div>
         <a class="tweet-link" href="${t.url}" target="_blank" rel="noopener">View →</a>
       </div>

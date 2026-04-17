@@ -39,8 +39,9 @@
     .tweet-card.boosted { border-color: rgba(51,214,142,0.4); background: rgba(51,214,142,0.04); }
     .tweet-text { font-size: 15px; line-height: 1.6; margin-bottom: 12px; white-space: pre-wrap; word-break: break-word; }
     .tweet-meta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-    .tweet-stat { font-size: 13px; color: var(--text-mute); }
+    .tweet-stat { font-size: 13px; color: var(--text-mute); display: inline-flex; align-items: center; gap: 6px; }
     .tweet-stat strong { color: var(--text); }
+    .stat-ico { width: 14px; height: 14px; flex-shrink: 0; }
     .tweet-age { font-size: 12px; color: var(--text-mute); margin-left: auto; }
     .tweet-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; align-items: center; }
 
@@ -68,7 +69,7 @@
   </div>
 
   <div class="reauth-banner" id="reauthBanner">
-    ⚠️ Retweet permissions not enabled. <a href="/api/auth/logout">Sign out</a> and back in to activate this feature.
+    Retweet permissions not enabled. <a href="/api/auth/logout">Sign out</a> and back in to activate this feature.
   </div>
 
   <div id="stateLoading" class="state-box">
@@ -129,7 +130,7 @@ async function boostTweet(tweetId, btn) {
     const d = await r.json();
     if (d.error === 'scope') {
       document.getElementById('reauthBanner').style.display = 'block';
-      btn.textContent = '🔁 Boost';
+      btn.textContent = 'Boost';
       btn.disabled = false;
       return;
     }
@@ -140,11 +141,11 @@ async function boostTweet(tweetId, btn) {
       renderPage(window._tweets); // re-render
     } else {
       btn.textContent = 'Failed';
-      setTimeout(() => { btn.textContent = '🔁 Boost'; btn.disabled = false; }, 2000);
+      setTimeout(() => { btn.textContent = 'Boost'; btn.disabled = false; }, 2000);
     }
   } catch {
     btn.textContent = 'Error';
-    setTimeout(() => { btn.textContent = '🔁 Boost'; btn.disabled = false; }, 2000);
+    setTimeout(() => { btn.textContent = 'Boost'; btn.disabled = false; }, 2000);
   }
 }
 
@@ -196,7 +197,7 @@ function renderPage(tweets) {
   let html = '';
 
   // Currently boosted
-  html += `<div class="section-header">🟢 Currently Boosted <span class="section-count">${boostedTweets.length}</span></div>`;
+  html += `<div class="section-header">Currently Boosted <span class="section-count">${boostedTweets.length}</span></div>`;
   if (!boostedTweets.length) {
     html += `<div class="empty-section">Nothing boosted yet — pick a tweet below to start recycling.</div>`;
   } else {
@@ -207,13 +208,13 @@ function renderPage(tweets) {
         <div class="tweet-card boosted">
           <div class="tweet-text">${t.text.replace(/</g,'&lt;').substring(0,280)}</div>
           <div class="tweet-meta">
-            <span class="tweet-stat">❤️ <strong class="mono">${fmt(t.likes)}</strong></span>
-            <span class="tweet-stat">🔁 <strong class="mono">${fmt(t.retweets)}</strong></span>
+            <span class="tweet-stat"><svg class="stat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg><strong class="mono">${fmt(t.likes)}</strong></span>
+            <span class="tweet-stat"><svg class="stat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg><strong class="mono">${fmt(t.retweets)}</strong></span>
             <span class="tweet-age mono">${timeAgo(t.createdAt)}</span>
           </div>
           <div class="tweet-actions">
-            <span class="countdown ${cd.expiring ? 'expiring' : ''}">⏱ ${cd.text}</span>
-            <button class="btn btn-sm btn-danger" onclick="unboostTweet('${t.id}', this)">✕ Remove Boost</button>
+            <span class="countdown ${cd.expiring ? 'expiring' : ''}">${cd.text}</span>
+            <button class="btn btn-sm btn-danger" onclick="unboostTweet('${t.id}', this)">Remove Boost</button>
             <a class="btn btn-sm btn-secondary" href="${t.url}" target="_blank">View →</a>
           </div>
         </div>`;
@@ -222,7 +223,7 @@ function renderPage(tweets) {
   }
 
   // Available to boost
-  html += `<div class="section-header" style="margin-top:32px;">⚡ Top Tweets to Boost <span class="section-count">${available.length}</span></div>`;
+  html += `<div class="section-header" style="margin-top:32px;">Top Tweets to Boost <span class="section-count">${available.length}</span></div>`;
   if (!available.length) {
     html += `<div class="empty-section">No old tweets found (need posts older than 30 days).</div>`;
   } else {
@@ -233,14 +234,14 @@ function renderPage(tweets) {
         <div class="tweet-card">
           <div class="tweet-text">${t.text.replace(/</g,'&lt;').substring(0,280)}</div>
           <div class="tweet-meta">
-            <span class="tweet-stat">❤️ <strong class="mono">${fmt(t.likes)}</strong></span>
-            <span class="tweet-stat">🔁 <strong class="mono">${fmt(t.retweets)}</strong></span>
-            <span class="tweet-stat">💬 <strong class="mono">${fmt(t.replies)}</strong></span>
+            <span class="tweet-stat"><svg class="stat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg><strong class="mono">${fmt(t.likes)}</strong></span>
+            <span class="tweet-stat"><svg class="stat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg><strong class="mono">${fmt(t.retweets)}</strong></span>
+            <span class="tweet-stat"><svg class="stat-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg><strong class="mono">${fmt(t.replies)}</strong></span>
             <span class="score-badge ${sc}"><span class="mono">${t.engagementScore}</span> pts</span>
             <span class="tweet-age mono">${t.daysSincePosted}d ago</span>
           </div>
           <div class="tweet-actions">
-            <button class="btn btn-sm btn-accent" onclick="boostTweet('${t.id}', this)">🔁 Boost for 24h</button>
+            <button class="btn btn-sm btn-accent" onclick="boostTweet('${t.id}', this)">Boost for 24h</button>
             <a class="btn btn-sm btn-secondary" href="${t.url}" target="_blank">View →</a>
           </div>
         </div>`;
@@ -261,7 +262,7 @@ async function load() {
   if (r.status === 401) { location.href = '/api/auth/login?returnTo=/viral-reposter'; return; }
   const d = await r.json();
   if (d.error) {
-    document.getElementById('stateLoading').innerHTML = `<span class="state-icon">⚠️</span><div class="state-title">${d.error}</div>`;
+    document.getElementById('stateLoading').innerHTML = `<span class="state-icon state-warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><div class="state-title">${d.error}</div>`;
     return;
   }
   renderPage(d.tweets || []);
