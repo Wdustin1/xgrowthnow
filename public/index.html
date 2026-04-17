@@ -216,8 +216,32 @@
     }
     /* Nav handle input */
     .hero-sub-p { font-size: 16px; color: var(--muted2); margin-bottom: 0; }
-    .hero-stars { font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-    .hero-stars span { font-weight: 600; color: #fff; }
+    .hero-proof {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-bottom: 24px;
+      padding: 5px 14px 5px 5px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 999px;
+      font-size: 13px;
+      max-width: 100%;
+    }
+    .hero-proof-avatar {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-hi));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: #fff;
+      flex-shrink: 0; letter-spacing: -0.02em;
+    }
+    .hero-proof-quote { color: rgba(255,255,255,0.88); font-weight: 500; }
+    .hero-proof-handle {
+      color: var(--accent-hi); font-weight: 600;
+      font-family: 'Geist Mono', monospace; font-size: 12px;
+      white-space: nowrap;
+    }
+    @media (max-width: 560px) {
+      .hero-proof { flex-wrap: wrap; row-gap: 4px; }
+    }
     .hero-testimonial { margin-top: 32px; max-width: 460px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px 28px; }
     .testimonial-text { font-size: 16px; color: rgba(255,255,255,0.9); line-height: 1.6; font-style: italic; margin-bottom: 20px; font-weight: 500; }
     .testimonial-byline { display: flex; align-items: center; gap: 14px; }
@@ -1151,7 +1175,11 @@
 <section class="hero hero-glow" style="position:relative;z-index:1;">
   <!-- Left column: text + CTA -->
   <div class="hero-text">
-    <div class="hero-stars fade-in">⭐⭐⭐⭐⭐ <span>Trusted by 500+ X creators</span></div>
+    <div class="hero-proof fade-in">
+      <div class="hero-proof-avatar">MC</div>
+      <div class="hero-proof-quote">"2k → 18k in 4 months."</div>
+      <div class="hero-proof-handle">— @marcusbuilds</div>
+    </div>
     <h1 class="fade-in">Grow on X Organically<br/>&amp; Get Monetized <em class="text-gradient">FASTER</em></h1>
     <p class="fade-in hero-sub-p">No bots. Just real growth through proven tools to help get monetized.</p>
     <div class="hero-buttons fade-in">
