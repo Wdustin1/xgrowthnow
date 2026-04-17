@@ -16,7 +16,7 @@
 
   --text:        #fafbff;
   --text-mute:   #8c90a3;
-  --text-faint:  #5a5e6e;
+  --text-faint:  #6d7285;
 
   --accent:      #5a78ff;
   --accent-hi:   #7b92ff;
@@ -40,6 +40,7 @@
      Keep so unchanged page CSS rules still resolve while we migrate. */
   --blue: var(--accent);
   --muted: var(--text-mute);
+  --muted2: var(--text-faint);
   --purple: var(--accent);
 }
 
