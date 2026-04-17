@@ -228,6 +228,29 @@ textarea.x-input, select.x-input {
   width: 14px; height: 14px; margin-right: 4px;
 }
 
+/* Shared app-page footer (tool pages with sidebar) */
+.app-footer {
+  border-top: 1px solid var(--border);
+  padding: 24px;
+  margin-top: 48px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-mute);
+}
+.app-footer a { color: var(--text-mute); text-decoration: none; }
+.app-footer a:hover { color: var(--text); }
+
+/* State-icon SVG sizing (loading/empty/error states) */
+.state-icon svg {
+  width: 40px; height: 40px;
+  stroke-width: 1.5;
+  color: var(--accent);
+  margin: 0 auto;
+}
+.state-icon.state-warn svg { color: var(--warning); }
+.state-icon.state-error svg { color: var(--danger); }
+.state-icon.state-success svg { color: var(--success); }
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

@@ -38,14 +38,15 @@
 
     /* Empty state */
     #stateEmpty { text-align: center; padding: 60px 0; color: var(--text-mute); display: none; }
-    #stateEmpty .big { font-size: 42px; margin-bottom: 12px; }
+    #stateEmpty .big { margin-bottom: 12px; display: flex; justify-content: center; }
+    #stateEmpty .big svg { width: 40px; height: 40px; color: var(--success); stroke-width: 1.5; }
   </style>
 </head>
 <body class="has-sidebar">
 
 <div class="inner">
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:6px;">
-    <h1 class="page-title">💬 Unreplied Comments</h1>
+    <h1 class="page-title">Unreplied Comments</h1>
     <button class="btn btn-sm btn-secondary" id="refreshBtn" onclick="load()">↺ Refresh</button>
   </div>
   <p class="page-sub">Your recent tweets where people have commented — sorted by most replies first. Never miss an engagement opportunity.</p>
@@ -62,13 +63,15 @@
   </div>
 
   <div id="stateEmpty">
-    <div class="big">🎉</div>
+    <div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div>
     <div style="font-size:17px;font-weight:700;margin-bottom:8px;">You're all caught up!</div>
     <div style="font-size:14px;">No unreplied comments on your recent tweets.</div>
   </div>
 
   <div class="tweet-list" id="tweetList"></div>
 </div>
+
+<footer class="app-footer"><img class="footer-mark" src="/logo-icon.png" alt="" aria-hidden="true"/> XGrowth — Built by <a href="https://x.com/investwithdoc" target="_blank">@InvestWithDoc</a></footer>
 
 <script src="/sidebar.js"></script>
 <script>
