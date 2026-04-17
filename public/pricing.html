@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pricing — XGrowthNow</title>
+  <meta name="description" content="Simple, transparent pricing for XGrowthNow. Monthly or annual billing."/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --surface: #0a0a0a; --card: #111; --border: #1f1f1f; --border2: #2a2a2a;
+      --text: #e7e9ea; --muted: #555; --muted2: #888;
+      --blue: #1d9bf0; --blue-dim: rgba(29,155,240,0.10);
+      --green: #00ba7c; --red: #f4212e; --purple: #7b61ff;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text);
+      min-height: 100vh; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+
+    /* ── TYPOGRAPHY ── */
+    h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -1px; }
+
+    /* ── NAV ── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 80px; position: sticky; top: 0; z-index: 100;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(16px);
+    }
+    
+    .nav-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; text-decoration: none; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .nav-logo span { color: var(--blue); }
+    .nav-logo-img { height: 32px; width: auto; display: block; }
+    .nav-links { display: flex; align-items: center; gap: 8px; }
+    .nav-link { color: var(--muted2); text-decoration: none; font-size: 16px; font-weight: 500; padding: 9px 16px; border-radius: 20px; transition: color 0.15s; }
+    .nav-link:hover, .nav-link.active { color: var(--text); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff;
+      border: none; border-radius: 20px; font-size: 14px; font-weight: 700; padding: 8px 20px;
+      cursor: pointer; text-decoration: none; font-family: inherit; transition: all 0.15s;
+      box-shadow: 0 0 20px rgba(29,155,240,0.25);
+    }
+    .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+    @media (max-width: 600px) { .nav-links { display: none; } nav { padding: 0 20px; } }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center; padding: 72px 24px 48px;
+      background: radial-gradient(ellipse 100% 60% at 50% -10%, rgba(29,155,240,0.13) 0%, rgba(123,97,255,0.05) 40%, transparent 70%);
+      position: relative; z-index: 1;
+    }
+    .pricing-stat { display: block; max-width: 100% !important; width: 100%; font-size: clamp(20px, 2.8vw, 42px) !important; font-weight: 900 !important; font-style: italic; color: #fff !important; -webkit-text-fill-color: #fff !important; background: none !important; margin: 20px 0 0 !important; letter-spacing: -0.5px; line-height: 1.2; white-space: nowrap; text-align: center !important; }
+    .pricing-stat em { font-style: normal !important; color: #1d9bf0 !important; -webkit-text-fill-color: #1d9bf0 !important; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--blue-dim); border: 1px solid rgba(29,155,240,0.25);
+      color: var(--blue); font-size: 12px; font-weight: 600; padding: 5px 14px;
+      border-radius: 20px; margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 56px); font-weight: 900; letter-spacing: -2px; line-height: 1.05; margin-bottom: 14px;
+      background: linear-gradient(135deg, #fff 0%, #a8d4f8 60%, #1d9bf0 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero p { font-size: 16px; color: var(--muted2); max-width: 460px; margin: 0 auto; line-height: 1.65; }
+
+    /* ── BILLING TOGGLE ── */
+    .toggle-section { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 40px 0 0; position: relative; z-index: 1; }
+    .toggle-label { font-size: 15px; font-weight: 600; color: var(--muted2); transition: color 0.2s; cursor: pointer; }
+    .toggle-label.active { color: var(--text); }
+
+    .toggle-switch {
+      width: 52px; height: 28px; background: var(--border2); border-radius: 14px;
+      position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .toggle-switch.on { background: linear-gradient(135deg, var(--blue), var(--purple)); }
+    .toggle-knob {
+      width: 22px; height: 22px; background: #fff; border-radius: 50%;
+      position: absolute; top: 3px; left: 3px;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .toggle-switch.on .toggle-knob { transform: translateX(24px); }
+
+    .save-badge {
+      background: rgba(0,186,124,0.12); color: var(--green); border: 1px solid rgba(0,186,124,0.2);
+      font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.3px;
+    }
+
+    /* ── PRICING GRID ── */
+    .pricing-wrap { max-width: 1100px; margin: 48px auto 80px; padding: 0 24px; position: relative; z-index: 1; }
+    .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 680px) { .pricing-grid { grid-template-columns: 1fr; } }
+
+    .pricing-card {
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: 24px; padding: 40px 36px; position: relative;
+      backdrop-filter: blur(8px);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .pricing-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.3); }
+    .pricing-card.featured {
+      border-color: var(--blue);
+      border-top: 2px solid var(--blue);
+      background: linear-gradient(160deg, rgba(29,155,240,0.07) 0%, rgba(123,97,255,0.04) 100%);
+      box-shadow: 0 0 48px rgba(29,155,240,0.12);
+    }
+    .pricing-card.best {
+      border-top: 2px solid var(--purple);
+    }
+    .plan-badge {
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: #fff; font-size: 11px; font-weight: 800; padding: 4px 18px;
+      border-radius: 20px; letter-spacing: 0.6px; white-space: nowrap;
+    }
+
+    .plan-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .plan-name.elite { color: var(--blue); }
+    .plan-tagline { font-size: 13px; color: var(--muted2); margin-bottom: 24px; }
+
+    .plan-price-wrap { margin-bottom: 6px; line-height: 1; }
+    .plan-price {
+      font-size: 58px; font-weight: 900; letter-spacing: -3px;
+      display: inline-flex; align-items: flex-start; gap: 2px;
+    }
+    .plan-price .dollar { font-size: 28px; font-weight: 700; margin-top: 12px; }
+    .plan-price .cents { font-size: 15px; font-weight: 600; color: var(--muted2); align-self: flex-end; margin-bottom: 12px; }
+    .plan-price.elite-price {
+      background: linear-gradient(135deg, #1d9bf0, #7b61ff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .plan-price.elite-price .dollar,
+    .plan-price.elite-price .cents { -webkit-text-fill-color: transparent; }
+
+    .plan-billing { font-size: 13px; color: var(--muted2); margin-bottom: 4px; }
+    .plan-annual-total { font-size: 12px; color: var(--muted); margin-bottom: 24px; min-height: 18px; }
+    .plan-annual-total .savings { color: var(--green); font-weight: 700; }
+
+    .plan-divider { border: none; border-top: 1px solid var(--border); margin-bottom: 22px; }
+
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 11px; margin-bottom: 32px; }
+    .plan-features li { font-size: 14px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.4; }
+    .check { color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .cross { color: var(--muted); flex-shrink: 0; margin-top: 1px; }
+    .muted-text { color: var(--muted2); }
+
+    .plan-btn {
+      width: 100%; padding: 15px; border-radius: 24px; font-size: 15px; font-weight: 700;
+      cursor: pointer; border: none; font-family: inherit; transition: all 0.2s;
+      text-decoration: none; display: block; text-align: center;
+    }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border2); }
+    .btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+    .btn-gradient {
+      background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff;
+      box-shadow: 0 0 24px rgba(29,155,240,0.3);
+    }
+    .btn-gradient:hover { box-shadow: 0 0 40px rgba(29,155,240,0.5); transform: translateY(-1px); }
+
+    /* ── COMPARE TABLE ── */
+    .compare-wrap { max-width: 1100px; margin: 0 auto 80px; padding: 0 24px; position: relative; z-index: 1; }
+    .compare-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 24px; text-align: center; }
+    .compare-table { width: 100%; border-collapse: collapse; }
+    .compare-table th { font-size: 13px; font-weight: 700; color: var(--muted2); text-align: center; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+    .compare-table th:first-child { text-align: left; }
+    .compare-table th.elite { color: var(--blue); }
+    .compare-table td { font-size: 14px; padding: 13px 16px; border-bottom: 1px solid var(--border); text-align: center; }
+    .compare-table td:first-child { text-align: left; color: var(--muted2); }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .tick { color: var(--green); font-size: 16px; }
+    .dash { color: var(--muted); }
+
+    /* ── FAQ ── */
+    .faq-wrap { max-width: 640px; margin: 0 auto 80px; padding: 0 24px; position: relative; z-index: 1; }
+    .faq-title { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; text-align: center; margin-bottom: 28px; }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 18px 0; cursor: pointer; }
+    .faq-q { font-size: 15px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .faq-arrow { font-size: 18px; color: var(--muted2); transition: transform 0.2s; flex-shrink: 0; }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); }
+    .faq-a { font-size: 14px; color: var(--muted2); line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, margin 0.3s; }
+    .faq-item.open .faq-a { max-height: 200px; margin-top: 12px; }
+
+    /* ── CTA ── */
+    .cta-banner {
+      margin: 0 24px 80px; border-radius: 24px; padding: 56px 40px; text-align: center;
+      background: linear-gradient(135deg, rgba(29,155,240,0.12) 0%, rgba(123,97,255,0.1) 50%, rgba(29,155,240,0.06) 100%);
+      border: 1px solid rgba(29,155,240,0.2); box-shadow: 0 0 60px rgba(29,155,240,0.07);
+      position: relative; z-index: 1;
+    }
+    .cta-banner h2 { font-size: clamp(24px, 3vw, 36px); font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; }
+    .cta-banner p { font-size: 15px; color: var(--muted2); margin-bottom: 28px; }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff;
+      border: none; border-radius: 24px; font-size: 16px; font-weight: 700; padding: 15px 36px;
+      cursor: pointer; text-decoration: none; font-family: inherit; transition: all 0.2s;
+      box-shadow: 0 0 28px rgba(29,155,240,0.35);
+    }
+    .cta-btn:hover { box-shadow: 0 0 48px rgba(29,155,240,0.5); transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--border); background: #050505; padding: 60px 40px 32px; position: relative; z-index: 1; }
+    .footer-inner { max-width: 1400px; margin: 0 auto 48px; display: flex; gap: 64px; flex-wrap: wrap; }
+    .footer-brand { flex: 0 0 240px; }
+    .footer-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800; color: var(--text); text-decoration: none; }
+    .footer-logo span { color: var(--blue); }
+    .footer-tagline { font-size: 13px; color: var(--muted2); margin-top: 10px; line-height: 1.6; }
+    .footer-social { margin-top: 16px; }
+    .footer-social-link { font-size: 13px; font-weight: 600; color: var(--blue); text-decoration: none; }
+    .footer-links-group { display: flex; gap: 48px; flex: 1; flex-wrap: wrap; }
+    .footer-col { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 4px; }
+    .footer-col a { font-size: 14px; color: var(--muted2); text-decoration: none; transition: color 0.15s; }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom { max-width: 1400px; margin: 0 auto; padding-top: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); flex-wrap: wrap; gap: 8px; }
+    @media (max-width: 768px) { footer { padding: 48px 24px 24px; } .footer-inner { gap: 40px; } .footer-brand { flex: 0 0 100%; } }
+
+    /* ── FADE ── */
+    .fade-in { opacity: 0; transform: translateY(18px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+  </style>
+  <style>
+    body { animation: pageIn 0.3s ease forwards; }
+    @keyframes pageIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/"><img src="/logo-icon.png" alt="" class="nav-logo-img"/>XGrowth<span>Now</span></a>
+  <div class="nav-links">
+    <a class="nav-link" href="/#tools">Tools</a>
+    <a class="nav-link active" href="/pricing">Pricing</a>
+    <a class="nav-link" href="/dashboard">Dashboard</a>
+  </div>
+  <a class="nav-cta" href="/api/auth/login">Sign in with 𝕏</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Invest in your growth</h1>
+  <p>Two plans. One goal — a bigger, more engaged audience on X. Most users recoup the cost within their first month of monetization.</p>
+  <p class="pricing-stat">XGrowthNow users get monetized 5x <em>FASTER</em></p>
+</div>
+
+<!-- BILLING TOGGLE -->
+<div class="toggle-section">
+  <span class="toggle-label" id="label-monthly">Monthly</span>
+  <div class="toggle-switch on" id="billingToggle" onclick="toggleBilling()">
+    <div class="toggle-knob"></div>
+  </div>
+  <span class="toggle-label active" id="label-annual">Annual <span class="save-badge">Save up to 41%</span></span>
+</div>
+
+<!-- PRICING CARDS -->
+<div class="pricing-wrap">
+  <div class="pricing-grid">
+
+    <!-- X Growth Core -->
+    <div class="pricing-card fade-in">
+      <div class="plan-name">X Growth Core</div>
+      <div class="plan-tagline">Everything you need to start growing.</div>
+      <div class="plan-price-wrap">
+        <div class="plan-price" id="core-price">
+          <span class="dollar">$</span><span id="core-amount">37</span><span class="cents">/month</span>
+        </div>
+      </div>
+      <div class="plan-billing" id="core-billing">Billed monthly</div>
+      <div class="plan-annual-total" id="core-annual"></div>
+      <hr class="plan-divider"/>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> Growth Dashboard</li>
+        <li><span class="check">✓</span> Unfollow Tracker</li>
+        <li><span class="check">✓</span> Mass Unfollow</li>
+        <li><span class="check">✓</span> Best Time to Post</li>
+        <li><span class="check">✓</span> Unreplied Comments</li>
+        <li><span class="check">✓</span> Tweet Recycler</li>
+        <li><span class="cross">–</span> <span class="muted-text">20 Most Loyal Fans</span></li>
+        <li><span class="cross">–</span> <span class="muted-text">Competitor Spy</span></li>
+        <li><span class="cross">–</span> <span class="muted-text">AI Tweet Optimizer</span></li>
+      </ul>
+      <a href="/api/stripe/checkout?plan=core-monthly" class="plan-btn btn-outline" id="core-btn">Get Core</a>
+    </div>
+
+    <!-- X Growth Elite -->
+    <div class="pricing-card featured fade-in" style="transition-delay:0.1s;">
+      <div class="plan-badge">MOST POPULAR</div>
+      <div class="plan-name elite">X Growth Elite</div>
+      <div class="plan-tagline">The full toolkit for serious growers.</div>
+      <div class="plan-price-wrap">
+        <div class="plan-price elite-price" id="elite-price">
+          <span class="dollar">$</span><span id="elite-amount">41</span><span class="cents">/month</span>
+        </div>
+      </div>
+      <div class="plan-billing" id="elite-billing">Billed monthly</div>
+      <div class="plan-annual-total" id="elite-annual"></div>
+      <hr class="plan-divider"/>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> Everything in Core</li>
+        <li><span class="check">✓</span> <strong>20 Most Loyal Fans</strong></li>
+        <li><span class="check">✓</span> <strong>Competitor Spy</strong></li>
+        <li><span class="check">✓</span> <strong>AI Tweet Optimizer</strong></li>
+        <li><span class="check">✓</span> All future tools included</li>
+        <li><span class="check">✓</span> Priority support</li>
+        <li><span class="check">✓</span> Early beta access</li>
+        <li><span class="check">✓</span> Feature request priority</li>
+        <li><span class="check">✓</span> New tools first</li>
+      </ul>
+      <a href="/api/stripe/checkout?plan=elite-monthly" class="plan-btn btn-gradient" id="elite-btn">Get Elite</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- COMPARE TABLE -->
+<div class="compare-wrap fade-in">
+  <div class="compare-title">Compare plans</div>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Core</th>
+        <th class="elite">Elite</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Growth Dashboard</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+      <tr><td>Unfollow Tracker</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+      <tr><td>Mass Unfollow</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+      <tr><td>Best Time to Post</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+      <tr><td>Unreplied Comments</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+      <tr><td>Tweet Recycler</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+      <tr><td>20 Most Loyal Fans</td><td><span class="dash">–</span></td><td><span class="tick">✓</span></td></tr>
+      <tr><td>Competitor Spy</td><td><span class="dash">–</span></td><td><span class="tick">✓</span></td></tr>
+      <tr><td>AI Tweet Optimizer</td><td><span class="dash">–</span></td><td><span class="tick">✓</span></td></tr>
+      <tr><td>All future tools</td><td><span class="dash">–</span></td><td><span class="tick">✓</span></td></tr>
+      <tr><td>Priority support</td><td><span class="dash">–</span></td><td><span class="tick">✓</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FAQ -->
+<div class="faq-wrap">
+  <div class="faq-title">Common questions</div>
+
+  <div class="faq-item">
+    <div class="faq-q">Is my X account safe? <span class="faq-arrow">⌄</span></div>
+    <div class="faq-a">Yes. We use X's official OAuth — we never see or store your password. We only request the minimum permissions each tool needs.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Will mass unfollowing get my account banned? <span class="faq-arrow">⌄</span></div>
+    <div class="faq-a">No. We stay well within X's rate limits — unfollowing up to 400 accounts per day, which is safe by platform standards.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Can I switch between Core and Elite? <span class="faq-arrow">⌄</span></div>
+    <div class="faq-a">Yes — upgrade or downgrade anytime. If you upgrade mid-cycle, you'll only pay the difference for the remaining period.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Can I cancel anytime? <span class="faq-arrow">⌄</span></div>
+    <div class="faq-a">Absolutely. Cancel anytime and your access continues until the end of your billing period. No questions asked.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What payment methods do you accept? <span class="faq-arrow">⌄</span></div>
+    <div class="faq-a">All major credit and debit cards via Stripe. Secure and fast.</div>
+  </div>
+</div>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <h2>Ready to grow smarter on X?</h2>
+  <p>Get started today and start growing your X audience.</p>
+  <a class="cta-btn" href="/api/auth/login">Sign in with 𝕏 →</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/" class="footer-logo">XGrowth<span>Now</span></a>
+      <p class="footer-tagline">Grow on X Organically.<br/>Get Monetized Faster.</p>
+      <div class="footer-social">
+        <a href="https://x.com/XGrowthNow" target="_blank" class="footer-social-link">𝕏 Follow us</a>
+      </div>
+    </div>
+    <div class="footer-links-group">
+      <div class="footer-col">
+        <div class="footer-col-title">Product</div>
+        <a href="/#tools">Tools</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/growth-predictor">Growth Predictor</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Tools</div>
+        <a href="/unfollow">Mass Unfollow</a>
+        <a href="/best-time">Best Time to Post</a>
+        <a href="/competitor-spy">Competitor Spy</a>
+        <a href="/loyal-fans">Loyal Fans</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Legal</div>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 XGrowthNow. All rights reserved.</span>
+    <span>Built for serious X creators.</span>
+  </div>
+</footer>
+
+<script>
+let isAnnual = true;
+document.addEventListener('DOMContentLoaded', updatePrices);
+
+const prices = {
+  core:  { monthly: 37, annual: 22, annualTotal: 264 },
+  elite: { monthly: 41, annual: 27, annualTotal: 324 },
+};
+
+function toggleBilling() {
+  isAnnual = !isAnnual;
+  const toggle = document.getElementById('billingToggle');
+  toggle.classList.toggle('on', isAnnual);
+
+  document.getElementById('label-monthly').classList.toggle('active', !isAnnual);
+  document.getElementById('label-annual').classList.toggle('active', isAnnual);
+
+  updatePrices();
+}
+
+function updatePrices() {
+  // Core
+  const coreAmt   = isAnnual ? prices.core.annual : prices.core.monthly;
+  const coreSave  = ((prices.core.monthly - prices.core.annual) * 12);
+  document.getElementById('core-amount').textContent  = coreAmt;
+  document.getElementById('core-billing').textContent = isAnnual ? `Billed annually — $${prices.core.annualTotal}/yr` : 'Billed monthly';
+  document.getElementById('core-annual').innerHTML    = isAnnual ? `<span class="savings">You save $${coreSave}/year</span>` : '&nbsp;';
+  document.getElementById('core-btn').href            = `/api/stripe/checkout?plan=core-${isAnnual ? 'annual' : 'monthly'}`;
+
+  // Elite
+  const eliteAmt  = isAnnual ? prices.elite.annual : prices.elite.monthly;
+  const eliteSave = ((prices.elite.monthly - prices.elite.annual) * 12);
+  document.getElementById('elite-amount').textContent  = eliteAmt;
+  document.getElementById('elite-billing').textContent = isAnnual ? `Billed annually — $${prices.elite.annualTotal}/yr` : 'Billed monthly';
+  document.getElementById('elite-annual').innerHTML    = isAnnual ? `<span class="savings">You save $${eliteSave}/year</span>` : '&nbsp;';
+  document.getElementById('elite-btn').href            = `/api/stripe/checkout?plan=elite-${isAnnual ? 'annual' : 'monthly'}`;
+}
+
+// FAQ
+document.querySelectorAll('.faq-item').forEach(item => {
+  item.querySelector('.faq-q').addEventListener('click', () => item.classList.toggle('open'));
+});
+
+// Scroll fade-in
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+</script>
+<script>
+  document.querySelectorAll('a[href^="/"]').forEach(link => {
+    link.addEventListener('click', e => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('/api') && link.target !== '_blank') {
+        e.preventDefault();
+        document.body.style.opacity = '0';
+        document.body.style.transform = 'translateY(-8px)';
+        document.body.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+        setTimeout(() => { window.location.href = href; }, 200);
+      }
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bitcoin Calculator — DCA & CAGR</title>
+  <meta name="description" content="Calculate your Bitcoin APR and see what 15%, 20%, or 25% CAGR looks like over 3 years from your entry price."/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080808;
+      --card: #0f0f0f;
+      --card2: #111;
+      --border: #1a1a1a;
+      --border2: #222;
+      --orange: #F7931A;
+      --orange-dim: rgba(247,147,26,0.12);
+      --orange-dim2: rgba(247,147,26,0.06);
+      --green: #22c55e;
+      --red: #ef4444;
+      --text: #e0e0e0;
+      --muted: #555;
+      --radius: 10px;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      display: flex; align-items: center; gap: 24px;
+      padding: 0 24px; height: 60px;
+      background: var(--card); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { text-decoration: none; font-size: 1.25rem; font-weight: 700; color: var(--orange); letter-spacing: -0.5px; white-space: nowrap; }
+    .logo span { color: var(--text); }
+    .live-price { margin-left: auto; display: flex; align-items: baseline; gap: 10px; }
+    .price-val { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.5px; }
+    .price-change { font-size: 0.85rem; font-weight: 600; }
+    .demo-badge {
+      background: rgba(247,147,26,0.15); border: 1px solid rgba(247,147,26,0.35);
+      color: var(--orange); font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px;
+      padding: 4px 10px; border-radius: 4px; text-transform: uppercase;
+    }
+
+    /* Hero */
+    .hero { text-align: center; padding: 52px 24px 40px; }
+    .hero h1 { font-size: 42px; font-weight: 700; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 12px; }
+    .hero h1 span { color: var(--orange); }
+    .hero p { font-size: 16px; color: var(--muted); max-width: 480px; margin: 0 auto; line-height: 1.6; font-weight: 400; }
+
+    /* Main */
+    .main { max-width: 1000px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* Calculator card */
+    .calc-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 720px) { .calc-card { grid-template-columns: 1fr; } }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+    .input-wrap { position: relative; }
+    .input-prefix { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; font-weight: 600; color: var(--orange); pointer-events: none; }
+    .field input {
+      width: 100%; background: var(--bg); border: 1px solid var(--border2);
+      border-radius: 6px; color: var(--text); font-size: 17px; font-weight: 600;
+      padding: 10px 12px 10px 30px; outline: none; transition: border-color 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .field input:focus { border-color: var(--orange); }
+    .field input.no-prefix { padding-left: 12px; }
+    .field .hint { font-size: 11px; color: var(--muted); }
+
+    .calc-btn {
+      grid-column: 1 / -1; background: var(--orange); color: #000;
+      border: none; border-radius: 6px; font-size: 15px; font-weight: 700;
+      padding: 14px; cursor: pointer; transition: all 0.15s; letter-spacing: 0.2px;
+      font-family: 'Inter', sans-serif;
+    }
+    .calc-btn:hover { background: #ff9f1a; }
+
+    /* Results */
+    #results { display: none; }
+
+    /* Stats row */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+    .stat-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+    .stat-value { font-size: 26px; font-weight: 700; line-height: 1; letter-spacing: -0.5px; }
+    .stat-sub { font-size: 11px; color: var(--muted); margin-top: 5px; }
+    .up   { color: var(--green); }
+    .down { color: var(--red); }
+
+    /* Section title */
+    .section-title { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 14px; margin-top: 28px; }
+
+    /* Projection cards */
+    .proj-grid { display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 600px) { .proj-grid { grid-template-columns: 1fr; } }
+
+    .proj-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; position: relative; overflow: hidden;
+    }
+    .proj-card.c15 { border-top: 2px solid #ffd400; }
+    .proj-card.c20 { border-top: 2px solid #888; background: var(--orange-dim2); }
+    .proj-card.c25 { border-top: 2px solid var(--green); }
+
+    .proj-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+    .proj-label.c15 { color: #ffd400; }
+    .proj-label.c20 { color: #888; }
+    .proj-label.c25 { color: var(--green); }
+
+    .proj-year { display: flex; flex-direction: column; gap: 3px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+    .proj-year:last-child { border-bottom: none; padding-bottom: 0; }
+    .proj-year-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 500; }
+    .proj-btc-price  { font-size: 19px; font-weight: 700; letter-spacing: -0.5px; }
+    .proj-portfolio  { font-size: 12px; color: var(--muted); }
+    .proj-gain       { font-size: 11px; font-weight: 600; }
+
+    /* Chart */
+    .chart-wrap { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-top: 12px; overflow-x: auto; }
+    canvas#projChart { width: 100%; max-height: 280px; }
+
+    /* Share */
+    .share-row { display: flex; align-items: center; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+    .share-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 18px; font-size: 13px; font-weight: 600;
+      cursor: pointer; border: none; transition: all 0.15s;
+      font-family: 'Inter', sans-serif; border-radius: 6px;
+    }
+    .share-x   { background: #000; color: #fff; border: 1px solid #333; }
+    .share-x:hover { border-color: #666; }
+    .share-copy { background: var(--card); color: var(--text); border: 1px solid var(--border2); }
+    .share-copy:hover { border-color: var(--orange); color: var(--orange); }
+
+    /* Footer */
+    footer { text-align: center; padding: 36px 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--orange); }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#">Bitcoin Calculator <span>DCA CAGR</span></a>
+  <span class="demo-badge">Calculator</span>
+  <div class="live-price">
+    <span class="price-val" id="livePrice">Loading...</span>
+    <span class="price-change" id="priceChange"></span>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>Know Your Bitcoin<br><span>Returns.</span></h1>
+  <p>Enter your entry price and see your real APR — plus what 15%, 20%, and 25% CAGR looks like for your stack over 3 years.</p>
+</div>
+
+<div class="main">
+  <!-- Calculator inputs -->
+  <div class="calc-card">
+    <div class="field">
+      <label>Your Entry Price</label>
+      <div class="input-wrap">
+        <span class="input-prefix">$</span>
+        <input type="number" id="entryPrice" placeholder="82,000" min="1" />
+      </div>
+      <div class="hint">Price you paid per BTC</div>
+    </div>
+    <div class="field">
+      <label>Amount Invested</label>
+      <div class="input-wrap">
+        <span class="input-prefix">$</span>
+        <input type="number" id="amountInvested" placeholder="10,000" min="1" />
+      </div>
+      <div class="hint">Total USD invested</div>
+    </div>
+    <div class="field">
+      <label>Purchase Date <span style="font-weight:400;opacity:0.6;">(optional)</span></label>
+      <div class="input-wrap">
+        <input type="date" id="purchaseDate" class="no-prefix" />
+      </div>
+      <div class="hint">Used to calculate exact APR</div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate My Returns →</button>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <!-- Summary stats -->
+    <div class="stats-row" id="statsRow"></div>
+
+    <!-- 3-year projections -->
+    <div class="section-title">📈 3-Year Projection — What CAGR Means for Your Stack</div>
+    <div class="proj-grid" id="projGrid"></div>
+
+    <!-- Chart -->
+    <div class="chart-wrap" style="margin-top:20px;">
+      <canvas id="projChart" height="260"></canvas>
+    </div>
+
+    <!-- Custom CAGR -->
+    <div style="margin-top:20px;">
+      <div class="section-title">🎯 Custom CAGR Calculator</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:13px;color:var(--muted);font-weight:600;">Enter your CAGR estimate:</span>
+            <div style="position:relative;display:flex;align-items:center;">
+              <input type="number" id="customCagr" min="1" max="1000" placeholder="e.g. 50"
+                style="background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);
+                       font-size:17px;font-weight:600;padding:9px 28px 9px 12px;width:110px;outline:none;
+                       font-family:'Inter',sans-serif;"
+                onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='var(--border2)'"
+                onkeydown="if(event.key==='Enter') calcCustomCagr()" />
+              <span style="position:absolute;right:10px;font-size:14px;font-weight:700;color:var(--orange);">%</span>
+            </div>
+          </div>
+          <button onclick="calcCustomCagr()"
+            style="background:var(--orange);color:#000;border:none;border-radius:6px;
+                   padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;
+                   font-family:'Inter',sans-serif;transition:background 0.15s;"
+            onmouseover="this.style.background='#ff9f1a'" onmouseout="this.style.background='var(--orange)'">
+            Calculate →
+          </button>
+        </div>
+        <div id="customCagrResult" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+          <div id="customCagrLabel" style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;"></div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;" id="customCagrCards"></div>
+        <div id="customChartWrap" style="display:none;margin-top:16px;">
+          <canvas id="customChart" height="220" style="width:100%;"></canvas>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Share -->
+    <div class="share-row">
+      <span style="font-size:13px;color:var(--muted);">Share your results:</span>
+      <button class="share-btn share-x" onclick="shareToX()">𝕏 Post to X</button>
+      <button class="share-btn share-copy" onclick="copyLink()">🔗 Copy Link</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  ₿ DCABTC — Built by <a href="https://x.com/investwithdoc" target="_blank">@InvestWithDoc</a> &nbsp;·&nbsp;
+  <a href="https://xgrowthnow.com" target="_blank">XGrowthNow</a>
+</footer>
+
+<script>
+// ─── Live BTC price ───────────────────────────────────────────────────────────
+let currentBtcPrice = null;
+let btcChange24h    = null;
+
+async function fetchBtcPrice() {
+  try {
+    // Primary: CryptoCompare (free, no key, CORS-friendly)
+    const r = await fetch('https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC&tsyms=USD');
+    const d = await r.json();
+    currentBtcPrice = d.RAW.BTC.USD.PRICE;
+    btcChange24h    = d.RAW.BTC.USD.CHANGEPCT24HOUR;
+  } catch {
+    try {
+      // Fallback: mempool.space
+      const r2 = await fetch('https://mempool.space/api/v1/prices');
+      const d2 = await r2.json();
+      currentBtcPrice = d2.USD;
+      btcChange24h    = null;
+    } catch {
+      document.getElementById('livePrice').textContent = 'Price unavailable';
+      return;
+    }
+  }
+
+  document.getElementById('livePrice').textContent = '$' + fmt(currentBtcPrice);
+  const changeEl = document.getElementById('priceChange');
+  if (btcChange24h !== null) {
+    const chg = btcChange24h.toFixed(2);
+    changeEl.textContent = (chg >= 0 ? '+' : '') + chg + '%';
+    changeEl.style.color = chg >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+}
+
+// ─── Formatting ───────────────────────────────────────────────────────────────
+function fmt(n, decimals = 0) {
+  if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+  return n?.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+}
+function fmtDollar(n) {
+  if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+  if (n >= 1e3) return '$' + (n / 1e3).toFixed(1) + 'K';
+  return '$' + n.toFixed(0);
+}
+function fmtPct(n) { return (n >= 0 ? '+' : '') + n.toFixed(1) + '%'; }
+
+// ─── Core calculation ─────────────────────────────────────────────────────────
+let lastResult = null;
+
+function calculate() {
+  const entry      = parseFloat(document.getElementById('entryPrice').value);
+  const invested   = parseFloat(document.getElementById('amountInvested').value);
+  const dateStr    = document.getElementById('purchaseDate').value;
+
+  if (!entry || entry <= 0)    { alert('Please enter your entry price'); return; }
+  if (!invested || invested <= 0) { alert('Please enter the amount invested'); return; }
+  if (!currentBtcPrice)        { alert('BTC price still loading — try again in a second'); return; }
+
+  const btcHeld      = invested / entry;
+  const currentValue = btcHeld * currentBtcPrice;
+  const totalReturn  = (currentBtcPrice - entry) / entry;
+  const profitLoss   = currentValue - invested;
+
+  // APR — annualized return
+  let apr = null, daysHeld = null;
+  if (dateStr) {
+    const purchaseDate = new Date(dateStr);
+    const today        = new Date();
+    daysHeld = Math.max(1, Math.floor((today - purchaseDate) / (1000 * 60 * 60 * 24)));
+    if (totalReturn > -1) {
+      apr = (Math.pow(1 + totalReturn, 365 / daysHeld) - 1) * 100;
+    }
+  }
+
+  // CAGR projections — from CURRENT price
+  const cagrs = [0.15, 0.20, 0.25];
+  const years  = [1, 2, 3, 4, 5];
+  const projections = cagrs.map(rate => ({
+    rate,
+    years: years.map(y => {
+      const projBtcPrice  = entry * Math.pow(1 + rate, y);
+      const projPortfolio = btcHeld * projBtcPrice;
+      const gainFromEntry = (projBtcPrice - entry) / entry * 100;
+      return { year: y, btcPrice: projBtcPrice, portfolio: projPortfolio, gainFromEntry };
+    })
+  }));
+
+  lastResult = { entry, invested, btcHeld, currentBtcPrice, currentValue, totalReturn, profitLoss, apr, daysHeld, projections };
+  renderResults(lastResult);
+
+  // Update URL with params for sharing
+  const params = new URLSearchParams({ entry, invested });
+  if (dateStr) params.set('date', dateStr);
+  history.replaceState({}, '', '?' + params.toString());
+}
+
+function renderResults(r) {
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const isUp = r.totalReturn >= 0;
+
+  // Stats
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">BTC Holdings</div>
+      <div class="stat-value" style="color:var(--orange);">₿ ${r.btcHeld.toFixed(6)}</div>
+      <div class="stat-sub">at $${fmt(r.entry)} entry</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Current Value</div>
+      <div class="stat-value ${isUp ? 'up' : 'down'}">${fmtDollar(r.currentValue)}</div>
+      <div class="stat-sub">was ${fmtDollar(r.invested)} invested</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Return</div>
+      <div class="stat-value ${isUp ? 'up' : 'down'}">${fmtPct(r.totalReturn * 100)}</div>
+      <div class="stat-sub">${isUp ? '+' : ''}${fmtDollar(r.profitLoss)} ${isUp ? 'profit' : 'loss'}</div>
+    </div>
+    ${r.apr !== null ? `
+    <div class="stat-card">
+      <div class="stat-label">Annualized APR</div>
+      <div class="stat-value ${r.apr >= 0 ? 'up' : 'down'}">${fmtPct(r.apr)}</div>
+      <div class="stat-sub">held ${r.daysHeld} days</div>
+    </div>` : `
+    <div class="stat-card">
+      <div class="stat-label">Entry vs Current</div>
+      <div class="stat-value">${fmtDollar(r.currentBtcPrice)}</div>
+      <div class="stat-sub">BTC price today</div>
+    </div>`}
+  `;
+
+  // Projection cards
+  const colors   = ['c15','c20','c25'];
+  const labels   = ['15% CAGR','20% CAGR','25% CAGR'];
+  document.getElementById('projGrid').innerHTML = r.projections.map((p, i) => `
+    <div class="proj-card ${colors[i]}">
+      <div class="proj-label ${colors[i]}">${labels[i]}</div>
+      ${p.years.map(y => `
+        <div class="proj-year">
+          <div class="proj-year-label">Year ${y.year} (${new Date().getFullYear() + y.year})</div>
+          <div class="proj-btc-price" style="color:var(--orange);">$${fmt(y.btcPrice)}</div>
+          <div class="proj-portfolio">Portfolio: <strong>${fmtDollar(y.portfolio)}</strong></div>
+          <div class="proj-gain ${y.gainFromEntry >= 0 ? 'up' : 'down'}">${fmtPct(y.gainFromEntry)} from entry</div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  renderChart(r);
+}
+
+// ─── Chart ────────────────────────────────────────────────────────────────────
+function renderChart(r) {
+  const canvas = document.getElementById('projChart');
+  const ctx    = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 800;
+  const H = 260;
+  canvas.width  = W * window.devicePixelRatio;
+  canvas.height = H * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  ctx.clearRect(0, 0, W, H);
+
+  const PAD = { top: 20, right: 20, bottom: 40, left: 60 };
+  const chartW = W - PAD.left - PAD.right;
+  const chartH = H - PAD.top  - PAD.bottom;
+
+  // Data points: [current, yr1, yr2, yr3] for each CAGR
+  const allValues = r.projections.flatMap(p => p.years.map(y => y.portfolio));
+  allValues.push(r.invested);
+  const minV = Math.min(...allValues) * 0.9;
+  const maxV = Math.max(...allValues) * 1.05;
+
+  const xPositions = [0, 1, 2, 3, 4, 5].map(i => PAD.left + (i / 5) * chartW);
+  const yScale = v => PAD.top + chartH - ((v - minV) / (maxV - minV)) * chartH;
+
+  const seriesColors = ['#ffd400', '#888888', '#22c55e'];
+  const xLabels = ['Now', 'Yr 1', 'Yr 2', 'Yr 3', 'Yr 4', 'Yr 5'];
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(26,26,26,0.9)';
+  ctx.lineWidth   = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = PAD.top + (i / 4) * chartH;
+    ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(PAD.left + chartW, y); ctx.stroke();
+    const val = maxV - (i / 4) * (maxV - minV);
+    ctx.fillStyle  = '#555';
+    ctx.font       = '10px Inter, sans-serif';
+    ctx.textAlign  = 'right';
+    ctx.fillText(fmtDollar(val), PAD.left - 6, y + 4);
+  }
+
+  // Invested line (horizontal reference)
+  ctx.strokeStyle = 'rgba(138,112,80,0.4)';
+  ctx.setLineDash([4, 4]);
+  ctx.lineWidth = 1;
+  const invY = yScale(r.invested);
+  ctx.beginPath(); ctx.moveTo(PAD.left, invY); ctx.lineTo(PAD.left + chartW, invY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Series lines
+  r.projections.forEach((proj, si) => {
+    const points = [
+      { x: xPositions[0], y: yScale(r.invested) },
+      ...proj.years.map((y, i) => ({ x: xPositions[i + 1], y: yScale(y.portfolio) }))
+    ];
+
+    ctx.strokeStyle = seriesColors[si];
+    ctx.lineWidth   = 2.5;
+    ctx.beginPath();
+    points.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+    ctx.stroke();
+
+    // Dots + value labels
+    points.forEach((p, i) => {
+      ctx.fillStyle = seriesColors[si];
+      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
+      if (i > 0) {
+        ctx.fillStyle = seriesColors[si];
+        ctx.font      = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        const offset  = si === 0 ? -14 : si === 1 ? 0 : 14;
+        ctx.fillText(fmtDollar(proj.years[i - 1].portfolio), p.x + offset, p.y - 10);
+      }
+    });
+  });
+
+  // X-axis labels
+  ctx.fillStyle = '#555';
+  ctx.font      = '11px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  xLabels.forEach((l, i) => ctx.fillText(l, xPositions[i], H - PAD.bottom + 16));
+
+  // Legend
+  const legendItems = ['15% CAGR', '20% CAGR', '25% CAGR'];
+  legendItems.forEach((label, i) => {
+    const lx = PAD.left + (i * 110);
+    ctx.fillStyle = seriesColors[i];
+    ctx.fillRect(lx, H - 14, 18, 3);
+    ctx.fillStyle = '#555';
+    ctx.font      = '10px Inter, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(label, lx + 22, H - 10);
+  });
+}
+
+// ─── Custom CAGR ─────────────────────────────────────────────────────────────
+function calcCustomCagr() {
+  if (!lastResult) { alert('Run the main calculator first'); return; }
+  const raw = parseFloat(document.getElementById('customCagr').value);
+  if (!raw || raw <= 0) { alert('Enter a valid CAGR %'); return; }
+  const rate = raw / 100;
+  const r    = lastResult;
+
+  const years = [1, 2, 3, 4, 5];
+  const cards = years.map(y => {
+    const projBtcPrice  = r.entry * Math.pow(1 + rate, y);
+    const projPortfolio = r.btcHeld * projBtcPrice;
+    const gainFromEntry = (projBtcPrice - r.entry) / r.entry * 100;
+    return { year: y, btcPrice: projBtcPrice, portfolio: projPortfolio, gainFromEntry };
+  });
+
+  const color = raw >= 50 ? '#22c55e' : raw >= 25 ? '#F7931A' : '#ffd400';
+
+  document.getElementById('customCagrLabel').innerHTML =
+    `<span style="color:${color};">${raw}% CAGR</span> — 3-Year Projection`;
+
+  document.getElementById('customCagrCards').innerHTML = cards.map(y => `
+    <div style="background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:14px;border-top:2px solid ${color};">
+      <div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;font-weight:500;margin-bottom:6px;">Year ${y.year} (${new Date().getFullYear() + y.year})</div>
+      <div style="font-size:19px;font-weight:700;letter-spacing:-0.5px;color:var(--orange);">$${fmt(y.btcPrice)}</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px;">Portfolio: <strong style="color:var(--text);">${fmtDollar(y.portfolio)}</strong></div>
+      <div style="font-size:11px;font-weight:600;margin-top:3px;color:${y.gainFromEntry >= 0 ? '#22c55e' : '#ef4444'};">${fmtPct(y.gainFromEntry)} from entry</div>
+    </div>
+  `).join('');
+
+  document.getElementById('customCagrResult').style.display = 'block';
+
+  // Draw custom chart
+  const wrap   = document.getElementById('customChartWrap');
+  wrap.style.display = 'block';
+  const canvas = document.getElementById('customChart');
+  const ctx    = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 700;
+  const H = 220;
+  canvas.width  = W * window.devicePixelRatio;
+  canvas.height = H * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  ctx.clearRect(0, 0, W, H);
+
+  const PAD  = { top: 20, right: 20, bottom: 36, left: 60 };
+  const cW   = W - PAD.left - PAD.right;
+  const cH   = H - PAD.top  - PAD.bottom;
+
+  const portfolioVals = [r.invested, ...cards.map(c => c.portfolio)];
+  const minV = Math.min(...portfolioVals) * 0.9;
+  const maxV = Math.max(...portfolioVals) * 1.05;
+  const xPos = [0,1,2,3,4,5].map(i => PAD.left + (i/5)*cW);
+  const yScl = v => PAD.top + cH - ((v - minV) / (maxV - minV)) * cH;
+  const xlbls = ['Now', 'Yr 1', 'Yr 2', 'Yr 3', 'Yr 4', 'Yr 5'];
+
+  // Grid
+  ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = PAD.top + (i/4)*cH;
+    ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(PAD.left+cW, y); ctx.stroke();
+    const val = maxV - (i/4)*(maxV-minV);
+    ctx.fillStyle = '#555'; ctx.font = '10px Inter,sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText(fmtDollar(val), PAD.left-6, y+4);
+  }
+
+  // Invested reference line
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.setLineDash([4,4]); ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(PAD.left, yScl(r.invested)); ctx.lineTo(PAD.left+cW, yScl(r.invested)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Filled area under line
+  const pts = portfolioVals.map((v,i) => ({ x: xPos[i], y: yScl(v) }));
+  const grad = ctx.createLinearGradient(0, PAD.top, 0, PAD.top+cH);
+  grad.addColorStop(0, color + '44');
+  grad.addColorStop(1, color + '00');
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, PAD.top+cH);
+  pts.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(pts[pts.length-1].x, PAD.top+cH);
+  ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
+
+  // Line
+  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+  ctx.beginPath(); pts.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y)); ctx.stroke();
+
+  // Dots + labels
+  pts.forEach((p,i) => {
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#e0e0e0'; ctx.font = 'bold 11px Inter,sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(fmtDollar(portfolioVals[i]), p.x, p.y - 10);
+  });
+
+  // X labels
+  ctx.fillStyle = '#555'; ctx.font = '11px Inter,sans-serif'; ctx.textAlign = 'center';
+  xlbls.forEach((l,i) => ctx.fillText(l, xPos[i], H - PAD.bottom + 14));
+}
+
+// ─── Share ────────────────────────────────────────────────────────────────────
+function shareToX() {
+  if (!lastResult) return;
+  const r   = lastResult;
+  const isUp = r.totalReturn >= 0;
+  const text = `My #Bitcoin entry: $${fmt(r.entry)} | Current value: ${fmtDollar(r.currentValue)} (${fmtPct(r.totalReturn * 100)})
+
+At 20% CAGR, my stack could be worth ${fmtDollar(r.projections[1].years[2].portfolio)} in 3 years 📈
+
+Calculate yours 👇
+${location.href}
+
+via @InvestWithDoc`;
+  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(location.href).then(() => {
+    const btn = event.target;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = '🔗 Copy Link', 2000);
+  });
+}
+
+// ─── Load from URL params (shareable links) ───────────────────────────────────
+function loadFromParams() {
+  const p = new URLSearchParams(location.search);
+  if (p.get('entry'))    document.getElementById('entryPrice').value    = p.get('entry');
+  if (p.get('invested')) document.getElementById('amountInvested').value = p.get('invested');
+  if (p.get('date'))     document.getElementById('purchaseDate').value   = p.get('date');
+  if (p.get('entry') && p.get('invested') && currentBtcPrice) calculate();
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+fetchBtcPrice().then(() => {
+  // Auto-fill defaults if no URL params
+  const p = new URLSearchParams(location.search);
+  if (!p.get('entry') && currentBtcPrice) {
+    document.getElementById('entryPrice').value = Math.round(currentBtcPrice);
+  }
+  if (!p.get('invested')) {
+    document.getElementById('amountInvested').value = 1000;
+  }
+  loadFromParams();
+  // Refresh price every 60s
+  setInterval(fetchBtcPrice, 60000);
+});
+</script>
+</body>
+</html>

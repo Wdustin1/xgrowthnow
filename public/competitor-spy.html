@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Competitor Spy — XGrowthNow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --surface: #0f0f0f; --card: #16181c; --border: #2f3336;
+      --text: #e7e9ea; --muted: #71767b; --blue: #1d9bf0; --red: #f4212e;
+      --green: #00ba7c; --yellow: #ffd400; --radius: 16px;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+    main { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .page-header p { font-size: 14px; color: var(--muted); }
+
+    .search-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px;
+      margin-bottom: 28px; display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .search-input {
+      flex: 1; min-width: 200px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 24px; color: var(--text); font-family: inherit; font-size: 14px;
+      padding: 11px 18px; outline: none; transition: border-color 0.15s;
+    }
+    .search-input:focus { border-color: var(--blue); }
+    .search-input::placeholder { color: var(--muted); }
+    .search-btn {
+      background: var(--blue); color: #fff; border: none; border-radius: 24px;
+      font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer;
+      padding: 11px 22px; transition: background 0.15s; display: flex; align-items: center; gap: 8px;
+    }
+    .search-btn:hover:not(:disabled) { background: #1a8cd8; }
+    .search-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+    .spinner.show { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg { background: rgba(244,33,46,0.08); border: 1px solid rgba(244,33,46,0.25); color: var(--red); border-radius: 10px; padding: 12px 16px; font-size: 14px; margin-bottom: 20px; display: none; }
+    .error-msg.show { display: block; }
+
+    /* Profile card */
+    .profile-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; margin-bottom: 20px; display: flex; gap: 16px; align-items: flex-start;
+    }
+    .profile-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; background: var(--border); flex-shrink: 0; }
+    .profile-info { flex: 1; min-width: 0; }
+    .profile-name { font-size: 17px; font-weight: 800; margin-bottom: 2px; }
+    .profile-handle { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+    .profile-bio { font-size: 13px; line-height: 1.5; color: var(--text); margin-bottom: 10px; }
+    .profile-meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; }
+    .profile-meta span strong { color: var(--text); }
+    .profile-meta span { color: var(--muted); }
+    .verified-icon { color: var(--blue); margin-left: 4px; }
+
+    /* Stats grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+    .stat-num { font-size: 26px; font-weight: 900; margin-bottom: 2px; }
+    .stat-label { font-size: 12px; color: var(--muted); }
+    .stat-card.highlight .stat-num { color: var(--blue); }
+
+    /* Top tweets */
+    .section-title { font-size: 16px; font-weight: 800; margin-bottom: 14px; }
+    .tweet-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .tweet-row { background: var(--card); padding: 14px 18px; transition: background 0.15s; }
+    .tweet-row:hover { background: var(--surface); }
+    .tweet-rank { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .tweet-text { font-size: 14px; line-height: 1.5; margin-bottom: 10px; word-break: break-word; }
+    .tweet-stats { display: flex; gap: 16px; font-size: 12px; color: var(--muted); }
+    .tweet-stats span { display: flex; align-items: center; gap: 4px; }
+    .tweet-link { font-size: 12px; color: var(--blue); text-decoration: none; margin-left: auto; }
+    .tweet-link:hover { text-decoration: underline; }
+    .tweet-footer { display: flex; align-items: center; }
+  </style>
+  <script>const sidebarPage = 'competitor-spy';</script>
+</head>
+<body class="has-sidebar">
+
+<main>
+  <div class="page-header">
+    <h1>🔍 Competitor Spy</h1>
+    <p>Analyze any public Twitter account's engagement, best content, and posting patterns</p>
+  </div>
+
+  <div class="search-card">
+    <input class="search-input" id="handleInput" type="text" placeholder="@username or username" onkeydown="if(event.key==='Enter')analyze()"/>
+    <button class="search-btn" id="searchBtn" onclick="analyze()">
+      <div class="spinner" id="spinner"></div>
+      <span id="btnText">Analyze →</span>
+    </button>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+  <div id="results" style="display:none;"></div>
+</main>
+
+<script src="/sidebar.js"></script>
+<script>
+function fmt(n) {
+  if (!n && n !== 0) return '—';
+  if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
+  return n.toLocaleString();
+}
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function analyze() {
+  const raw    = document.getElementById('handleInput').value.trim().replace('@', '');
+  if (!raw) { showError('Enter a Twitter handle to analyze.'); return; }
+
+  const btn     = document.getElementById('searchBtn');
+  const spinner = document.getElementById('spinner');
+  const btnText = document.getElementById('btnText');
+
+  btn.disabled = true;
+  spinner.classList.add('show');
+  btnText.textContent = 'Analyzing...';
+  document.getElementById('errorMsg').classList.remove('show');
+  document.getElementById('results').style.display = 'none';
+
+  try {
+    const r = await fetch(`/api/tools/competitor-spy?handle=${encodeURIComponent(raw)}`);
+    if (r.status === 401) { location.href = '/api/auth/login'; return; }
+    const data = await r.json();
+
+    if (data.error) { showError(data.error); return; }
+
+    renderResults(data);
+  } catch {
+    showError('Network error — please try again.');
+  } finally {
+    btn.disabled = false;
+    spinner.classList.remove('show');
+    btnText.textContent = 'Analyze →';
+  }
+}
+
+function renderResults({ profile, stats, top5 }) {
+  const verified = profile.verified ? '<span class="verified-icon" title="Verified">✔</span>' : '';
+  const topTweet = top5?.[0];
+
+  const tweetRows = (top5 || []).map((t, i) => `
+    <div class="tweet-row">
+      <div class="tweet-rank">#${i + 1} Best Tweet</div>
+      <div class="tweet-text">${escHtml(t.text)}</div>
+      <div class="tweet-footer">
+        <div class="tweet-stats">
+          <span>❤️ ${fmt(t.likes)}</span>
+          <span>🔁 ${fmt(t.retweets)}</span>
+          <span>💬 ${fmt(t.replies)}</span>
+        </div>
+        <a class="tweet-link" href="${t.url}" target="_blank" rel="noopener">View →</a>
+      </div>
+    </div>
+  `).join('');
+
+  const html = `
+    <div class="profile-card">
+      <img class="profile-avatar" src="${escHtml(profile.avatar)}" onerror="this.src=''" alt=""/>
+      <div class="profile-info">
+        <div class="profile-name">${escHtml(profile.name)}${verified}</div>
+        <div class="profile-handle">@${escHtml(profile.username)}</div>
+        ${profile.bio ? `<div class="profile-bio">${escHtml(profile.bio)}</div>` : ''}
+        <div class="profile-meta">
+          <span><strong>${fmt(profile.followers)}</strong> Followers</span>
+          <span><strong>${fmt(profile.following)}</strong> Following</span>
+          <span><strong>${fmt(profile.tweetCount)}</strong> Tweets</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card highlight">
+        <div class="stat-num">${stats.engagementRate}%</div>
+        <div class="stat-label">Avg Engagement Rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${fmt(stats.avgLikes)}</div>
+        <div class="stat-label">Avg Likes / Tweet</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${fmt(stats.avgRTs)}</div>
+        <div class="stat-label">Avg RTs / Tweet</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${fmt(stats.tweetCount)}</div>
+        <div class="stat-label">Tweets Analyzed</div>
+      </div>
+    </div>
+
+    ${top5?.length ? `
+      <div class="section-title">Top 5 Tweets</div>
+      <div class="tweet-list">${tweetRows}</div>
+    ` : ''}
+  `;
+
+  const results = document.getElementById('results');
+  results.innerHTML = html;
+  results.style.display = 'block';
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+initLayout();
+</script>
+</body>
+</html>

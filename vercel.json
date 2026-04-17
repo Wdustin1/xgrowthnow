@@ -1,0 +1,60 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/**/*.js", "use": "@vercel/node", "config": { "maxDuration": 60 } },
+    { "src": "public/**", "use": "@vercel/static" }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "has": [{ "type": "host", "value": "bitcoincalc.xyz" }],
+      "dest": "/public/dcabtc.html"
+    },
+    {
+      "src": "/(.*)",
+      "has": [{ "type": "host", "value": "www.bitcoincalc.xyz" }],
+      "dest": "/public/dcabtc.html"
+    },
+    { "src": "/api/stripe/checkout",  "dest": "/api/stripe/checkout.js" },
+    { "src": "/api/stripe/success",   "dest": "/api/stripe/manage.js" },
+    { "src": "/api/stripe/portal",    "dest": "/api/stripe/manage.js" },
+    { "src": "/api/tools/best-time",  "dest": "/api/tools/best-time.js" },
+    { "src": "/best-time",            "dest": "/public/best-time.html" },
+    { "src": "/top5",                 "dest": "/public/top5.html" },
+    { "src": "/unfollow-tracker",    "dest": "/public/unfollow-tracker.html" },
+    { "src": "/pricing",              "dest": "/public/pricing.html" },
+    { "src": "/dcabtc",              "dest": "/public/dcabtc.html" },
+    { "src": "/bitcoin-calc",        "dest": "/public/dcabtc.html" },
+    { "src": "/api/auth/login",       "dest": "/api/auth/login.js" },
+    { "src": "/api/auth/callback",    "dest": "/api/auth/callback.js" },
+    { "src": "/api/auth/logout",      "dest": "/api/auth/logout.js" },
+    { "src": "/api/auth/me",          "dest": "/api/auth/me.js" },
+    { "src": "/api/tools/inactive-follows",  "dest": "/api/tools/inactive-follows.js" },
+    { "src": "/inactive-follows",               "dest": "/public/inactive-follows.html" },
+    { "src": "/api/tools/loyal-fans",        "dest": "/api/tools/loyal-fans.js" },
+    { "src": "/pricing",                     "dest": "/public/pricing.html" },
+    { "src": "/loyal-fans",                  "dest": "/public/loyal-fans.html" },
+    { "src": "/api/tools/tweet-optimizer",   "dest": "/api/tools/tweet-optimizer.js" },
+    { "src": "/tweet-optimizer",             "dest": "/public/tweet-optimizer.html" },
+    { "src": "/api/tools/competitor-spy",    "dest": "/api/tools/competitor-spy.js" },
+    { "src": "/competitor-spy",              "dest": "/public/competitor-spy.html" },
+    { "src": "/api/tools/viral-reposter",    "dest": "/api/tools/viral-reposter.js" },
+    { "src": "/api/tools/retweet",           "dest": "/api/tools/retweet.js" },
+    { "src": "/api/tools/growth-predictor", "dest": "/api/tools/growth-predictor.js" },
+    { "src": "/growth-predictor",           "dest": "/public/growth-predictor.html" },
+    { "src": "/viral-reposter",              "dest": "/public/viral-reposter.html" },
+    { "src": "/api/tools/unreplied",  "dest": "/api/tools/unreplied.js" },
+    { "src": "/api/tools/following",  "dest": "/api/tools/following.js" },
+    { "src": "/api/tools/followers",  "dest": "/api/tools/followers.js" },
+    { "src": "/api/tools/unfollow",   "dest": "/api/tools/unfollow.js" },
+    { "src": "/api/analyze",          "dest": "/api/analyze.js" },
+    { "src": "/api/project",          "dest": "/api/project.js" },
+    { "src": "/dashboard",            "dest": "/public/dashboard.html" },
+    { "src": "/unfollow",             "dest": "/public/unfollow.html" },
+    { "src": "/tweet-to-reel",        "dest": "/public/tweet-to-reel.html" },
+    { "src": "/unreplied",            "dest": "/public/unreplied.html" },
+    { "src": "/f5bot",                "dest": "/public/f5bot.html" },
+    { "src": "/sidebar.js",           "dest": "/public/sidebar.js" },
+    { "src": "/(.*)",                 "dest": "/public/$1" }
+  ]
+}

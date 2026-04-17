@@ -1,0 +1,17 @@
+{
+  "name": "xpilot",
+  "version": "1.0.0",
+  "description": "X Pilot - Twitter follower growth projections",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "stripe": "^20.4.1"
+  },
+  "devDependencies": {
+    "vercel": "^50.32.5"
+  }
+}

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tweet Recycler — XGrowthNow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --surface: #0f0f0f; --card: #16181c; --border: #2f3336;
+      --text: #e7e9ea; --muted: #71767b; --blue: #1d9bf0; --red: #f4212e;
+      --green: #00ba7c; --yellow: #ffd400; --radius: 16px;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+    main { max-width: 720px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .page-header p { font-size: 14px; color: var(--muted); }
+
+    .reauth-banner { background: rgba(29,155,240,0.08); border: 1px solid rgba(29,155,240,0.25); border-radius: 12px; padding: 14px 18px; margin-bottom: 24px; font-size: 14px; display: none; }
+    .reauth-banner a { color: var(--blue); font-weight: 700; }
+
+    .state-box { text-align: center; padding: 60px 24px; }
+    .state-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+    .state-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .state-sub { font-size: 14px; color: var(--muted); }
+    .progress-bar-wrap { height: 4px; background: var(--border); border-radius: 2px; margin-top: 20px; max-width: 300px; margin-inline: auto; overflow: hidden; }
+    .progress-bar { height: 100%; background: var(--blue); border-radius: 2px; animation: progress 6s ease-out forwards; }
+    @keyframes progress { from { width: 0% } to { width: 85% } }
+
+    .section-header { font-size: 17px; font-weight: 800; margin: 32px 0 14px; display: flex; align-items: center; gap: 8px; }
+    .section-count { font-size: 12px; font-weight: 700; background: rgba(29,155,240,0.12); color: var(--blue); border: 1px solid rgba(29,155,240,0.2); border-radius: 20px; padding: 2px 10px; }
+
+    .tweet-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 10px; transition: border-color 0.15s; }
+    .tweet-card:hover { border-color: #4a5568; }
+    .tweet-card.boosted { border-color: rgba(0,186,124,0.4); background: rgba(0,186,124,0.04); }
+    .tweet-text { font-size: 15px; line-height: 1.6; margin-bottom: 12px; white-space: pre-wrap; word-break: break-word; }
+    .tweet-meta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .tweet-stat { font-size: 13px; color: var(--muted); }
+    .tweet-stat strong { color: var(--text); }
+    .tweet-age { font-size: 12px; color: var(--muted); margin-left: auto; }
+    .tweet-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+
+    .btn { border-radius: 20px; padding: 7px 16px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-boost { background: var(--blue); color: #fff; }
+    .btn-boost:hover { background: #1a8cd8; }
+    .btn-boost:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-unboost { background: transparent; border: 1px solid rgba(244,33,46,0.4); color: var(--red); }
+    .btn-unboost:hover { background: rgba(244,33,46,0.1); }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+    .btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+
+    .countdown { font-size: 12px; font-weight: 700; color: var(--green); background: rgba(0,186,124,0.1); border-radius: 8px; padding: 4px 10px; }
+    .countdown.expiring { color: var(--yellow); background: rgba(255,212,0,0.1); }
+
+    .score-badge { font-size: 11px; font-weight: 700; border-radius: 8px; padding: 3px 9px; }
+    .score-high { background: rgba(0,186,124,0.12); color: var(--green); }
+    .score-med  { background: rgba(255,212,0,0.12); color: var(--yellow); }
+    .score-low  { background: rgba(113,118,123,0.15); color: var(--muted); }
+
+    .empty-section { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; text-align: center; font-size: 14px; color: var(--muted); }
+  </style>
+  <script>const sidebarPage = 'viral-reposter';</script>
+</head>
+<body class="has-sidebar">
+<main>
+  <div class="page-header">
+    <h1>🔁 Tweet Recycler</h1>
+    <p>Boost your best old tweets for 24 hours, then auto-clean your timeline.</p>
+  </div>
+
+  <div class="reauth-banner" id="reauthBanner">
+    ⚠️ Retweet permissions not enabled. <a href="/api/auth/logout">Sign out</a> and back in to activate this feature.
+  </div>
+
+  <div id="stateLoading" class="state-box">
+    <span class="state-icon">⏳</span>
+    <div class="state-title">Scanning your tweet history...</div>
+    <div class="state-sub">Finding your best old tweets worth recycling</div>
+    <div class="progress-bar-wrap"><div class="progress-bar"></div></div>
+  </div>
+
+  <div id="stateContent" style="display:none;"></div>
+</main>
+
+<script src="/sidebar.js"></script>
+<script>
+const STORAGE_KEY = 'xgn_boosted_tweets';
+const HOUR_24 = 24 * 60 * 60 * 1000;
+
+function getBoosted() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+function saveBoosted(arr) { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+
+function fmt(n) {
+  if (!n) return '0';
+  if (n >= 1000) return (n/1000).toFixed(1)+'K';
+  return String(n);
+}
+function timeAgo(iso) {
+  const diff = (Date.now() - new Date(iso)) / 1000;
+  if (diff < 86400) return Math.floor(diff/3600)+'h ago';
+  if (diff < 2592000) return Math.floor(diff/86400)+'d ago';
+  return Math.floor(diff/2592000)+'mo ago';
+}
+function countdown(boostedAt) {
+  const remaining = HOUR_24 - (Date.now() - boostedAt);
+  if (remaining <= 0) return { text: 'Expiring...', expiring: true };
+  const h = Math.floor(remaining / 3600000);
+  const m = Math.floor((remaining % 3600000) / 60000);
+  return { text: `${h}h ${m}m left`, expiring: h < 2 };
+}
+function scoreClass(score) {
+  if (score >= 50) return 'score-high';
+  if (score >= 15) return 'score-med';
+  return 'score-low';
+}
+
+async function boostTweet(tweetId, btn) {
+  btn.disabled = true;
+  btn.textContent = 'Boosting...';
+  try {
+    const r = await fetch('/api/tools/retweet', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tweetId }),
+    });
+    const d = await r.json();
+    if (d.error === 'scope') {
+      document.getElementById('reauthBanner').style.display = 'block';
+      btn.textContent = '🔁 Boost';
+      btn.disabled = false;
+      return;
+    }
+    if (d.success) {
+      const boosted = getBoosted();
+      boosted.push({ tweetId, boostedAt: Date.now() });
+      saveBoosted(boosted);
+      renderPage(window._tweets); // re-render
+    } else {
+      btn.textContent = 'Failed';
+      setTimeout(() => { btn.textContent = '🔁 Boost'; btn.disabled = false; }, 2000);
+    }
+  } catch {
+    btn.textContent = 'Error';
+    setTimeout(() => { btn.textContent = '🔁 Boost'; btn.disabled = false; }, 2000);
+  }
+}
+
+async function unboostTweet(tweetId, btn) {
+  btn.disabled = true;
+  btn.textContent = 'Removing...';
+  try {
+    const r = await fetch(`/api/tools/retweet?tweetId=${tweetId}`, { method: 'DELETE' });
+    const d = await r.json();
+    if (d.success || d.error) { // even if error, remove from local tracking
+      const boosted = getBoosted().filter(b => b.tweetId !== tweetId);
+      saveBoosted(boosted);
+      renderPage(window._tweets);
+    }
+  } catch {
+    const boosted = getBoosted().filter(b => b.tweetId !== tweetId);
+    saveBoosted(boosted);
+    renderPage(window._tweets);
+  }
+}
+
+function renderPage(tweets) {
+  window._tweets = tweets;
+  const boosted = getBoosted();
+  const boostedIds = new Set(boosted.map(b => b.tweetId));
+
+  // Auto-remove expired boosts
+  const now = Date.now();
+  const expired = boosted.filter(b => now - b.boostedAt >= HOUR_24);
+  if (expired.length) {
+    expired.forEach(b => {
+      fetch(`/api/tools/retweet?tweetId=${b.tweetId}`, { method: 'DELETE' }).catch(() => {});
+    });
+    saveBoosted(boosted.filter(b => now - b.boostedAt < HOUR_24));
+  }
+
+  const activeBoosted = boosted.filter(b => now - b.boostedAt < HOUR_24);
+  const boostedTweets = activeBoosted.map(b => ({
+    ...tweets.find(t => t.id === b.tweetId),
+    boostedAt: b.boostedAt,
+  })).filter(Boolean);
+
+  const available = tweets.filter(t => !boostedIds.has(t.id));
+
+  const content = document.getElementById('stateContent');
+  content.style.display = 'block';
+  document.getElementById('stateLoading').style.display = 'none';
+
+  let html = '';
+
+  // Currently boosted
+  html += `<div class="section-header">🟢 Currently Boosted <span class="section-count">${boostedTweets.length}</span></div>`;
+  if (!boostedTweets.length) {
+    html += `<div class="empty-section">Nothing boosted yet — pick a tweet below to start recycling.</div>`;
+  } else {
+    boostedTweets.forEach(t => {
+      const cd = countdown(t.boostedAt);
+      html += `
+        <div class="tweet-card boosted">
+          <div class="tweet-text">${t.text.replace(/</g,'&lt;').substring(0,280)}</div>
+          <div class="tweet-meta">
+            <span class="tweet-stat">❤️ <strong>${fmt(t.likes)}</strong></span>
+            <span class="tweet-stat">🔁 <strong>${fmt(t.retweets)}</strong></span>
+            <span class="tweet-age">${timeAgo(t.createdAt)}</span>
+          </div>
+          <div class="tweet-actions">
+            <span class="countdown ${cd.expiring ? 'expiring' : ''}">⏱ ${cd.text}</span>
+            <button class="btn btn-unboost" onclick="unboostTweet('${t.id}', this)">✕ Remove Boost</button>
+            <a class="btn btn-outline" href="${t.url}" target="_blank">View →</a>
+          </div>
+        </div>`;
+    });
+  }
+
+  // Available to boost
+  html += `<div class="section-header" style="margin-top:32px;">⚡ Top Tweets to Boost <span class="section-count">${available.length}</span></div>`;
+  if (!available.length) {
+    html += `<div class="empty-section">No old tweets found (need posts older than 30 days).</div>`;
+  } else {
+    available.slice(0, 20).forEach(t => {
+      const sc = scoreClass(t.engagementScore);
+      html += `
+        <div class="tweet-card">
+          <div class="tweet-text">${t.text.replace(/</g,'&lt;').substring(0,280)}</div>
+          <div class="tweet-meta">
+            <span class="tweet-stat">❤️ <strong>${fmt(t.likes)}</strong></span>
+            <span class="tweet-stat">🔁 <strong>${fmt(t.retweets)}</strong></span>
+            <span class="tweet-stat">💬 <strong>${fmt(t.replies)}</strong></span>
+            <span class="score-badge ${sc}">${t.engagementScore} pts</span>
+            <span class="tweet-age">${t.daysSincePosted}d ago</span>
+          </div>
+          <div class="tweet-actions">
+            <button class="btn btn-boost" onclick="boostTweet('${t.id}', this)">🔁 Boost for 24h</button>
+            <a class="btn btn-outline" href="${t.url}" target="_blank">View →</a>
+          </div>
+        </div>`;
+    });
+  }
+
+  content.innerHTML = html;
+
+  // Refresh countdown timers every minute
+  if (activeBoosted.length) {
+    setTimeout(() => renderPage(window._tweets), 60000);
+  }
+}
+
+async function load() {
+  const r = await fetch('/api/tools/viral-reposter');
+  if (r.status === 401) { location.href = '/api/auth/login?returnTo=/viral-reposter'; return; }
+  const d = await r.json();
+  if (d.error) {
+    document.getElementById('stateLoading').innerHTML = `<span class="state-icon">⚠️</span><div class="state-title">${d.error}</div>`;
+    return;
+  }
+  renderPage(d.tweets || []);
+}
+
+initLayout().then(() => { load(); });
+</script>
+</body>
+</html>

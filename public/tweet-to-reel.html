@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tweet To Video — XGrowthNow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --surface: #0f0f0f; --card: #16181c; --border: #2f3336;
+      --text: #e7e9ea; --muted: #71767b; --blue: #1d9bf0; --green: #00ba7c; --radius: 16px;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+
+    main { max-width: 1140px; margin: 0 auto; padding: 36px 24px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+    @media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+
+    .left-panel h1 { font-size: 24px; font-weight: 900; margin-bottom: 4px; }
+    .left-panel p  { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+
+    .input-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+    /* Tweet URL import */
+    .import-row { display: flex; gap: 8px; }
+    .import-row input { flex: 1; }
+    .import-btn {
+      background: var(--blue); color: #fff; border: none; border-radius: 10px;
+      padding: 10px 16px; font-size: 13px; font-weight: 700; cursor: pointer;
+      white-space: nowrap; transition: background 0.2s; flex-shrink: 0;
+    }
+    .import-btn:hover { background: #1a8cd8; }
+    .import-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .import-status { font-size: 12px; color: var(--muted); min-height: 16px; }
+    .import-status.ok  { color: var(--green); }
+    .import-status.err { color: #f4212e; }
+
+    .divider { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 13px; font-weight: 600; }
+    .field input, .field textarea {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-size: 14px; padding: 10px 14px; outline: none;
+      transition: border-color 0.2s; font-family: inherit;
+    }
+    .field input:focus, .field textarea:focus { border-color: var(--blue); }
+    .field textarea { resize: vertical; min-height: 90px; }
+
+    .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .theme-opt { border: 2px solid var(--border); border-radius: 10px; padding: 8px 4px; cursor: pointer; text-align: center; font-size: 11px; font-weight: 700; transition: all 0.15s; color: var(--muted); }
+    .theme-opt:hover { border-color: var(--blue); color: var(--text); }
+    .theme-opt.active { border-color: var(--blue); color: var(--text); background: rgba(29,155,240,0.08); }
+    .theme-swatch { width: 100%; height: 24px; border-radius: 5px; margin-bottom: 5px; }
+
+    /* Action buttons */
+    .action-row { display: flex; gap: 10px; }
+    .btn-dl-img {
+      flex: 1; background: var(--card); color: var(--text); border: 1px solid var(--border);
+      border-radius: 12px; font-size: 14px; font-weight: 700; padding: 13px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-dl-img:hover { border-color: var(--blue); color: var(--blue); }
+    .btn-dl-vid {
+      flex: 2; background: var(--blue); color: #fff; border: none;
+      border-radius: 12px; font-size: 14px; font-weight: 700; padding: 13px;
+      cursor: pointer; transition: background 0.2s; position: relative; overflow: hidden;
+    }
+    .btn-dl-vid:hover:not(:disabled) { background: #1a8cd8; }
+    .btn-dl-vid:disabled { opacity: 0.7; cursor: not-allowed; }
+
+    /* Recording progress */
+    .record-progress { display: none; flex-direction: column; gap: 8px; }
+    .record-progress.visible { display: flex; }
+    .progress-bar-wrap { background: var(--border); border-radius: 4px; height: 5px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: var(--blue); width: 0%; transition: width 0.1s linear; border-radius: 4px; }
+    .progress-label { font-size: 12px; color: var(--muted); text-align: center; }
+
+    /* Right: preview */
+    .right-panel { position: sticky; top: 80px; }
+    .preview-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+    .reel-outer { width: 100%; max-width: 280px; margin: 0 auto; }
+    .reel-wrap {
+      width: 100%;
+      padding-bottom: 177.78%; /* 16/9 = 1.7778 → forces 9:16 portrait */
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #3a3d42;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 20px 60px rgba(0,0,0,0.8);
+    }
+    .reel-wrap canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: block;
+    }
+
+    /* Platform badges */
+    .platform-row { display: flex; justify-content: center; gap: 10px; margin-top: 14px; }
+    .plat-badge { font-size: 11px; color: var(--muted); background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; }
+  </style>
+</head>
+<body class="has-sidebar">
+
+<main>
+  <!-- LEFT -->
+  <div class="left-panel">
+    <h1>🎬 Tweet To Video</h1>
+    <p>Put your content on MULTIPLE PLATFORMS — Paste a tweet link to auto-import. Export as a 15-second 9:16 video ready for TikTok, Instagram Reels & YouTube Shorts.</p>
+
+    <div class="input-card">
+
+      <!-- Tweet URL Import -->
+      <div class="field">
+        <label>Import from tweet URL</label>
+        <div class="import-row">
+          <input type="text" id="tweetUrl" placeholder="https://x.com/investwithdoc/status/..." oninput="clearImportStatus()" />
+          <button class="import-btn" id="importBtn" onclick="importTweet()">↓ Import</button>
+        </div>
+        <div class="import-status" id="importStatus"></div>
+      </div>
+
+      <div class="divider">or fill in manually</div>
+
+      <div class="field">
+        <label>Your name</label>
+        <input type="text" id="authorName" placeholder="Invest With Doc - MD/MBA" oninput="drawFrame(0)" />
+      </div>
+      <div class="field">
+        <label>@handle</label>
+        <input type="text" id="authorHandle" placeholder="investwithdoc" oninput="drawFrame(0)" />
+      </div>
+      <div class="field">
+        <label>Tweet text</label>
+        <textarea id="tweetText" placeholder="Paste your tweet here..." oninput="drawFrame(0)"></textarea>
+      </div>
+      <div class="field">
+        <label>Profile picture URL (optional)</label>
+        <input type="text" id="avatarUrl" placeholder="https://pbs.twimg.com/..." oninput="handleAvatarInput()" />
+      </div>
+
+      <div class="field">
+        <label>Theme</label>
+        <div class="theme-grid">
+          <div class="theme-opt active" onclick="setTheme('dark',this)"><div class="theme-swatch" style="background:#000;border:1px solid #2f3336;"></div>Dark</div>
+          <div class="theme-opt" onclick="setTheme('midnight',this)"><div class="theme-swatch" style="background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);"></div>Midnight</div>
+          <div class="theme-opt" onclick="setTheme('sunrise',this)"><div class="theme-swatch" style="background:linear-gradient(135deg,#f7971e,#ffd200);"></div>Sunrise</div>
+          <div class="theme-opt" onclick="setTheme('bitcoin',this)"><div class="theme-swatch" style="background:linear-gradient(135deg,#f7931a,#ff6b00);"></div>Bitcoin 🟠</div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-dl-img" onclick="downloadImage()">⬇ Image</button>
+        <button class="btn-dl-vid" id="vidBtn" onclick="startRecording()">🎬 Export 15s Video</button>
+      </div>
+
+      <div class="record-progress" id="recordProgress">
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel">Recording... 0s / 15s</div>
+      </div>
+
+      <!-- Post-recording export options -->
+      <div id="exportOptions" style="display:none; flex-direction:column; gap:10px;">
+        <div style="font-size:12px;color:var(--muted);text-align:center;">Recording complete — choose your format:</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-dl-img" style="flex:1;" id="dlWebm" onclick="downloadWebm()">⬇ WebM <span style="font-size:10px;opacity:0.6;">(YouTube)</span></button>
+          <button class="btn-dl-vid" style="flex:2;background:linear-gradient(135deg,#e1306c,#833ab4,#fd1d1d);" id="dlMp4" onclick="convertToMp4()">🔄 Convert → MP4 <span style="font-size:10px;opacity:0.8;">(TikTok · Reels)</span></button>
+        </div>
+        <div id="convertStatus" style="font-size:12px;color:var(--muted);text-align:center;min-height:16px;"></div>
+        <div class="progress-bar-wrap" id="convertProgressWrap" style="display:none;"><div class="progress-bar-fill" id="convertFill" style="background:linear-gradient(90deg,#e1306c,#833ab4);"></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-panel">
+    <div class="preview-label">Live Preview · 9:16 Portrait</div>
+    <div class="reel-outer">
+      <div class="reel-wrap">
+        <canvas id="reelCanvas" width="1080" height="1920"></canvas>
+      </div>
+    </div>
+    <div class="platform-row">
+      <span class="plat-badge">TikTok</span>
+      <span class="plat-badge">Instagram Reels</span>
+      <span class="plat-badge">YouTube Shorts</span>
+    </div>
+  </div>
+</main>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+let currentTheme = 'dark';
+let avatarImg    = null;
+let isRecording  = false;
+
+const themes = {
+  dark:     { gradient: null,   bg: '#000000',  card: '#16181c', border: '#2f3336',               text: '#e7e9ea', sub: '#71767b',            accent: '#1d9bf0' },
+  midnight: { gradient: ['#0f0c29','#302b63','#24243e'],   card: 'rgba(255,255,255,0.06)', border: 'rgba(255,255,255,0.12)', text: '#ffffff',   sub: 'rgba(255,255,255,0.55)', accent: '#7b61ff' },
+  sunrise:  { gradient: ['#f7971e','#ffd200'],              card: 'rgba(0,0,0,0.22)',      border: 'rgba(0,0,0,0.18)',       text: '#ffffff',   sub: 'rgba(255,255,255,0.72)', accent: '#fff' },
+  bitcoin:  { gradient: ['#1a0a00','#2d1500','#1a0a00'],   card: 'rgba(247,147,26,0.1)',  border: 'rgba(247,147,26,0.25)', text: '#ffffff',   sub: 'rgba(255,255,255,0.6)',  accent: '#f7931a' },
+};
+
+// ─── Tweet URL import ─────────────────────────────────────────────────────────
+function clearImportStatus() {
+  document.getElementById('importStatus').textContent = '';
+  document.getElementById('importStatus').className = 'import-status';
+}
+
+function setImportStatus(msg, type) {
+  const el = document.getElementById('importStatus');
+  el.textContent = msg;
+  el.className = 'import-status ' + (type || '');
+}
+
+function parseTweetId(url) {
+  const m = url.match(/\/status\/(\d+)/);
+  return m ? m[1] : null;
+}
+
+async function importTweet() {
+  const url = document.getElementById('tweetUrl').value.trim();
+  if (!url) return;
+  const tweetId = parseTweetId(url);
+  if (!tweetId) { setImportStatus('Invalid tweet URL', 'err'); return; }
+
+  const btn = document.getElementById('importBtn');
+  btn.disabled = true;
+  btn.textContent = 'Loading...';
+  setImportStatus('Fetching tweet...');
+
+  try {
+    // Use Twitter's public oEmbed API — no API key needed, CORS-friendly
+    const oembed = await fetch(
+      `https://publish.twitter.com/oembed?url=https://twitter.com/i/status/${tweetId}&omit_script=true`
+    );
+    if (!oembed.ok) throw new Error('Tweet not found');
+    const data = await oembed.json();
+
+    // Parse author name and handle
+    const authorName   = data.author_name || '';
+    const authorHandle = data.author_url?.split('/').pop() || '';
+
+    // Parse tweet text from oEmbed HTML
+    const parser = new DOMParser();
+    const doc    = parser.parseFromString(data.html, 'text/html');
+    const p      = doc.querySelector('blockquote p');
+    let tweetText = '';
+    if (p) {
+      // Get text content, convert <a> to plain text, remove trailing pic.twitter/t.co links
+      p.querySelectorAll('a[href*="t.co"], a[href*="pic.twitter"]').forEach(a => {
+        if (a.textContent.startsWith('http') || a.textContent.startsWith('pic.')) a.remove();
+      });
+      tweetText = p.textContent.trim();
+    }
+
+    document.getElementById('authorName').value   = authorName;
+    document.getElementById('authorHandle').value = authorHandle;
+    document.getElementById('tweetText').value    = tweetText;
+
+    setImportStatus('✓ Tweet imported!', 'ok');
+    drawFrame(0);
+  } catch (e) {
+    setImportStatus('Failed to fetch tweet. Try pasting text manually.', 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '↓ Import';
+  }
+}
+
+// ─── Canvas drawing ───────────────────────────────────────────────────────────
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  let line = '', lines = [];
+  for (const w of words) {
+    const test = line ? line + ' ' + w : w;
+    if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = w; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineHeight));
+  return lines.length;
+}
+
+// progress: 0.0 → 1.0 (used for Ken Burns animation during recording)
+// fadeIn: 0.0 → 1.0 (card fade-in at start)
+function drawFrame(progress, fadeIn) {
+  const canvas = document.getElementById('reelCanvas');
+  const ctx    = canvas.getContext('2d');
+  const W = 1080, H = 1920;
+  const t = themes[currentTheme];
+  if (fadeIn === undefined) fadeIn = 1;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.save();
+
+  // Ken Burns: very slow zoom 1.0 → 1.04
+  const scale = 1 + progress * 0.04;
+  ctx.translate(W / 2, H / 2);
+  ctx.scale(scale, scale);
+  ctx.translate(-W / 2, -H / 2);
+
+  // Background
+  if (t.gradient) {
+    const grd = ctx.createLinearGradient(0, 0, W, H);
+    t.gradient.forEach((c, i) => grd.addColorStop(i / (t.gradient.length - 1), c));
+    ctx.fillStyle = grd;
+  } else {
+    ctx.fillStyle = t.bg;
+  }
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle scan lines (dark theme only)
+  if (currentTheme === 'dark') {
+    ctx.fillStyle = 'rgba(255,255,255,0.012)';
+    for (let y = 0; y < H; y += 60) ctx.fillRect(0, y, W, 1);
+  }
+
+  // Card bounds
+  const cx = 72, cw = W - 144;
+  const cardY = H / 2 - 400;
+
+  // Fade in card
+  ctx.globalAlpha = fadeIn;
+
+  // Card shadow / glow
+  ctx.shadowColor = t.accent;
+  ctx.shadowBlur  = 40 * fadeIn;
+  ctx.fillStyle   = t.card;
+  roundRect(ctx, cx, cardY, cw, 800, 48);
+  ctx.fill();
+  ctx.shadowBlur  = 0;
+
+  ctx.strokeStyle = t.border;
+  ctx.lineWidth   = 2;
+  roundRect(ctx, cx, cardY, cw, 800, 48);
+  ctx.stroke();
+
+  // Accent top bar
+  const accentGrd = ctx.createLinearGradient(cx, cardY, cx + cw, cardY);
+  accentGrd.addColorStop(0, t.accent);
+  accentGrd.addColorStop(1, t.accent + '44');
+  ctx.fillStyle = accentGrd;
+  roundRect(ctx, cx, cardY, cw, 8, 4);
+  ctx.fill();
+
+  // Avatar
+  const avX = cx + 64, avY = cardY + 80, avR = 54;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(avX, avY, avR, 0, Math.PI * 2);
+  ctx.clip();
+  if (avatarImg) {
+    ctx.drawImage(avatarImg, avX - avR, avY - avR, avR * 2, avR * 2);
+  } else {
+    ctx.fillStyle = t.accent;
+    ctx.fillRect(avX - avR, avY - avR, avR * 2, avR * 2);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 52px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const n = document.getElementById('authorName').value || 'Y';
+    ctx.fillText(n.charAt(0).toUpperCase(), avX, avY);
+  }
+  ctx.restore();
+
+  // Author info
+  const name   = document.getElementById('authorName').value   || 'Your Name';
+  const handle = document.getElementById('authorHandle').value || 'yourhandle';
+  ctx.fillStyle    = t.text;
+  ctx.font         = 'bold 44px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.textAlign    = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(name, avX + avR + 24, cardY + 72);
+  ctx.fillStyle = t.sub;
+  ctx.font      = '36px -apple-system, sans-serif';
+  ctx.fillText('@' + handle.replace('@',''), avX + avR + 24, cardY + 120);
+
+  // X logo
+  ctx.fillStyle = t.text;
+  ctx.font      = 'bold 54px serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('𝕏', cx + cw - 52, cardY + 84);
+
+  // Tweet text
+  const tweet = document.getElementById('tweetText').value || 'Your tweet text will appear here.';
+  ctx.fillStyle    = t.text;
+  ctx.font         = '52px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.textAlign    = 'left';
+  ctx.textBaseline = 'top';
+  const lineCount = wrapText(ctx, tweet, cx + 56, cardY + 196, cw - 112, 76);
+
+  // Divider
+  const divY = cardY + 220 + lineCount * 76;
+  ctx.strokeStyle = t.border;
+  ctx.lineWidth   = 1.5;
+  ctx.beginPath(); ctx.moveTo(cx + 56, divY); ctx.lineTo(cx + cw - 56, divY); ctx.stroke();
+
+  // Stats row
+  ctx.fillStyle = t.sub;
+  ctx.font      = '32px -apple-system, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('💬  Replies', cx + 56, divY + 44);
+  ctx.textAlign = 'right';
+  ctx.fillText('❤️  Likes  ·  🔁  Retweets', cx + cw - 56, divY + 44);
+
+  ctx.globalAlpha = 1;
+
+  // Bottom branding
+  ctx.fillStyle    = t.sub;
+  ctx.font         = '30px -apple-system, sans-serif';
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'alphabetic';
+  ctx.globalAlpha  = fadeIn;
+  ctx.fillText('xgrowthnow.com  ·  @InvestWithDoc', W / 2, H - 80);
+  ctx.globalAlpha = 1;
+
+  // Progress bar during recording
+  if (progress > 0) {
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    ctx.fillRect(0, H - 12, W, 12);
+    ctx.fillStyle = t.accent;
+    ctx.fillRect(0, H - 12, W * progress, 12);
+  }
+
+  ctx.restore();
+}
+
+// ─── Theme ────────────────────────────────────────────────────────────────────
+function setTheme(name, el) {
+  currentTheme = name;
+  document.querySelectorAll('.theme-opt').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  drawFrame(0);
+}
+
+// ─── Avatar input ─────────────────────────────────────────────────────────────
+function handleAvatarInput() {
+  const url = document.getElementById('avatarUrl').value.trim();
+  if (url) {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload  = () => { avatarImg = img; drawFrame(0); };
+    img.onerror = () => { avatarImg = null; drawFrame(0); };
+    img.src = url;
+  } else {
+    avatarImg = null;
+    drawFrame(0);
+  }
+}
+
+// ─── Download image ───────────────────────────────────────────────────────────
+function downloadImage() {
+  drawFrame(0);
+  const canvas = document.getElementById('reelCanvas');
+  const link   = document.createElement('a');
+  link.download = 'tweet-reel.png';
+  link.href     = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// ─── Record 15-second video ───────────────────────────────────────────────────
+let lastWebmBlob = null;
+
+function startRecording() {
+  if (isRecording) return;
+
+  const canvas  = document.getElementById('reelCanvas');
+  const btn     = document.getElementById('vidBtn');
+  const prog    = document.getElementById('recordProgress');
+  const fill    = document.getElementById('progressFill');
+  const label   = document.getElementById('progressLabel');
+  const exports = document.getElementById('exportOptions');
+
+  exports.style.display = 'none';
+  lastWebmBlob = null;
+  document.getElementById('convertStatus').textContent = '';
+  document.getElementById('convertProgressWrap').style.display = 'none';
+
+  const DURATION_MS = 15000;
+  const FPS         = 30;
+
+  const mimeType = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']
+    .find(t => MediaRecorder.isTypeSupported(t)) || 'video/webm';
+
+  const stream   = canvas.captureStream(FPS);
+  const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 8_000_000 });
+  const chunks   = [];
+
+  recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+  recorder.onstop = () => {
+    lastWebmBlob = new Blob(chunks, { type: mimeType });
+
+    isRecording     = false;
+    btn.disabled    = false;
+    btn.textContent = '🔁 Record Again';
+    prog.classList.remove('visible');
+    exports.style.display = 'flex';
+  };
+
+  isRecording     = true;
+  btn.disabled    = true;
+  btn.textContent = 'Recording...';
+  prog.classList.add('visible');
+
+  const startTime = performance.now();
+
+  function animate() {
+    const elapsed  = performance.now() - startTime;
+    const progress = Math.min(elapsed / DURATION_MS, 1);
+    const fadeIn   = Math.min(elapsed / 800, 1);
+
+    drawFrame(progress, fadeIn);
+
+    const secs = Math.floor(elapsed / 1000);
+    fill.style.width  = (progress * 100) + '%';
+    label.textContent = `Recording... ${secs}s / 15s`;
+
+    if (progress < 1) requestAnimationFrame(animate);
+    else recorder.stop();
+  }
+
+  recorder.start();
+  requestAnimationFrame(animate);
+}
+
+function downloadWebm() {
+  if (!lastWebmBlob) return;
+  const url  = URL.createObjectURL(lastWebmBlob);
+  const link = document.createElement('a');
+  link.download = 'tweet-reel.webm';
+  link.href     = url;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─── FFmpeg MP4 conversion ─────────────────────────────────────────────────────
+let ffmpegLoaded = false;
+let ffmpegInst   = null;
+
+function setConvertStatus(msg, color) {
+  const el = document.getElementById('convertStatus');
+  el.textContent  = msg;
+  el.style.color  = color || 'var(--muted)';
+}
+
+async function convertToMp4() {
+  if (!lastWebmBlob) return;
+
+  const btn  = document.getElementById('dlMp4');
+  const wrap = document.getElementById('convertProgressWrap');
+  const fill = document.getElementById('convertFill');
+
+  btn.disabled = true;
+  wrap.style.display = 'block';
+  fill.style.width   = '0%';
+
+  try {
+    // Lazy-load FFmpeg.wasm (single-threaded, no SharedArrayBuffer needed)
+    if (!ffmpegLoaded) {
+      setConvertStatus('Loading FFmpeg (one-time, ~10 MB)...');
+      fill.style.width = '10%';
+
+      await new Promise((resolve, reject) => {
+        const s1 = document.createElement('script');
+        s1.src = 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js';
+        s1.onload = () => {
+          const s2 = document.createElement('script');
+          s2.src = 'https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js';
+          s2.onload = resolve;
+          s2.onerror = reject;
+          document.head.appendChild(s2);
+        };
+        s1.onerror = reject;
+        document.head.appendChild(s1);
+      });
+
+      fill.style.width = '20%';
+      setConvertStatus('Initializing FFmpeg...');
+
+      const { FFmpeg }   = FFmpegWASM;
+      const { toBlobURL } = FFmpegUtil;
+
+      ffmpegInst = new FFmpeg();
+      ffmpegInst.on('progress', ({ progress }) => {
+        fill.style.width = (20 + progress * 70) + '%';
+      });
+
+      await ffmpegInst.load({
+        coreURL: await toBlobURL(
+          'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
+          'text/javascript'
+        ),
+        wasmURL: await toBlobURL(
+          'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm',
+          'application/wasm'
+        ),
+      });
+
+      ffmpegLoaded = true;
+      fill.style.width = '25%';
+    }
+
+    setConvertStatus('Converting to MP4...');
+    const { fetchFile } = FFmpegUtil;
+
+    await ffmpegInst.writeFile('input.webm', await fetchFile(lastWebmBlob));
+    fill.style.width = '30%';
+
+    ffmpegInst.on('progress', ({ progress }) => {
+      fill.style.width = (30 + progress * 65) + '%';
+    });
+
+    await ffmpegInst.exec([
+      '-i', 'input.webm',
+      '-c:v', 'libx264',
+      '-preset', 'fast',
+      '-crf', '20',
+      '-pix_fmt', 'yuv420p',  // required for Instagram/TikTok compatibility
+      '-movflags', '+faststart',
+      'output.mp4'
+    ]);
+
+    const data = await ffmpegInst.readFile('output.mp4');
+    const mp4Blob = new Blob([data.buffer], { type: 'video/mp4' });
+    const url     = URL.createObjectURL(mp4Blob);
+    const link    = document.createElement('a');
+    link.download = 'tweet-reel.mp4';
+    link.href     = url;
+    link.click();
+    URL.revokeObjectURL(url);
+
+    fill.style.width = '100%';
+    setConvertStatus('✓ MP4 downloaded! Ready for TikTok & Instagram.', 'var(--green)');
+  } catch (e) {
+    setConvertStatus('Conversion failed: ' + e.message, '#f4212e');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+drawFrame(0);
+</script>
+
+<script src="/sidebar.js"></script>
+<script>
+initLayout().then(user => {
+  if (!user) { window.location.href = '/api/auth/login'; return; }
+  // Pre-fill with user's own data
+  if (user.name && !document.getElementById('authorName').value) {
+    document.getElementById('authorName').value   = user.name;
+    document.getElementById('authorHandle').value = user.username || '';
+    if (user.avatar) {
+      document.getElementById('avatarUrl').value = user.avatar;
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload  = () => { avatarImg = img; drawFrame(0); };
+      img.onerror = () => {};
+      img.src = user.avatar;
+    } else {
+      drawFrame(0);
+    }
+  }
+});
+</script>
+</body>
+</html>

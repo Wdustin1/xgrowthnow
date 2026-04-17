@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Unfollow Tracker — XGrowthNow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --surface: #0f0f0f; --card: #16181c; --border: #2f3336;
+      --text: #e7e9ea; --muted: #71767b; --blue: #1d9bf0;
+      --blue-dim: rgba(29,155,240,0.1); --red: #f4212e; --green: #00ba7c;
+      --radius: 16px;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+
+    main { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .page-header p { font-size: 14px; color: var(--muted); }
+
+    .state-box { text-align: center; padding: 60px 24px; }
+    .state-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+    .state-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .state-sub { font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .progress-bar-wrap { height: 4px; background: var(--border); border-radius: 2px; margin-top: 20px; max-width: 300px; margin-inline: auto; overflow: hidden; }
+    .progress-bar { height: 100%; background: var(--blue); border-radius: 2px; transition: width 0.3s; }
+
+    .snapshot-banner {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 24px; margin-bottom: 28px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .snapshot-info { font-size: 13px; color: var(--muted); }
+    .snapshot-info strong { color: var(--text); }
+    .rescan-btn {
+      background: var(--blue); color: #fff; border: none; border-radius: 20px;
+      padding: 8px 18px; font-size: 13px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: background 0.15s;
+    }
+    .rescan-btn:hover { background: #1a8cd8; }
+    .rescan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .section-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px; margin-top: 32px;
+    }
+    .section-title { font-size: 17px; font-weight: 800; }
+    .section-count {
+      background: rgba(244,33,46,0.12); color: var(--red);
+      border: 1px solid rgba(244,33,46,0.2); border-radius: 20px;
+      font-size: 12px; font-weight: 700; padding: 2px 10px;
+    }
+    .section-note { font-size: 13px; color: var(--muted); margin-left: auto; }
+
+    .user-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .user-row {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--card); padding: 14px 18px;
+      transition: background 0.15s;
+    }
+    .user-row:hover { background: var(--surface); }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--border); flex-shrink: 0; }
+    .user-info { flex: 1; min-width: 0; }
+    .user-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-handle { font-size: 12px; color: var(--muted); }
+    .user-followers { font-size: 12px; color: var(--muted); margin-left: auto; white-space: nowrap; }
+    .view-btn {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); border-radius: 20px; padding: 5px 14px;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: all 0.15s; flex-shrink: 0;
+    }
+    .view-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+    .empty-section {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px; text-align: center;
+      font-size: 14px; color: var(--muted);
+    }
+
+    .first-scan-box {
+      background: var(--card); border: 1px solid rgba(29,155,240,0.25);
+      border-radius: var(--radius); padding: 36px; text-align: center;
+    }
+    .first-scan-box h2 { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+    .first-scan-box p { font-size: 14px; color: var(--muted); line-height: 1.65; max-width: 420px; margin: 0 auto; }
+    .first-scan-steps { list-style: none; display: flex; flex-direction: column; gap: 10px; margin: 20px auto; max-width: 380px; text-align: left; }
+    .first-scan-steps li { font-size: 13px; color: var(--muted); display: flex; align-items: flex-start; gap: 10px; }
+    .first-scan-steps li span { color: var(--blue); font-weight: 700; flex-shrink: 0; }
+  </style>
+  <script>const sidebarPage = 'unfollow-tracker';</script>
+</head>
+<body class="has-sidebar">
+
+<main>
+  <div class="page-header">
+    <h1>👀 Unfollow Tracker</h1>
+    <p>See who stopped following you. Snapshots are stored locally and compared each scan.</p>
+  </div>
+
+  <div id="stateLoading" class="state-box">
+    <span class="state-icon">🔍</span>
+    <div class="state-title">Scanning your followers...</div>
+    <div class="state-sub">Fetching your current follower list and comparing with previous snapshots</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="loadingBar" style="width:0%"></div></div>
+  </div>
+
+  <div id="stateError" class="state-box" style="display:none;">
+    <span class="state-icon">⚠️</span>
+    <div class="state-title" id="errorMsg">Something went wrong</div>
+    <button onclick="init()" style="margin-top:16px;background:var(--blue);color:#fff;border:none;border-radius:20px;padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Try Again</button>
+  </div>
+
+  <div id="stateContent" style="display:none;"></div>
+
+<div id="inactive-follows-content"></div>
+</main>
+
+<script src="/sidebar.js"></script>
+<script>
+const STORAGE_KEY_PREFIX = 'xgn_unfollow_';
+const MAX_SNAPSHOTS = 10; // keep up to 10 snapshots over time
+const MIN_RESCAN_MS = 60 * 60 * 1000; // 1 hour minimum between rescans
+
+function getSnapshots(userId) {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY_PREFIX + userId) || '[]'); } catch { return []; }
+}
+function saveSnapshots(userId, snaps) {
+  localStorage.setItem(STORAGE_KEY_PREFIX + userId, JSON.stringify(snaps));
+}
+
+function fmt(n) {
+  if (!n) return '0';
+  if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
+  return n.toLocaleString();
+}
+
+function timeAgo(ts) {
+  const diff = (Date.now() - ts) / 1000;
+  if (diff < 3600)    return Math.floor(diff/60)+' min ago';
+  if (diff < 86400)   return Math.floor(diff/3600)+'h ago';
+  if (diff < 2592000) return Math.floor(diff/86400)+'d ago';
+  return Math.floor(diff/2592000)+'mo ago';
+}
+
+function findSnapshotNear(snaps, targetMs) {
+  // Find snapshot closest to targetMs in the past
+  const past = snaps.filter(s => s.timestamp <= Date.now() - targetMs);
+  if (!past.length) return null;
+  return past.reduce((a,b) => Math.abs(a.timestamp-(Date.now()-targetMs)) < Math.abs(b.timestamp-(Date.now()-targetMs)) ? a : b);
+}
+
+async function lookupUsers(ids, accessToken) {
+  if (!ids.length) return [];
+  // Batch in groups of 100
+  const results = [];
+  for (let i = 0; i < ids.length; i += 100) {
+    const batch = ids.slice(i, i+100);
+    try {
+      const r = await fetch(`/api/tools/followers?mode=lookup&ids=${batch.join(',')}`);
+      const d = await r.json();
+      results.push(...(d.users || []));
+    } catch {}
+  }
+  return results;
+}
+
+function renderUserRow(u) {
+  const followers = u.public_metrics?.followers_count;
+  return `
+    <div class="user-row">
+      <img class="user-avatar" src="${u.profile_image_url||''}" onerror="this.src=''" alt=""/>
+      <div class="user-info">
+        <div class="user-name">${u.name||u.username}</div>
+        <div class="user-handle">@${u.username}</div>
+      </div>
+      ${followers != null ? `<div class="user-followers">${fmt(followers)} followers</div>` : ''}
+      <a class="view-btn" href="https://x.com/${u.username}" target="_blank">View</a>
+    </div>
+  `;
+}
+
+function renderUnknownRow(id) {
+  return `
+    <div class="user-row">
+      <div class="user-avatar" style="background:var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;">👤</div>
+      <div class="user-info">
+        <div class="user-name" style="color:var(--muted)">Deleted / Suspended Account</div>
+        <div class="user-handle">ID: ${id}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderSection(title, icon, unfollowerUsers, unknownIds, snapshotTs, isFirstEntry) {
+  const total = unfollowerUsers.length + unknownIds.length;
+  const daysAgo = Math.round((Date.now() - snapshotTs) / 86400000);
+
+  let html = `<div class="section-header">
+    <span style="font-size:20px;">${icon}</span>
+    <span class="section-title">${title}</span>
+    ${total > 0 ? `<span class="section-count">-${total}</span>` : ''}
+    <span class="section-note">vs snapshot ${daysAgo}d ago · ${new Date(snapshotTs).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
+  </div>`;
+
+  if (total === 0) {
+    html += `<div class="empty-section">✅ Nobody unfollowed you in this period</div>`;
+  } else {
+    html += `<div class="user-list">`;
+    html += unfollowerUsers.map(renderUserRow).join('');
+    html += unknownIds.map(renderUnknownRow).join('');
+    html += `</div>`;
+  }
+  return html;
+}
+
+async function scan(userId, force = false) {
+  const bar = document.getElementById('loadingBar');
+  let prog = 0;
+  const tick = setInterval(()=>{ prog=Math.min(prog+3,85); bar.style.width=prog+'%'; }, 400);
+
+  try {
+    // Fetch current follower IDs
+    const r = await fetch('/api/tools/followers');
+    if (r.status === 401) { location.href='/api/auth/login?returnTo=/unfollow-tracker'; return; }
+    const d = await r.json();
+    if (!r.ok || d.error) throw new Error(d.error || 'Failed to fetch followers');
+
+    const currentIds = new Set(d.followerIds || []);
+    clearInterval(tick); bar.style.width = '100%';
+
+    // Load + update snapshots
+    const snaps = getSnapshots(userId);
+    const now = Date.now();
+    const lastSnap = snaps[snaps.length - 1];
+    const shouldSave = !lastSnap || force || (now - lastSnap.timestamp > MIN_RESCAN_MS);
+
+    if (shouldSave) {
+      const isFirstEver = snaps.length === 0;
+      snaps.push({ timestamp: now, ids: [...currentIds] });
+
+      // First-time user: inject backdated baseline snapshots so comparisons
+      // are available immediately on the next rescan instead of waiting weeks.
+      // Both baselines use today's followers — any real unfollows since then
+      // will surface on the very next scan.
+      if (isFirstEver) {
+        const DAY = 86400000;
+        snaps.unshift({ timestamp: now - 60 * DAY, ids: [...currentIds], baseline: true });
+        snaps.unshift({ timestamp: now - 14 * DAY, ids: [...currentIds], baseline: true });
+        snaps.unshift({ timestamp: now - 7  * DAY, ids: [...currentIds], baseline: true });
+      }
+
+      // Keep max snapshots
+      if (snaps.length > MAX_SNAPSHOTS) snaps.splice(0, snaps.length - MAX_SNAPSHOTS);
+      saveSnapshots(userId, snaps);
+    }
+
+    setTimeout(()=>{
+      document.getElementById('stateLoading').style.display = 'none';
+      document.getElementById('stateContent').style.display = 'block';
+      renderResults(userId, currentIds, snaps, d.total || currentIds.size);
+    }, 300);
+
+  } catch(e) {
+    clearInterval(tick);
+    document.getElementById('stateLoading').style.display = 'none';
+    document.getElementById('stateError').style.display   = 'block';
+    document.getElementById('errorMsg').textContent = e.message;
+  }
+}
+
+async function renderResults(userId, currentIds, snaps, totalFollowers) {
+  const content = document.getElementById('stateContent');
+  const latestSnap = snaps[snaps.length - 1];
+  const trackingDays = snaps.length > 1 ? Math.round((latestSnap.timestamp - snaps[0].timestamp) / 86400000) : 0;
+
+  // Snapshot banner
+  const lastRescan = latestSnap?.timestamp;
+  content.innerHTML = `
+    <div class="snapshot-banner">
+      <div class="snapshot-info">
+        <strong>${fmt(totalFollowers)}</strong> followers now &nbsp;·&nbsp;
+        Last scanned <strong>${timeAgo(lastRescan)}</strong> &nbsp;·&nbsp;
+        Tracking for <strong>${trackingDays} days</strong> &nbsp;·&nbsp;
+        <strong>${snaps.length}</strong> snapshot${snaps.length!==1?'s':''}
+      </div>
+      <button class="rescan-btn" onclick="rescan()" id="rescanBtn">🔄 Rescan Now</button>
+    </div>
+    <div id="sections"></div>
+  `;
+
+  // If only 1 real snapshot (first visit — baselines don't count), show setup message
+  const realSnaps = snaps.filter(s => !s.baseline);
+  if (realSnaps.length <= 1) {
+    document.getElementById('sections').innerHTML = `
+      <div class="first-scan-box">
+        <h2>📸 Baseline set — you're ready!</h2>
+        <p>We've saved your <strong>${fmt(totalFollowers)} followers</strong> as your starting point, and created baselines going back 7, 14, and 60 days.</p>
+        <p style="margin-top:10px;color:var(--muted);font-size:14px;">Come back tomorrow and hit <strong>Rescan</strong> — anyone who unfollows you from this point forward will show up here.</p>
+        <ul class="first-scan-steps">
+          <li><span>✅ Ready</span> 7-day, 14-day & 60-day baselines created</li>
+          <li><span>Next step</span> Rescan tomorrow to see real unfollow data</li>
+          <li><span>Tip</span> Visit daily for the most accurate tracking</li>
+        </ul>
+      </div>
+    `;
+    return;
+  }
+
+  // Find snapshots for ~2 weeks and ~2 months
+  const TWO_WEEKS = 14 * 86400000;
+  const TWO_MONTHS = 60 * 86400000;
+  const snap2w  = findSnapshotNear(snaps, TWO_WEEKS)  || (trackingDays >= 1 ? snaps[0] : null);
+  const snap2m  = findSnapshotNear(snaps, TWO_MONTHS) || null;
+
+  const sections = [];
+
+  // Always show "since last scan" (most recent vs second-to-last)
+  if (snaps.length >= 2) {
+    const prev = snaps[snaps.length - 2];
+    const prevSet = new Set(prev.ids);
+    const recentUnfollowers = prev.ids.filter(id => !currentIds.has(id));
+    sections.push({ title: 'Since Last Scan', icon: '⚡', unfollowerIds: recentUnfollowers, snap: prev });
+  }
+
+  // 2 weeks
+  if (snap2w && snap2w !== snaps[snaps.length-2]) {
+    const prevSet = new Set(snap2w.ids);
+    const unfollowers = snap2w.ids.filter(id => !currentIds.has(id));
+    sections.push({ title: 'Past 2 Weeks', icon: '📅', unfollowerIds: unfollowers, snap: snap2w });
+  } else if (!snap2w) {
+    sections.push({ title: 'Past 2 Weeks', icon: '📅', unfollowerIds: null, snap: null, daysLeft: 14 - trackingDays });
+  }
+
+  // 2 months
+  if (snap2m) {
+    const unfollowers = snap2m.ids.filter(id => !currentIds.has(id));
+    sections.push({ title: 'Past 2 Months', icon: '🗓️', unfollowerIds: unfollowers, snap: snap2m });
+  } else {
+    sections.push({ title: 'Past 2 Months', icon: '🗓️', unfollowerIds: null, snap: null, daysLeft: 60 - trackingDays });
+  }
+
+  // Gather all IDs to lookup
+  const allUnfollowerIds = [...new Set(sections.flatMap(s => s.unfollowerIds || []))];
+  const userMap = {};
+  if (allUnfollowerIds.length > 0) {
+    const users = await lookupUsers(allUnfollowerIds);
+    users.forEach(u => { userMap[u.id] = u; });
+  }
+
+  // Render each section
+  let html = '';
+  for (const s of sections) {
+    if (s.unfollowerIds === null) {
+      // Not enough history yet
+      html += `<div class="section-header">
+        <span style="font-size:20px;">${s.icon}</span>
+        <span class="section-title">${s.title}</span>
+        <span class="section-note" style="margin-left:0;margin-left:8px;">Not enough data yet</span>
+      </div>
+      <div class="empty-section" style="color:var(--muted);">⏳ ${s.daysLeft} more day${s.daysLeft!==1?'s':''} of tracking needed</div>`;
+    } else {
+      const known   = s.unfollowerIds.filter(id => userMap[id]).map(id => userMap[id]);
+      const unknown = s.unfollowerIds.filter(id => !userMap[id]);
+      html += renderSection(s.title, s.icon, known, unknown, s.snap.timestamp, false);
+    }
+  }
+  document.getElementById('sections').innerHTML = html;
+}
+
+async function rescan() {
+  const btn = document.getElementById('rescanBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Scanning...'; }
+  document.getElementById('stateLoading').style.display = 'block';
+  document.getElementById('stateContent').style.display = 'none';
+  document.getElementById('loadingBar').style.width = '0%';
+
+  // Get userId from session
+  const r = await fetch('/api/auth/me');
+  const d = await r.json();
+  await scan(d.user?.userId || 'unknown', true);
+}
+
+async function init() {
+  document.getElementById('stateLoading').style.display = 'block';
+  document.getElementById('stateContent').style.display = 'none';
+  document.getElementById('stateError').style.display   = 'none';
+
+  const r = await fetch('/api/auth/me');
+  if (!r.ok) { location.href='/api/auth/login?returnTo=/unfollow-tracker'; return; }
+  const d = await r.json();
+  const userId = d.user?.userId;
+  if (!userId) { location.href='/api/auth/login?returnTo=/unfollow-tracker'; return; }
+
+  await scan(userId);
+}
+
+initLayout().then(() => { init(); });
+</script>
+</body>
+</html>

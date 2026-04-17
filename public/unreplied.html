@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Unreplied Comments — XGrowthNow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --surface: #0f0f0f; --card: #16181c; --border: #2f3336;
+      --text: #e7e9ea; --muted: #71767b; --blue: #1d9bf0; --green: #00ba7c;
+      --red: #f4212e; --radius: 12px;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+
+    .inner { max-width: 720px; margin: 0 auto; padding: 36px 20px 80px; }
+
+    .page-title { font-size: 24px; font-weight: 900; margin-bottom: 6px; }
+    .page-sub   { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+
+    /* Stats bar */
+    .stats-bar { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+    .stat-chip { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 13px; }
+    .stat-chip strong { display: block; font-size: 22px; font-weight: 900; color: var(--blue); }
+
+    /* Loading */
+    #stateLoading { text-align: center; padding: 80px 0; color: var(--muted); }
+    .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Tweet cards */
+    .tweet-list { display: flex; flex-direction: column; gap: 12px; }
+    .tweet-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px 20px; transition: border-color 0.2s;
+    }
+    .tweet-card:hover { border-color: #444; }
+
+    .tweet-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 8px; }
+    .tweet-text { font-size: 15px; line-height: 1.55; margin-bottom: 14px; white-space: pre-wrap; word-break: break-word; }
+    .tweet-text a { color: var(--blue); text-decoration: none; }
+
+    .tweet-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .meta-item { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--muted); }
+    .meta-item svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+
+    .btn-group { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .reply-btn, .view-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 50px; padding: 7px 14px; font-size: 13px; font-weight: 700;
+      text-decoration: none; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .reply-btn { background: var(--blue); color: #fff; border: none; }
+    .reply-btn:hover { background: #1a8cd8; }
+    .view-btn { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .view-btn:hover { border-color: var(--text); color: var(--text); }
+
+    /* Empty state */
+    #stateEmpty { text-align: center; padding: 60px 0; color: var(--muted); display: none; }
+    #stateEmpty .big { font-size: 42px; margin-bottom: 12px; }
+
+    .refresh-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid var(--border); background: none; color: var(--text);
+      border-radius: 50px; padding: 8px 18px; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; margin-bottom: 20px;
+    }
+    .refresh-btn:hover { border-color: var(--blue); color: var(--blue); }
+  </style>
+</head>
+<body class="has-sidebar">
+
+<div class="inner">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:6px;">
+    <h1 class="page-title">💬 Unreplied Comments</h1>
+    <button class="refresh-btn" id="refreshBtn" onclick="load()">↺ Refresh</button>
+  </div>
+  <p class="page-sub">Your recent tweets where people have commented — sorted by most replies first. Never miss an engagement opportunity.</p>
+
+  <div id="statsBar" class="stats-bar" style="display:none;">
+    <div class="stat-chip"><strong id="statUnreplied">—</strong>unreplied</div>
+    <div class="stat-chip"><strong id="statScanned">—</strong>tweets scanned</div>
+  </div>
+
+  <div id="stateLoading">
+    <div class="spinner"></div>
+    <div>Scanning your recent tweets...</div>
+    <div style="font-size:12px;margin-top:8px;color:var(--border)">This takes ~15 seconds</div>
+  </div>
+
+  <div id="stateEmpty">
+    <div class="big">🎉</div>
+    <div style="font-size:17px;font-weight:700;margin-bottom:8px;">You're all caught up!</div>
+    <div style="font-size:14px;">No unreplied comments on your recent tweets.</div>
+  </div>
+
+  <div class="tweet-list" id="tweetList"></div>
+</div>
+
+<script src="/sidebar.js"></script>
+<script>
+let currentUser = null;
+
+initLayout().then(user => {
+  if (!user) { window.location.href = '/api/auth/login'; return; }
+  currentUser = user;
+  load();
+});
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function fmt(n) {
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return n?.toLocaleString() || '0';
+}
+
+function truncateText(text, max = 240) {
+  // Remove media URLs (t.co links at end)
+  text = text.replace(/https:\/\/t\.co\/\S+/g, '').trim();
+  if (text.length > max) return text.slice(0, max) + '…';
+  return text;
+}
+
+async function load() {
+  document.getElementById('stateLoading').style.display = 'block';
+  document.getElementById('stateEmpty').style.display   = 'none';
+  document.getElementById('tweetList').innerHTML        = '';
+  document.getElementById('statsBar').style.display     = 'none';
+  document.getElementById('refreshBtn').disabled        = true;
+
+  try {
+    const res  = await fetch('/api/tools/unreplied');
+    const data = await res.json();
+
+    document.getElementById('stateLoading').style.display = 'none';
+    document.getElementById('refreshBtn').disabled        = false;
+
+    if (!res.ok) {
+      document.getElementById('tweetList').innerHTML = `<div style="color:var(--red);padding:20px;">${data.error || 'Failed to load'}</div>`;
+      return;
+    }
+
+    document.getElementById('statUnreplied').textContent = fmt(data.total || 0);
+    document.getElementById('statScanned').textContent   = fmt(data.totalScanned || 0);
+    document.getElementById('statsBar').style.display    = 'flex';
+
+    if (!data.unreplied?.length) {
+      document.getElementById('stateEmpty').style.display = 'block';
+      return;
+    }
+
+    const list = document.getElementById('tweetList');
+    data.unreplied.forEach(t => {
+      const card = document.createElement('div');
+      card.className = 'tweet-card';
+      card.innerHTML = `
+        <div class="tweet-label">Your tweet · ${formatDate(t.createdAt)}</div>
+        <div class="tweet-text">${truncateText(t.text)}</div>
+        <div class="tweet-meta">
+          <span class="meta-item">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <strong style="color:var(--text);">${fmt(t.replyCount)}</strong> comments
+          </span>
+          <span class="meta-item">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            ${fmt(t.likeCount)}
+          </span>
+          <span class="meta-item">
+            <svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            ${fmt(t.retweetCount)}
+          </span>
+          <span class="meta-item">${formatDate(t.createdAt)}</span>
+          <div class="btn-group">
+            <a class="view-btn" href="${t.url}" target="_blank">View Comments</a>
+            <a class="reply-btn" href="https://twitter.com/intent/tweet?in_reply_to=${t.id}" target="_blank">✏ Reply</a>
+          </div>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+
+  } catch (e) {
+    document.getElementById('stateLoading').style.display = 'none';
+    document.getElementById('refreshBtn').disabled        = false;
+    document.getElementById('tweetList').innerHTML = `<div style="color:var(--red);padding:20px;">Error: ${e.message}</div>`;
+  }
+}
+</script>
+</body>
+</html>

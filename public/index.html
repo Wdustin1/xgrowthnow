@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XGrowthNow — The X Growth Toolkit</title>
+  <meta name="description" content="XGrowthNow gives you the exact tools to unfollow dead weight, post at the right time, spy on competitors, and recycle your best content — all in one place." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #000;
+      --surface: #0a0a0a;
+      --card: #111;
+      --border: #1f1f1f;
+      --blue: #1d9bf0;
+      --purple: #7b61ff;
+      --green: #00ba7c;
+      --red: #f4212e;
+      --text: #e7e9ea;
+      --muted: #71767b;
+      --muted2: #888;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── TYPOGRAPHY ─── */
+    h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -1px; }
+
+    /* ─── FADE-IN ─── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+    }
+    
+    .nav-logo {
+      font-size: 28px;
+      font-weight: 900;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: -1px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-logo span { color: var(--blue); }
+    .nav-logo-img { height: 38px; width: auto; display: block; flex-shrink: 0; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted2);
+      text-decoration: none;
+      font-size: 17px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #fff; }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 100px;
+      background: linear-gradient(135deg, #1d9bf0, #7b61ff);
+      box-shadow: 0 0 24px rgba(29,155,240,0.3);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(29,155,240,0.5);
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: 100px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-secondary:hover {
+      border-color: rgba(29,155,240,0.4);
+      background: rgba(29,155,240,0.05);
+    }
+    .nav-mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 22px;
+      cursor: pointer;
+    }
+    @media (max-width: 700px) {
+      .nav-links { display: none; }
+      .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100px;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.97);
+        border-bottom: 1px solid var(--border);
+        padding: 16px 24px 24px;
+        gap: 20px;
+      }
+      .nav-mobile-toggle { display: block; }
+    }
+
+    /* ─── ORBS ─── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(80px);
+      opacity: 0.65;
+      animation: orbFloat 12s ease-in-out infinite;
+    }
+    .orb-1 {
+      width: 729px; height: 729px;
+      background: radial-gradient(circle, rgba(29,155,240,0.63) 0%, transparent 70%);
+      top: -160px; left: -140px;
+      animation-duration: 14s;
+    }
+    .orb-2 {
+      width: 608px; height: 608px;
+      background: radial-gradient(circle, rgba(123,97,255,0.59) 0%, transparent 70%);
+      top: 60px; right: -100px;
+      animation-duration: 17s;
+      animation-delay: -5s;
+    }
+    .orb-3 {
+      width: 486px; height: 486px;
+      background: radial-gradient(circle, rgba(29,155,240,0.41) 0%, transparent 70%);
+      top: 50vh; left: 30%;
+      animation-duration: 20s;
+      animation-delay: -9s;
+      opacity: 0.41;
+    }
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      33%       { transform: translateY(-30px) scale(1.04); }
+      66%       { transform: translateY(20px) scale(0.97); }
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 140px 40px 120px;
+      gap: 40px;
+    }
+    .hero-text {
+      flex: 1;
+      text-align: left;
+    }
+    .hero-phone {
+      position: relative;
+      width: 760px;
+      height: 700px;
+      flex-shrink: 0;
+      overflow: visible;
+    }
+    @media (max-width: 900px) {
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 60px 24px;
+      }
+      .hero-text { text-align: center; }
+      .hero-phone { display: none; }
+      .hero h1 { font-size: clamp(26px, 7vw, 42px); max-width: 100%; letter-spacing: -1px; }
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      border-radius: 100px;
+      border: 1px solid rgba(29,155,240,0.3);
+      background: rgba(29,155,240,0.08);
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 28px;
+    }
+    .hero h1 em { font-style: normal; -webkit-text-fill-color: #1d9bf0; color: #1d9bf0; }
+    .hero h1 {
+      font-size: 46px;
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -2px;
+      background: linear-gradient(135deg, #fff 0%, #a8d4f8 60%, #1d9bf0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      max-width: 800px;
+      margin: 0 0 24px;
+      text-align: left;
+    }
+    @media (max-width: 900px) {
+      .hero h1 { margin: 0 auto 24px; text-align: center; font-size: clamp(22px, 6.5vw, 36px) !important; max-width: 100% !important; letter-spacing: -0.5px; }
+    }
+    .hero p {
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--muted);
+      max-width: 540px;
+      margin: 0 0 40px;
+      line-height: 1.7;
+    }
+    /* Nav handle input */
+    .hero-sub-p { font-size: 16px; color: var(--muted2); margin-bottom: 0; }
+    .hero-stars { font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .hero-stars span { font-weight: 600; color: #fff; }
+    .hero-testimonial { margin-top: 32px; max-width: 460px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px 28px; }
+    .testimonial-text { font-size: 16px; color: rgba(255,255,255,0.9); line-height: 1.6; font-style: italic; margin-bottom: 20px; font-weight: 500; }
+    .testimonial-byline { display: flex; align-items: center; gap: 14px; }
+    .testimonial-accent { width: 32px; height: 3px; background: linear-gradient(90deg, #1d9bf0, #7b61ff); border-radius: 2px; flex-shrink: 0; }
+    .testimonial-avatar-circle { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #1d9bf0, #7b61ff); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .testimonial-name { font-size: 15px; font-weight: 800; color: #fff; }
+    .testimonial-handle { font-size: 13px; color: var(--blue); font-weight: 500; }
+
+    /* Dashboard Mockup */
+    .dashboard-mockup {
+      position: absolute;
+      right: -40px;
+      bottom: 40px;
+      width: 760px;
+      height: 540px;
+      background: #0d0d0f;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
+      z-index: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .db-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .db-logo { font-size: 15px; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
+    .db-badge { font-size: 10px; font-weight: 700; color: #22c55e; background: rgba(34,197,94,0.12); padding: 3px 8px; border-radius: 100px; border: 1px solid rgba(34,197,94,0.25); animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .db-stats { display: flex; gap: 0; margin-bottom: 16px; }
+    .db-stat { flex: 1; text-align: center; padding: 10px 0; border-right: 1px solid rgba(255,255,255,0.06); }
+    .db-stat:last-child { border-right: none; }
+    .db-stat-val { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .db-stat-label { font-size: 10px; color: rgba(255,255,255,0.4); font-weight: 500; }
+    .db-chart-wrap { margin-bottom: 14px; border-radius: 10px; overflow: hidden; background: rgba(29,155,240,0.04); border: 1px solid rgba(29,155,240,0.1); flex: 1; min-height: 0; }
+    .db-chart { width: 100%; height: 100%; display: block; min-height: 200px; }
+    .db-chart-line { stroke-dasharray: 900; stroke-dashoffset: 900; animation: drawLine 2.5s ease forwards; }
+    .db-chart-fill { opacity: 0; animation: fadeIn 2.5s ease forwards; }
+    @keyframes drawLine { to { stroke-dashoffset: 0; } }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+    .db-feed-title { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .db-feed { display: flex; flex-direction: column; gap: 6px; }
+    .db-feed-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; background: rgba(255,255,255,0.03); transition: opacity 0.3s ease, transform 0.3s ease; }
+    .db-feed-avatar { width: 24px; height: 24px; border-radius: 50%; background: #1d9bf0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .db-feed-name { flex: 1; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.85); }
+    .db-feed-name span { font-weight: 400; color: rgba(255,255,255,0.4); }
+    .db-feed-time { font-size: 10px; color: rgba(255,255,255,0.3); white-space: nowrap; }
+
+    /* ─── IPHONE MOCKUP (PathSocial style) ─── */
+    .iphone-frame {
+      position: absolute;
+      right: -30px;
+      bottom: -120px;
+      z-index: 3;
+      width: 210px;
+      height: 430px;
+      border-radius: 36px;
+      background: linear-gradient(145deg, #2a3a4a, #1a2535);
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.5), inset 0 0 0 2px rgba(255,255,255,0.08), 0 30px 80px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    /* Side buttons */
+    .iphone-btn-silent {
+      position: absolute;
+      left: -3px;
+      top: 90px;
+      width: 3px;
+      height: 26px;
+      background: #1a2535;
+      border-radius: 3px 0 0 3px;
+    }
+    .iphone-btn-vol-up {
+      position: absolute;
+      left: -3px;
+      top: 130px;
+      width: 3px;
+      height: 44px;
+      background: #1a2535;
+      border-radius: 3px 0 0 3px;
+    }
+    .iphone-btn-vol-dn {
+      position: absolute;
+      left: -3px;
+      top: 184px;
+      width: 3px;
+      height: 44px;
+      background: #1a2535;
+      border-radius: 3px 0 0 3px;
+    }
+    .iphone-btn-power {
+      position: absolute;
+      right: -3px;
+      top: 140px;
+      width: 3px;
+      height: 60px;
+      background: #1a2535;
+      border-radius: 0 3px 3px 0;
+    }
+    /* Notch */
+    .iphone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 24px;
+      border-radius: 0 0 16px 16px;
+      background: #0d1117;
+      z-index: 10;
+    }
+    /* Inner screen */
+    .iphone-screen {
+      position: absolute;
+      inset: 6px;
+      border-radius: 38px;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 90% 75% at 88% 8%, rgba(65, 105, 220, 0.9) 0%, rgba(40, 70, 180, 0.45) 40%, transparent 65%),
+        radial-gradient(ellipse 85% 90% at 8% 92%, rgba(18, 155, 115, 0.9) 0%, rgba(10, 110, 90, 0.45) 40%, transparent 65%),
+        radial-gradient(ellipse 55% 45% at 50% 48%, rgba(25, 45, 95, 0.6) 0%, transparent 70%),
+        linear-gradient(175deg, #040c18 0%, #060f1e 40%, #050c16 100%);
+      display: flex;
+      flex-direction: column;
+    }
+    /* Home indicator */
+    .iphone-home-bar {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 2px;
+      z-index: 10;
+    }
+    /* Lock screen content */
+    .phone-time {
+      font-size: 38px;
+      font-weight: 300;
+      color: #fff;
+      text-align: center;
+      margin-top: 28px;
+      letter-spacing: -2px;
+      flex-shrink: 0;
+    }
+    .phone-date {
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      margin-bottom: 10px;
+      flex-shrink: 0;
+    }
+    /* Notification center panel */
+    .notif-center {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 16px;
+      margin: 0 10px;
+      padding: 0;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .notif-center-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.2px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .notif-close {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+    }
+    /* Notification cards inside the center */
+    .notif-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.04);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .notif-app-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      color: #fff;
+      font-weight: 900;
+    }
+    .notif-content { flex: 1; min-width: 0; }
+    .notif-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+    .notif-app-name {
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .notif-time { font-size: 10px; color: rgba(255,255,255,0.4); }
+    .notif-body {
+      font-size: 12px;
+      color: rgba(255,255,255,0.9);
+      font-weight: 500;
+      line-height: 1.3;
+    }
+    /* Phone glow */
+    .phone-glow {
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 180px;
+      height: 50px;
+      background: rgba(29,155,240,0.4);
+      filter: blur(24px);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .nav-handle-form {
+      display: flex; align-items: center; gap: 10px;
+      background: #111; border: 1px solid #333; border-radius: 100px;
+      padding: 8px 8px 8px 22px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      flex-shrink: 0;
+    }
+    .nav-handle-form:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(29,155,240,0.15); }
+    .nav-handle-at { font-size: 17px; font-weight: 700; color: var(--muted2); flex-shrink: 0; }
+    .nav-handle-input {
+      background: transparent; border: none; outline: none;
+      font-size: 16px; font-weight: 500; color: var(--text); font-family: inherit;
+      width: 160px;
+    }
+    .nav-handle-input::placeholder { color: #555; }
+    .nav-handle-btn {
+      background: linear-gradient(135deg, #1d9bf0, #7b61ff); color: #fff;
+      border: none; border-radius: 100px; font-size: 15px; font-weight: 700;
+      padding: 12px 22px; cursor: pointer; font-family: inherit; white-space: nowrap;
+      transition: all 0.15s; flex-shrink: 0;
+    }
+    .nav-handle-btn:hover { opacity: 0.9; }
+    @media (max-width: 1080px) { .nav-handle-form { display: none; } }
+
+    /* Hero buttons */
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+    @media (max-width: 900px) {
+      .hero-buttons { justify-content: center; }
+    }
+    .hero-buttons .btn-primary {
+      padding: 16px 32px;
+      font-size: 16px;
+      border-radius: 100px;
+    }
+
+    /* ─── STATS BAR ─── */
+    .stats-bar {
+      position: relative;
+      z-index: 1;
+      margin-top: 72px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .stats-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      divide: 1px solid var(--border);
+    }
+    .stat-item {
+      padding: 28px 24px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -1px;
+    }
+    .stat-value span { color: var(--blue); }
+    .stat-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    @media (max-width: 600px) {
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(1),
+      .stat-item:nth-child(2) { border-bottom: 1px solid var(--border); }
+    }
+
+    /* ─── SECTIONS SHARED ─── */
+    section {
+      position: relative;
+      z-index: 1;
+    }
+    .section-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 800;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: -1px;
+      color: #fff;
+      line-height: 1.15;
+    }
+    .section-subtitle {
+      font-size: 17px;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    /* ─── HOW IT WORKS ─── */
+    .hiw {
+      padding: 100px 0;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 48px;
+      left: calc(16.66% + 20px);
+      right: calc(16.66% + 20px);
+      height: 1px;
+      border-top: 2px dashed rgba(29,155,240,0.25);
+      z-index: 0;
+    }
+    .step {
+      text-align: center;
+      padding: 32px 28px;
+      position: relative;
+      z-index: 1;
+    }
+    .step-number {
+      font-size: 72px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.04);
+      line-height: 1;
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      letter-spacing: -3px;
+    }
+    .step-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 20px;
+      position: relative;
+      z-index: 2;
+    }
+    .step h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .step p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    @media (max-width: 700px) {
+      .steps { grid-template-columns: 1fr; gap: 8px; }
+      .steps::before { display: none; }
+      .step-number { font-size: 48px; }
+    }
+
+    /* ─── FEATURE HIGHLIGHTS ─── */
+    .features { padding: 0 0 100px; }
+    .feature-block {
+      max-width: 1400px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .feature-block.reverse { direction: rtl; }
+    .feature-block.reverse > * { direction: ltr; }
+    .feature-text .section-label { margin-bottom: 12px; }
+    .feature-text h3 {
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .feature-text p {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .feature-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .feature-bullets li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .feature-bullets li::before {
+      content: '✓';
+      color: var(--green);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .feature-mock {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      overflow: hidden;
+    }
+    .mock-header {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .mock-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid transparent;
+      margin-bottom: 8px;
+      transition: border-color 0.2s;
+    }
+    .mock-row:hover { border-color: var(--border); }
+    .mock-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .mock-info { flex: 1; }
+    .mock-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .mock-handle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .mock-btn {
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: transparent;
+      border: 1px solid rgba(244,33,46,0.4);
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .mock-btn:hover { background: rgba(244,33,46,0.1); }
+
+    /* Heatmap mock */
+    .heatmap-mock { padding: 16px 20px; }
+    .heatmap-labels {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+      padding-left: 48px;
+    }
+    .heatmap-labels span {
+      flex: 1;
+      text-align: center;
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .heatmap-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .heatmap-day {
+      width: 42px;
+      flex-shrink: 0;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
+      text-align: right;
+    }
+    .heatmap-cell {
+      flex: 1;
+      height: 28px;
+      border-radius: 5px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+    }
+    .heatmap-cell.hot-1 { background: rgba(29,155,240,0.15); border-color: rgba(29,155,240,0.2); }
+    .heatmap-cell.hot-2 { background: rgba(29,155,240,0.30); border-color: rgba(29,155,240,0.35); }
+    .heatmap-cell.hot-3 { background: rgba(29,155,240,0.55); border-color: rgba(29,155,240,0.6); }
+    .heatmap-cell.hot-4 { background: rgba(29,155,240,0.80); border-color: rgba(29,155,240,0.85); }
+
+    @media (max-width: 900px) {
+      .feature-block {
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+      .feature-block.reverse { direction: ltr; }
+    }
+
+    /* ─── TOOLS GRID ─── */
+    .tools-section {
+      padding: 100px 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .tool-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 28px 24px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+      background: var(--card);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      position: relative;
+    }
+    .tool-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(29,155,240,0.12), 0 0 0 1px rgba(29,155,240,0.2);
+      border-color: rgba(29,155,240,0.3);
+    }
+    .tool-card:hover .tool-arrow { opacity: 1; }
+    /* Remove right border on last column */
+    .tool-card:nth-child(3n) { border-right: none; }
+    /* Remove bottom border on last row */
+    .tool-card:nth-last-child(-n+3) { border-bottom: none; }
+    .tool-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .icon-tracker { background: linear-gradient(135deg,#1d3a5c,#1d9bf0); }
+    .icon-unfollow { background: linear-gradient(135deg,#3d1515,#f4212e); }
+    .icon-time { background: linear-gradient(135deg,#3d3000,#ffd400); }
+    .icon-unreplied { background: linear-gradient(135deg,#003d2a,#00ba7c); }
+    .icon-loyal { background: linear-gradient(135deg,#002a3d,#06b6d4); }
+    .icon-spy { background: linear-gradient(135deg,#1a1a3d,#6366f1); }
+    .icon-recycler { background: linear-gradient(135deg,#003d1a,#00ba7c); }
+    .icon-ai { background: linear-gradient(135deg,#2d1a4a,#ec4899); }
+    .icon-dashboard { background: linear-gradient(135deg,#001a3d,#1d9bf0); }
+    .tool-info { flex: 1; }
+    .tool-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .tool-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .tool-arrow {
+      position: absolute;
+      top: 28px;
+      right: 20px;
+      color: var(--blue);
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    @media (max-width: 800px) {
+      .tools-grid { grid-template-columns: repeat(2, 1fr); }
+      .tool-card:nth-child(3n) { border-right: 1px solid var(--border); }
+      .tool-card:nth-child(2n) { border-right: none; }
+      .tool-card:nth-last-child(-n+2) { border-bottom: none; }
+      .tool-card:nth-last-child(-n+3) { border-bottom: 1px solid var(--border); }
+    }
+    @media (max-width: 520px) {
+      .tools-grid { grid-template-columns: 1fr; }
+      .tool-card { border-right: none !important; }
+      .tool-card:last-child { border-bottom: none !important; }
+      .tool-card:nth-last-child(-n+2) { border-bottom: 1px solid var(--border) !important; }
+    }
+
+    /* ─── PRICING TEASER ─── */
+    .pricing-teaser {
+      padding: 100px 0;
+    }
+    .pricing-teaser .section-inner {
+      text-align: center;
+    }
+    .pricing-teaser .section-title { margin-bottom: 12px; }
+    .plan-pills {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 36px 0 40px;
+    }
+    .plan-pill {
+      padding: 12px 24px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .plan-pill span {
+      color: var(--blue);
+    }
+    .plan-pill.featured {
+      border-color: rgba(29,155,240,0.4);
+      background: rgba(29,155,240,0.08);
+    }
+    .pricing-note {
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ─── FAQ ─── */
+    .faq-section {
+      padding: 100px 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .faq-list {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-question {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 24px;
+      background: var(--card);
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .faq-question:hover { background: rgba(255,255,255,0.03); }
+    .faq-chevron {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s, border-color 0.2s;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .faq-item.open .faq-chevron {
+      transform: rotate(180deg);
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .faq-item.open .faq-answer { max-height: 200px; }
+    .faq-answer-inner {
+      padding: 0 24px 20px;
+      background: var(--card);
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ─── CTA BANNER ─── */
+    .cta-banner {
+      padding: 100px 24px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(29,155,240,0.12) 0%, rgba(123,97,255,0.1) 50%, rgba(29,155,240,0.06) 100%);
+      box-shadow: 0 0 60px rgba(29,155,240,0.08);
+      border-top: 1px solid rgba(29,155,240,0.12);
+    }
+    .cta-banner h2 {
+      font-size: clamp(28px, 4vw, 52px);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .cta-banner p {
+      font-size: 17px;
+      color: var(--muted);
+      margin-bottom: 40px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cta-banner .btn-primary {
+      padding: 16px 36px;
+      font-size: 16px;
+      border-radius: 100px;
+    }
+
+    /* ─── SECTION DIVIDER ─── */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(29,155,240,0.2) 30%, rgba(123,97,255,0.2) 70%, transparent 100%);
+      margin: 0;
+      border: none;
+    }
+
+    /* ─── FOOTER ─── */
+    footer { border-top: 1px solid var(--border); background: #050505; padding: 60px 40px 32px; }
+    .footer-inner { max-width: 1400px; margin: 0 auto 48px; display: flex; gap: 64px; flex-wrap: wrap; }
+    .footer-brand { flex: 0 0 240px; }
+    .footer-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800; color: var(--text); text-decoration: none; }
+    .footer-logo span { color: var(--blue); }
+    .footer-tagline { font-size: 13px; color: var(--muted2); margin-top: 10px; line-height: 1.6; }
+    .footer-social { margin-top: 16px; }
+    .footer-social-link { font-size: 13px; font-weight: 600; color: var(--blue); text-decoration: none; }
+    .footer-links-group { display: flex; gap: 48px; flex: 1; flex-wrap: wrap; }
+    .footer-col { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 4px; }
+    .footer-col a { font-size: 14px; color: var(--muted2); text-decoration: none; transition: color 0.15s; }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom { max-width: 1400px; margin: 0 auto; padding-top: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); flex-wrap: wrap; gap: 8px; }
+    @media (max-width: 768px) { footer { padding: 48px 24px 24px; } .footer-inner { gap: 40px; } .footer-brand { flex: 0 0 100%; } }
+  </style>
+  <style>
+    body { animation: pageIn 0.3s ease forwards; }
+    @keyframes pageIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+<!-- ─── BACKGROUND ORBS ─── -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><img src="/logo-icon.png" alt="" class="nav-logo-img"/>XGrowth<span>Now</span></a>
+    <form class="nav-handle-form" id="handleForm" onsubmit="checkGrowth(event)">
+      <span class="nav-handle-at">@</span>
+      <input class="nav-handle-input" id="handleInput" type="text" placeholder="yourhandle" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"/>
+      <button class="nav-handle-btn" type="submit">Check My Growth →</button>
+    </form>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#tools">Tools</a></li>
+      <li><a href="/pricing">Pricing</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li>
+        <a href="/api/auth/login" class="btn-primary">Sign in with 𝕏</a>
+      </li>
+    </ul>
+    <button class="nav-mobile-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero" style="position:relative;z-index:1;">
+  <!-- Left column: text + CTA -->
+  <div class="hero-text">
+    <div class="hero-stars fade-in">⭐⭐⭐⭐⭐ <span>Trusted by 500+ X creators</span></div>
+    <h1 class="fade-in">Grow on X Organically<br/>&amp; Get Monetized <em>FASTER</em></h1>
+    <p class="fade-in hero-sub-p">No bots. Just real growth through proven tools to help get monetized.</p>
+    <div class="hero-buttons fade-in">
+      <a href="/pricing" class="btn-primary">Get Started →</a>
+      <a href="/growth-predictor" class="btn-secondary">Preview My Growth →</a>
+    </div>
+    <div class="hero-testimonial fade-in">
+      <div class="testimonial-text">"Gained 800 followers in my first month and hit monetization within 60 days."</div>
+      <div class="testimonial-byline">
+        <div class="testimonial-accent"></div>
+        <div class="testimonial-avatar-circle">GM</div>
+        <div>
+          <div class="testimonial-name">Growth MD</div>
+          <div class="testimonial-handle">@growthmd · X Creator</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right column: iPhone mockup + dashboard -->
+  <div class="hero-phone">
+    <div class="dashboard-mockup">
+      <!-- Header -->
+      <div class="db-header">
+        <span class="db-logo">XGrowthNow</span>
+        <span class="db-badge">● Live</span>
+      </div>
+      <!-- Stats row -->
+      <div class="db-stats">
+        <div class="db-stat">
+          <div class="db-stat-val" id="followerCount">12,847</div>
+          <div class="db-stat-label">Followers</div>
+        </div>
+        <div class="db-stat">
+          <div class="db-stat-val" style="color:#22c55e">+4.2%</div>
+          <div class="db-stat-label">Growth Rate</div>
+        </div>
+        <div class="db-stat">
+          <div class="db-stat-val" style="color:#1d9bf0">82</div>
+          <div class="db-stat-label">Score</div>
+        </div>
+      </div>
+      <!-- Mini chart -->
+      <div class="db-chart-wrap">
+        <svg class="db-chart" viewBox="0 0 380 120" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(29,155,240,0.35)"/>
+              <stop offset="100%" stop-color="rgba(29,155,240,0)"/>
+            </linearGradient>
+          </defs>
+          <path class="db-chart-fill" d="M0,110 C30,105 60,95 100,78 C140,61 160,80 200,62 C240,44 270,32 310,20 C340,12 360,8 380,5 L380,120 L0,120 Z" fill="url(#chartGrad)"/>
+          <path class="db-chart-line" d="M0,110 C30,105 60,95 100,78 C140,61 160,80 200,62 C240,44 270,32 310,20 C340,12 360,8 380,5" fill="none" stroke="#1d9bf0" stroke-width="2.5" stroke-linecap="round"/>
+          <text x="0" y="118" font-size="9" fill="rgba(255,255,255,0.3)">Jan</text>
+          <text x="88" y="118" font-size="9" fill="rgba(255,255,255,0.3)">Feb</text>
+          <text x="185" y="118" font-size="9" fill="rgba(255,255,255,0.3)">Mar</text>
+          <text x="280" y="118" font-size="9" fill="rgba(255,255,255,0.3)">Apr</text>
+          <text x="358" y="118" font-size="9" fill="rgba(255,255,255,0.3)">May</text>
+        </svg>
+      </div>
+      <!-- Recent activity feed -->
+      <div class="db-feed-title">Recent Followers</div>
+      <div class="db-feed" id="dbFeed">
+        <div class="db-feed-item">
+          <div class="db-feed-avatar">B</div>
+          <div class="db-feed-name">@bitcoinbull <span>followed you</span></div>
+          <div class="db-feed-time">just now</div>
+        </div>
+        <div class="db-feed-item">
+          <div class="db-feed-avatar" style="background:#7b61ff">C</div>
+          <div class="db-feed-name">@cryptodoc99 <span>followed you</span></div>
+          <div class="db-feed-time">1m ago</div>
+        </div>
+        <div class="db-feed-item">
+          <div class="db-feed-avatar" style="background:#22c55e">T</div>
+          <div class="db-feed-name">@tradermike <span>followed you</span></div>
+          <div class="db-feed-time">2m ago</div>
+        </div>
+      </div>
+    </div>
+    <div class="iphone-frame">
+      <!-- Side buttons -->
+      <div class="iphone-btn-silent"></div>
+      <div class="iphone-btn-vol-up"></div>
+      <div class="iphone-btn-vol-dn"></div>
+      <div class="iphone-btn-power"></div>
+      <!-- Notch -->
+      <div class="iphone-notch"></div>
+      <!-- Screen -->
+      <div class="iphone-screen">
+        <div class="phone-time">9:41</div>
+        <div class="phone-date">Wednesday, April 8</div>
+        <div class="notif-center">
+          <div class="notif-center-header">
+            <span>Notification Center</span>
+            <span class="notif-close">✕</span>
+          </div>
+          <div id="notifCards"></div>
+        </div>
+      </div>
+      <!-- Home indicator -->
+      <div class="iphone-home-bar"></div>
+    </div>
+    <div class="phone-glow"></div>
+  </div>
+</section>
+
+<!-- ─── SECTION DIVIDER ─── -->
+<div class="section-divider"></div>
+
+<!-- ─── STATS BAR ─── -->
+
+
+<!-- ─── HOW IT WORKS ─── -->
+<section class="hiw">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-label fade-in">HOW IT WORKS</div>
+      <h2 class="section-title fade-in">Get growing in 3 steps</h2>
+    </div>
+    <div class="steps">
+      <div class="step fade-in">
+        <div class="step-number">1</div>
+        <div class="step-icon">🔗</div>
+        <h3>Connect your X account</h3>
+        <p>Sign in securely with X OAuth. No passwords stored, ever.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-number">2</div>
+        <div class="step-icon">🛠️</div>
+        <h3>Pick your tools</h3>
+        <p>Unfollow inactive accounts, find your best posting time, spy on competitors, and more.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-number">3</div>
+        <div class="step-icon">📈</div>
+        <h3>Watch your growth</h3>
+        <p>Cleaner following list, better engagement, and a growing audience.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURE HIGHLIGHTS ─── -->
+<section class="features">
+
+  <!-- Block 1: text left, mock right -->
+  <div class="feature-block fade-in">
+    <div class="feature-text">
+      <div class="section-label">FOLLOWER MANAGEMENT</div>
+      <h3>Stop following people who don't follow back.</h3>
+      <p>Our Mass Unfollow tool lets you clean up your following list fast. Filter by inactive accounts, non-followers, and more — without risking your account.</p>
+      <ul class="feature-bullets">
+        <li>Unfollow up to 400/day safely</li>
+        <li>Filter non-followers &amp; inactive accounts</li>
+        <li>Full control — you approve every action</li>
+      </ul>
+    </div>
+    <div class="feature-mock">
+      <div class="mock-header">Non-followers · 247 found</div>
+      <div class="mock-row">
+        <svg class="mock-avatar" viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#1d3a5c"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#1d9bf0" font-size="16" font-family="sans-serif">A</text></svg>
+        <div class="mock-info">
+          <div class="mock-name">Alex_Builds</div>
+          <div class="mock-handle">@alex_builds · 0 posts in 90d</div>
+        </div>
+        <button class="mock-btn">Unfollow</button>
+      </div>
+      <div class="mock-row">
+        <svg class="mock-avatar" viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#3d1515"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#f4212e" font-size="16" font-family="sans-serif">M</text></svg>
+        <div class="mock-info">
+          <div class="mock-name">MarketBot99</div>
+          <div class="mock-handle">@marketbot99 · Never followed back</div>
+        </div>
+        <button class="mock-btn">Unfollow</button>
+      </div>
+      <div class="mock-row">
+        <svg class="mock-avatar" viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#1a1a3d"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#6366f1" font-size="16" font-family="sans-serif">S</text></svg>
+        <div class="mock-info">
+          <div class="mock-name">SarahDrops</div>
+          <div class="mock-handle">@sarahdrops · Inactive 6 months</div>
+        </div>
+        <button class="mock-btn">Unfollow</button>
+      </div>
+      <div class="mock-row">
+        <svg class="mock-avatar" viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#003d2a"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#00ba7c" font-size="16" font-family="sans-serif">T</text></svg>
+        <div class="mock-info">
+          <div class="mock-name">TrendChaserX</div>
+          <div class="mock-handle">@trendchaserx · 2 posts/year</div>
+        </div>
+        <button class="mock-btn">Unfollow</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Block 2: mock left, text right -->
+  <div class="feature-block reverse fade-in">
+    <div class="feature-text">
+      <div class="section-label">CONTENT INTELLIGENCE</div>
+      <h3>Know exactly when to post for maximum reach.</h3>
+      <p>XGrowthNow analyzes your account data to show you the exact hours your audience is most active — so every post gets seen.</p>
+      <ul class="feature-bullets">
+        <li>Personalized best-time analysis</li>
+        <li>Day-by-day breakdown</li>
+        <li>Stop guessing, start growing</li>
+      </ul>
+    </div>
+    <div class="feature-mock heatmap-mock">
+      <div class="mock-header">Best Times to Post — This Week</div>
+      <div class="heatmap-labels">
+        <span>6am</span><span>9am</span><span>12pm</span><span>3pm</span><span>6pm</span><span>9pm</span>
+      </div>
+      <div class="heatmap-row">
+        <div class="heatmap-day">Mon</div>
+        <div class="heatmap-cell"></div>
+        <div class="heatmap-cell hot-2"></div>
+        <div class="heatmap-cell hot-1"></div>
+        <div class="heatmap-cell hot-3"></div>
+        <div class="heatmap-cell hot-4"></div>
+        <div class="heatmap-cell hot-1"></div>
+      </div>
+      <div class="heatmap-row">
+        <div class="heatmap-day">Tue</div>
+        <div class="heatmap-cell hot-1"></div>
+        <div class="heatmap-cell hot-3"></div>
+        <div class="heatmap-cell hot-2"></div>
+        <div class="heatmap-cell hot-1"></div>
+        <div class="heatmap-cell hot-2"></div>
+        <div class="heatmap-cell"></div>
+      </div>
+      <div class="heatmap-row">
+        <div class="heatmap-day">Wed</div>
+        <div class="heatmap-cell"></div>
+        <div class="heatmap-cell hot-4"></div>
+        <div class="heatmap-cell hot-3"></div>
+        <div class="heatmap-cell hot-4"></div>
+        <div class="heatmap-cell hot-3"></div>
+        <div class="heatmap-cell hot-1"></div>
+      </div>
+      <div class="heatmap-row">
+        <div class="heatmap-day">Thu</div>
+        <div class="heatmap-cell hot-2"></div>
+        <div class="heatmap-cell hot-2"></div>
+        <div class="heatmap-cell hot-1"></div>
+        <div class="heatmap-cell hot-3"></div>
+        <div class="heatmap-cell hot-4"></div>
+        <div class="heatmap-cell hot-2"></div>
+      </div>
+      <div class="heatmap-row">
+        <div class="heatmap-day">Fri</div>
+        <div class="heatmap-cell hot-1"></div>
+        <div class="heatmap-cell hot-3"></div>
+        <div class="heatmap-cell hot-4"></div>
+        <div class="heatmap-cell hot-2"></div>
+        <div class="heatmap-cell hot-3"></div>
+        <div class="heatmap-cell hot-1"></div>
+      </div>
+      <div class="heatmap-row">
+        <div class="heatmap-day">Sat</div>
+        <div class="heatmap-cell"></div>
+        <div class="heatmap-cell hot-1"></div>
+        <div class="heatmap-cell hot-2"></div>
+        <div class="heatmap-cell hot-4"></div>
+        <div class="heatmap-cell hot-3"></div>
+        <div class="heatmap-cell hot-2"></div>
+      </div>
+      <div class="heatmap-row">
+        <div class="heatmap-day">Sun</div>
+        <div class="heatmap-cell hot-1"></div>
+        <div class="heatmap-cell"></div>
+        <div class="heatmap-cell hot-3"></div>
+        <div class="heatmap-cell hot-2"></div>
+        <div class="heatmap-cell hot-1"></div>
+        <div class="heatmap-cell"></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ─── SECTION DIVIDER ─── -->
+<div class="section-divider"></div>
+
+<!-- ─── TOOLS GRID ─── -->
+<section class="tools-section" id="tools">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-label fade-in">ALL TOOLS</div>
+      <h2 class="section-title fade-in">Everything you need to grow on X.</h2>
+      <p class="section-subtitle fade-in">A full toolkit — not just one trick.</p>
+    </div>
+    <div class="tools-grid">
+      <a href="/followers" class="tool-card fade-in">
+        <div class="tool-icon-wrap icon-tracker">👀</div>
+        <div class="tool-info">
+          <div class="tool-name">Unfollow Tracker</div>
+          <div class="tool-desc">See exactly who doesn't follow you back.</div>
+        </div>
+        <span class="tool-arrow">→</span>
+      </a>
+      <a href="/unfollow" class="tool-card fade-in">
+        <div class="tool-icon-wrap icon-unfollow">🧹</div>
+        <div class="tool-info">
+          <div class="tool-name">Mass Unfollow</div>
+          <div class="tool-desc">Clean your list fast. Unfollow hundreds in minutes.</div>
+        </div>
+        <span class="tool-arrow">→</span>
+      </a>
+      <a href="/best-time" class="tool-card fade-in">
+        <div class="tool-icon-wrap icon-time">⏰</div>
+        <div class="tool-info">
+          <div class="tool-name">Best Time to Post</div>
+          <div class="tool-desc">Post when your audience is actually online.</div>
+        </div>
+        <span class="tool-arrow">→</span>
+      </a>
+      <a href="/unreplied" class="tool-card fade-in">
+        <div class="tool-icon-wrap icon-unreplied">💬</div>
+        <div class="tool-info">
+          <div class="tool-name">Unreplied Comments</div>
+          <div class="tool-desc">Never miss an engagement opportunity again.</div>
+        </div>
+        <span class="tool-arrow">→</span>
+      </a>
+      <a href="/loyal-fans" class="tool-card fade-in">
+        <div class="tool-icon-wrap icon-loyal">💎</div>
+        <div class="tool-info">
+          <div class="tool-name">20 Most Loyal Fans</div>
+          <div class="tool-desc">Know who your biggest supporters are.</div>
+        </div>
+        <span class="tool-arrow">→</span>
+      </a>
+      <a href="/competitor-spy" class="tool-card fade-in">
+        <div class="tool-icon-wrap icon-spy">🔍</div>
+        <div class="tool-info">
+          <div class="tool-name">Competitor Spy</div>
+          <div class="tool-desc">See what's working for accounts in your niche.</div>
+        </div>
+        <span class="tool-arrow">→</span>
+      </a>
+      <a href="/viral-reposter" class="tool-card fade-in">
+        <div class="tool-icon-wrap icon-recycler">🔁</div>
+        <div class="tool-info">
+          <div class="tool-name">Tweet Recycler</div>
+          <div class="tool-desc">Boost your best old tweets. Auto-clean after 24h.</div>
+        </div>
+        <span class="tool-arrow">→</span>
+      </a>
+      <a href="/tweet-optimizer" class="tool-card fade-in">
+        <div class="tool-icon-wrap icon-ai">✍️</div>
+        <div class="tool-info">
+          <div class="tool-name">AI Tweet Optimizer</div>
+          <div class="tool-desc">Let AI rewrite your tweets for max engagement.</div>
+        </div>
+        <span class="tool-arrow">→</span>
+      </a>
+      <a href="/dashboard" class="tool-card fade-in">
+        <div class="tool-icon-wrap icon-dashboard">📊</div>
+        <div class="tool-info">
+          <div class="tool-name">Growth Dashboard</div>
+          <div class="tool-desc">Your account stats at a glance.</div>
+        </div>
+        <span class="tool-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION DIVIDER ─── -->
+<div class="section-divider"></div>
+
+<!-- ─── PRICING TEASER ─── -->
+<section class="pricing-teaser">
+  <div class="section-inner fade-in">
+    <div class="section-label">PRICING</div>
+    <h2 class="section-title">Simple pricing. Serious results.</h2>
+    <p class="section-subtitle">Upgrade anytime. Cancel anytime.</p>
+    <div class="plan-pills">
+      <div class="plan-pill">X Growth Core</div>
+      <div class="plan-pill featured">X Growth Elite</div>
+      <div class="plan-pill">Monthly or Annual</div>
+    </div>
+    <a href="/pricing" class="btn-primary" style="padding:16px 40px;font-size:16px;border-radius:100px;">View All Plans →</a>
+    <p class="pricing-note">All paid plans include every tool + all future tools</p>
+  </div>
+</section>
+
+<!-- ─── SECTION DIVIDER ─── -->
+<div class="section-divider"></div>
+
+<!-- ─── FAQ ─── -->
+<section class="faq-section">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 class="section-title fade-in">Frequently asked questions</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item fade-in">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Is XGrowthNow safe for my X account?
+          <span class="faq-chevron">▾</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Yes. We use X's official OAuth system — we never see or store your password. We only request the minimum permissions each tool needs to function.</div>
+        </div>
+      </div>
+      <div class="faq-item fade-in">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Will mass unfollowing get my account banned?
+          <span class="faq-chevron">▾</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">We stay well within X's rate limits — unfollowing up to 400 accounts per day, which is safe by platform standards. We never take aggressive bulk actions.</div>
+        </div>
+      </div>
+      <div class="faq-item fade-in">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Do I need to pay to get started?
+          <span class="faq-chevron">▾</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">A paid plan is required to access our tools. Sign up to get started.</div>
+        </div>
+      </div>
+      <div class="faq-item fade-in">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What's included in the Lifetime plan?
+          <span class="faq-chevron">▾</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">One payment gives you access to every current tool AND every future tool we release — forever. No subscriptions, no renewals.</div>
+        </div>
+      </div>
+      <div class="faq-item fade-in">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Can I cancel my monthly plan anytime?
+          <span class="faq-chevron">▾</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Yes, anytime. Your access continues until the end of your billing period. No questions asked.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION DIVIDER ─── -->
+<div class="section-divider"></div>
+
+<!-- ─── FINAL CTA ─── -->
+<section class="cta-banner fade-in">
+  <h2>Ready to grow smarter on X?</h2>
+  <p>Join thousands of creators who use XGrowthNow to build a real audience.</p>
+  <a href="/api/auth/login" class="btn-primary">Sign in with 𝕏 →</a>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/" class="footer-logo">XGrowth<span>Now</span></a>
+      <p class="footer-tagline">Grow on X Organically.<br/>Get Monetized Faster.</p>
+      <div class="footer-social">
+        <a href="https://x.com/XGrowthNow" target="_blank" class="footer-social-link">𝕏 Follow us</a>
+      </div>
+    </div>
+    <div class="footer-links-group">
+      <div class="footer-col">
+        <div class="footer-col-title">Product</div>
+        <a href="/#tools">Tools</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/growth-predictor">Growth Predictor</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Tools</div>
+        <a href="/unfollow">Mass Unfollow</a>
+        <a href="/best-time">Best Time to Post</a>
+        <a href="/competitor-spy">Competitor Spy</a>
+        <a href="/loyal-fans">Loyal Fans</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Legal</div>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 XGrowthNow. All rights reserved.</span>
+    <span>Built for serious X creators.</span>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav toggle
+  document.getElementById('navToggle').addEventListener('click', function() {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+
+  // FAQ accordion
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  }
+
+  // Handle input → sign in with hint
+  function checkGrowth(e) {
+    e.preventDefault();
+    const handle = document.getElementById('handleInput').value.trim().replace(/^@/, '');
+    if (!handle) { document.getElementById('handleInput').focus(); return; }
+    window.location.href = `/growth-predictor?handle=${encodeURIComponent(handle)}`;
+  }
+
+  // Scroll fade-in
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-in').forEach((el, i) => {
+    el.style.transitionDelay = (i % 4) * 80 + 'ms';
+    observer.observe(el);
+  });
+</script>
+<script>
+  document.querySelectorAll('a[href^="/"]').forEach(link => {
+    link.addEventListener('click', e => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('/api') && link.target !== '_blank') {
+        e.preventDefault();
+        document.body.style.opacity = '0';
+        document.body.style.transform = 'translateY(-8px)';
+        document.body.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+        setTimeout(() => { window.location.href = href; }, 200);
+      }
+    });
+  });
+</script>
+<script>
+  // iPhone notification animation
+  const followers = [
+    'bitcoinbull', 'investorpro', 'cryptodoc99', 'financeking', 'tradermike',
+    'stockwhiz', 'btcmaxi', 'wealthmd', 'xtrader22', 'moneytalks99',
+    'docfinance', 'cryptoqueen', 'bullmarket', 'hodlgang', 'wallstreetmd'
+  ];
+  let notifIdx = 0;
+
+  function addNotification() {
+    const name = followers[notifIdx % followers.length];
+    notifIdx++;
+    const center = document.getElementById('notifCards');
+    if (!center) return;
+    const card = document.createElement('div');
+    card.className = 'notif-card';
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(-10px)';
+    card.style.transition = 'all 0.4s ease';
+    card.innerHTML = `
+      <div class="notif-app-icon">𝕏</div>
+      <div class="notif-content">
+        <div class="notif-header">
+          <span class="notif-app-name">X (Twitter)</span>
+          <span class="notif-time">just now</span>
+        </div>
+        <div class="notif-body">@${name} started following you.</div>
+      </div>
+    `;
+    center.prepend(card);
+    setTimeout(() => { card.style.opacity = '1'; card.style.transform = 'translateY(0)'; }, 10);
+    // Keep max 4 cards
+    const cards = center.querySelectorAll('.notif-card');
+    if (cards.length > 4) {
+      const last = cards[cards.length - 1];
+      last.style.opacity = '0';
+      setTimeout(() => last.remove(), 300);
+    }
+    // Update times on older cards
+    center.querySelectorAll('.notif-time').forEach((el, i) => {
+      el.textContent = i === 0 ? 'just now' : `${i}m ago`;
+    });
+  }
+
+  setInterval(addNotification, 1800);
+  addNotification(); // start immediately
+</script>
+<script>
+  // Dashboard: Follower counter animation
+  let followerBase = 12847;
+  setInterval(() => {
+    followerBase += Math.floor(Math.random() * 3);
+    const el = document.getElementById('followerCount');
+    if (el) el.textContent = followerBase.toLocaleString();
+  }, 3000);
+
+  // Dashboard: Feed updates
+  const feedNames = [
+    { initial: 'B', name: '@bitcoinbull', color: '#1d9bf0' },
+    { initial: 'C', name: '@cryptodoc99', color: '#7b61ff' },
+    { initial: 'T', name: '@tradermike', color: '#22c55e' },
+    { initial: 'W', name: '@wealthmd', color: '#f59e0b' },
+    { initial: 'S', name: '@stockwhiz', color: '#ec4899' },
+    { initial: 'D', name: '@docfinance', color: '#1d9bf0' },
+    { initial: 'M', name: '@moneytalks', color: '#7b61ff' },
+    { initial: 'H', name: '@hodlgang', color: '#22c55e' },
+  ];
+  let feedIdx = 3;
+  setInterval(() => {
+    const feed = document.getElementById('dbFeed');
+    if (!feed) return;
+    const person = feedNames[feedIdx % feedNames.length];
+    feedIdx++;
+    const item = document.createElement('div');
+    item.className = 'db-feed-item';
+    item.style.opacity = '0';
+    item.style.transform = 'translateY(-8px)';
+    item.innerHTML = `
+      <div class="db-feed-avatar" style="background:${person.color}">${person.initial}</div>
+      <div class="db-feed-name">${person.name} <span>followed you</span></div>
+      <div class="db-feed-time">just now</div>
+    `;
+    feed.prepend(item);
+    setTimeout(() => { item.style.opacity = '1'; item.style.transform = 'translateY(0)'; }, 10);
+    // Update times
+    feed.querySelectorAll('.db-feed-time').forEach((el, i) => {
+      el.textContent = i === 0 ? 'just now' : `${i}m ago`;
+    });
+    // Max 4 items
+    const items = feed.querySelectorAll('.db-feed-item');
+    if (items.length > 4) items[items.length - 1].remove();
+  }, 2500);
+</script>
+</body>
+</html>

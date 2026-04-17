@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inactive Follows — XGrowthNow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --surface: #0f0f0f; --card: #16181c; --border: #2f3336;
+      --text: #e7e9ea; --muted: #71767b; --blue: #1d9bf0; --red: #f4212e;
+      --green: #00ba7c; --yellow: #ffd400; --radius: 16px;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+    main { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .page-header p { font-size: 14px; color: var(--muted); }
+
+    .state-box { text-align: center; padding: 60px 24px; }
+    .state-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+    .state-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .state-sub { font-size: 14px; color: var(--muted); }
+    .progress-bar-wrap { height: 4px; background: var(--border); border-radius: 2px; margin-top: 20px; max-width: 300px; margin-inline: auto; overflow: hidden; }
+    .progress-bar { height: 100%; background: var(--blue); border-radius: 2px; animation: progress 4s ease-out forwards; }
+    @keyframes progress { from { width: 0% } to { width: 90% } }
+
+    .summary-bar {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px;
+    }
+    .summary-card {
+      flex: 1; min-width: 140px; background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 20px;
+    }
+    .summary-num { font-size: 28px; font-weight: 900; }
+    .summary-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    .section-header { display: flex; align-items: center; gap: 10px; margin: 32px 0 14px; }
+    .section-title { font-size: 17px; font-weight: 800; }
+    .section-count {
+      border-radius: 20px; font-size: 12px; font-weight: 700; padding: 2px 10px;
+      background: rgba(244,33,46,0.12); color: var(--red); border: 1px solid rgba(244,33,46,0.2);
+    }
+
+    .user-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .user-row { display: flex; align-items: center; gap: 12px; background: var(--card); padding: 14px 18px; transition: background 0.15s; }
+    .user-row:hover { background: var(--surface); }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--border); flex-shrink: 0; }
+    .user-info { flex: 1; min-width: 0; }
+    .user-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-handle { font-size: 12px; color: var(--muted); }
+    .user-meta { font-size: 12px; color: var(--muted); margin-left: auto; white-space: nowrap; flex-shrink: 0; }
+    .view-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.15s; flex-shrink: 0; }
+    .view-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .unfollow-btn { background: transparent; border: 1px solid rgba(244,33,46,0.4); color: var(--red); border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; flex-shrink: 0; }
+    .unfollow-btn:hover { background: rgba(244,33,46,0.1); }
+    .unfollow-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .unfollow-btn.done { border-color: var(--border); color: var(--muted); pointer-events: none; }
+    .verified-badge { color: var(--blue); font-size: 13px; flex-shrink: 0; }
+
+    .empty-section { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; text-align: center; font-size: 14px; color: var(--muted); }
+
+    .tab-bar { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 0; }
+    .tab { padding: 10px 18px; font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+    .tab.active { color: var(--text); border-bottom-color: var(--blue); }
+    .tab:hover { color: var(--text); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+  </style>
+  <script>const sidebarPage = 'inactive-follows';</script>
+</head>
+<body class="has-sidebar">
+
+<main>
+  <div class="page-header">
+    <h1>📉 Inactive Follows</h1>
+    <p>Accounts you follow that haven't tweeted in 30 days, or whose content you haven't liked, retweeted, or replied to in the past month.</p>
+  </div>
+
+  <div id="stateLoading" class="state-box">
+    <span class="state-icon">🔍</span>
+    <div class="state-title">Analyzing your following list...</div>
+    <div class="state-sub">Checking last tweet dates and engagement across all accounts you follow</div>
+    <div class="progress-bar-wrap"><div class="progress-bar"></div></div>
+  </div>
+
+  <div id="stateError" class="state-box" style="display:none;">
+    <span class="state-icon">⚠️</span>
+    <div class="state-title" id="errMsg">Something went wrong</div>
+    <div class="state-sub" style="margin-top:8px;">Try signing out and back in, then refresh this page.</div>
+    <a href="/api/auth/logout" style="display:inline-block;margin-top:16px;background:var(--blue);color:#fff;border-radius:20px;padding:10px 24px;font-size:14px;font-weight:600;text-decoration:none;">Sign Out & Back In</a>
+  </div>
+
+  <div id="stateContent" style="display:none;"></div>
+</main>
+
+<script src="/sidebar.js"></script>
+<script>
+function fmt(n) {
+  if (!n) return '0';
+  if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
+  return n.toLocaleString();
+}
+function timeAgo(iso) {
+  if (!iso) return 'Never tweeted';
+  const diff = (Date.now() - new Date(iso)) / 1000;
+  if (diff < 86400)   return Math.floor(diff/3600)+'h ago';
+  if (diff < 2592000) return Math.floor(diff/86400)+'d ago';
+  return Math.floor(diff/2592000)+'mo ago';
+}
+
+function renderList(users, metaKey) {
+  if (!users.length) return `<div class="empty-section">✅ None found</div>`;
+  return `<div class="user-list">${users.map(u => `
+    <div class="user-row" id="row-${u.id}">
+      <img class="user-avatar" src="${u.avatar}" onerror="this.src=''" alt=""/>
+      <div class="user-info">
+        <div class="user-name">
+          ${u.name}
+          ${u.verified ? '<span class="verified-badge" title="Verified">✔</span>' : ''}
+        </div>
+        <div class="user-handle">@${u.username}</div>
+      </div>
+      <div class="user-meta">${metaKey === 'lastTweetAt' ? timeAgo(u.lastTweetAt) : fmt(u.followersCount)+' followers'}</div>
+      <button class="unfollow-btn" onclick="unfollow('${u.id}','${u.username}',this)">Unfollow</button>
+    </div>`).join('')}
+  </div>`;
+}
+
+async function unfollow(targetId, username, btn) {
+  btn.disabled = true;
+  btn.textContent = 'Unfollowing...';
+  try {
+    const r = await fetch('/api/tools/unfollow', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ targetIds: [targetId] }),
+    });
+    const d = await r.json();
+    if (d.success?.length > 0) {
+      btn.textContent = 'Unfollowed';
+      btn.classList.add('done');
+      // Fade out the row
+      const row = document.getElementById('row-' + targetId);
+      if (row) { row.style.opacity = '0.35'; }
+    } else {
+      btn.textContent = 'Failed';
+      btn.disabled = false;
+      setTimeout(() => { btn.textContent = 'Unfollow'; btn.disabled = false; }, 2000);
+    }
+  } catch {
+    btn.textContent = 'Error';
+    setTimeout(() => { btn.textContent = 'Unfollow'; btn.disabled = false; }, 2000);
+  }
+}
+
+async function load() {
+  const r = await fetch('/api/tools/inactive-follows');
+  if (r.status === 401) { location.href = '/api/auth/login'; return; }
+
+  let data;
+  try { data = await r.json(); } catch(e) {
+    document.getElementById('stateLoading').style.display = 'none';
+    document.getElementById('stateError').style.display = 'block';
+    document.getElementById('errMsg').textContent = 'Invalid server response — please try again';
+    return;
+  }
+
+  document.getElementById('stateLoading').style.display = 'none';
+
+  if (data.error) {
+    document.getElementById('stateError').style.display = 'block';
+    document.getElementById('errMsg').textContent = data.error;
+    return;
+  }
+
+  const { total = 0, notTweeted = [], notEngaged = [] } = data;
+  const content = document.getElementById('stateContent');
+  content.style.display = 'block';
+
+  content.innerHTML = `
+    <div class="summary-bar">
+      <div class="summary-card">
+        <div class="summary-num">${total.toLocaleString()}</div>
+        <div class="summary-label">Accounts you follow</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-num" style="color:var(--red)">${notTweeted.length}</div>
+        <div class="summary-label">Haven't tweeted in 30 days</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-num" style="color:var(--yellow)">${notEngaged.length}</div>
+        <div class="summary-label">Active, no likes/RTs/replies from you (30 days)</div></div>
+      </div>
+    </div>
+
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab('notTweeted',this)">
+        🗓 Not Tweeted <span style="color:var(--muted);font-weight:400">(${notTweeted.length})</span>
+      </div>
+      <div class="tab" onclick="switchTab('notEngaged',this)">
+        💤 No Engagement <span style="color:var(--muted);font-weight:400">(${notEngaged.length})</span>
+      </div>
+    </div>
+
+    <div id="panel-notTweeted" class="tab-panel active" style="margin-top:16px;">
+      ${renderList(notTweeted, 'lastTweetAt', 'Last tweet')}
+    </div>
+    <div id="panel-notEngaged" class="tab-panel" style="margin-top:16px;">
+      ${renderList(notEngaged, 'followersCount', 'Followers')}
+    </div>
+  `;
+}
+
+function switchTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-' + id).classList.add('active');
+}
+
+initLayout().then(() => { load(); });
+</script>
+</body>
+</html>

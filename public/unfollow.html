@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mass Unfollow — XGrowth</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --surface: #0f0f0f; --card: #16181c; --border: #2f3336;
+      --text: #e7e9ea; --muted: #71767b; --blue: #1d9bf0;
+      --blue-dim: rgba(29,155,240,0.1); --red: #f4212e; --green: #00ba7c;
+      --radius: 16px;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 28px; border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.9); backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-icon { width: 30px; height: 30px; background: var(--blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+    .logo-text { font-size: 17px; font-weight: 800; color: var(--text); }
+    .logo-text span { color: var(--blue); }
+    .back-btn { font-size: 13px; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .back-btn:hover { color: var(--text); }
+
+    main { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .page-header p { font-size: 14px; color: var(--muted); }
+
+    /* Filters & actions bar */
+    .toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-btn {
+      background: var(--card); border: 1px solid var(--border); color: var(--muted);
+      border-radius: 50px; font-size: 13px; padding: 7px 16px; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }
+
+    .search-input {
+      background: var(--card); border: 1px solid var(--border); border-radius: 50px;
+      color: var(--text); font-size: 13px; padding: 8px 16px; outline: none;
+      width: 200px; transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--blue); }
+    .search-input::placeholder { color: var(--muted); }
+
+    .actions-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 12px 18px; margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
+    }
+    .select-info { font-size: 14px; color: var(--muted); }
+    .select-info strong { color: var(--text); }
+    .actions-right { display: flex; gap: 10px; align-items: center; }
+
+    .select-all-btn {
+      background: transparent; border: 1px solid var(--border); color: var(--muted);
+      border-radius: 50px; font-size: 13px; padding: 7px 16px; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .select-all-btn:hover { border-color: var(--text); color: var(--text); }
+
+    .unfollow-btn {
+      background: var(--red); border: none; color: #fff;
+      border-radius: 50px; font-size: 14px; font-weight: 700;
+      padding: 9px 22px; cursor: pointer; transition: background 0.2s, opacity 0.2s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .unfollow-btn:hover { background: #d91a25; }
+    .unfollow-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* User list */
+    .user-list { display: flex; flex-direction: column; gap: 2px; }
+
+    .user-row {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--card); border: 1px solid transparent;
+      border-radius: 12px; padding: 12px 16px;
+      transition: border-color 0.15s, background 0.15s;
+      cursor: pointer;
+    }
+    .user-row:hover { border-color: var(--border); }
+    .user-row.selected { background: rgba(244,33,46,0.06); border-color: rgba(244,33,46,0.25); }
+    .user-row.unfollowed { opacity: 0.35; pointer-events: none; }
+
+    .user-checkbox {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid var(--border); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .user-row.selected .user-checkbox {
+      background: var(--red); border-color: var(--red);
+    }
+    .user-checkbox::after {
+      content: '✓'; font-size: 11px; color: #fff;
+      display: none;
+    }
+    .user-row.selected .user-checkbox::after { display: block; }
+
+    .user-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: var(--border); flex-shrink: 0; }
+
+    .user-info { flex: 1; min-width: 0; }
+    .user-name { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px; }
+    .user-handle { font-size: 13px; color: var(--muted); }
+    .verified-badge { flex-shrink: 0; width: 17px; height: 17px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; }
+    .verified-blue   { background: #1d9bf0; }
+    .verified-gold   { background: #FFD700; }
+    .verified-grey   { background: #829aab; }
+
+    .user-meta { display: flex; gap: 12px; flex-shrink: 0; align-items: center; }
+    .meta-item { font-size: 12px; color: var(--muted); text-align: right; }
+    .meta-item strong { color: var(--text); display: block; font-size: 14px; }
+
+    .no-follow-badge {
+      font-size: 11px; font-weight: 600; color: var(--red);
+      background: rgba(244,33,46,0.1); border: 1px solid rgba(244,33,46,0.2);
+      border-radius: 20px; padding: 2px 8px; white-space: nowrap;
+    }
+    .follows-badge {
+      font-size: 11px; font-weight: 600; color: var(--green);
+      background: rgba(0,186,124,0.1); border: 1px solid rgba(0,186,124,0.2);
+      border-radius: 20px; padding: 2px 8px; white-space: nowrap;
+    }
+
+    /* States */
+    .state-box { text-align: center; padding: 60px 24px; }
+    .state-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+    .state-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .state-sub { font-size: 14px; color: var(--muted); }
+
+    .progress-bar-wrap { height: 4px; background: var(--border); border-radius: 2px; margin-bottom: 8px; overflow: hidden; }
+    .progress-bar { height: 100%; background: var(--red); border-radius: 2px; transition: width 0.3s; }
+
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 50px; padding: 12px 24px; font-size: 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+
+    footer { border-top: 1px solid var(--border); padding: 24px; text-align: center; font-size: 12px; color: var(--muted); }
+    footer a { color: var(--muted); text-decoration: none; }
+  </style>
+</head>
+<body class="has-sidebar">
+
+
+<main>
+  <div class="page-header">
+    <h1>🧹 Mass Unfollow</h1>
+    <p>Clean up your following list. Select accounts and unfollow in bulk.</p>
+  </div>
+
+  <!-- Loading state -->
+  <div id="stateLoading" class="state-box">
+    <span class="state-icon">⏳</span>
+    <div class="state-title">Loading your following list...</div>
+    <div class="state-sub" id="loadingMsg">Fetching accounts and checking who follows back</div>
+    <div style="margin-top:20px; max-width:300px; margin-inline:auto;">
+      <div class="progress-bar-wrap"><div class="progress-bar" id="loadingBar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- Auth error -->
+  <div id="stateAuth" class="state-box" style="display:none;">
+    <span class="state-icon">🔐</span>
+    <div class="state-title">Sign in required</div>
+    <div class="state-sub" style="margin-bottom:20px;">Connect your Twitter account to use this tool</div>
+    <a href="/api/auth/login" style="background:var(--blue);color:#fff;text-decoration:none;border-radius:50px;padding:12px 28px;font-size:15px;font-weight:700;">𝕏 &nbsp;Sign in with X</a>
+  </div>
+
+  <!-- Main content -->
+  <div id="stateContent" style="display:none;">
+    <div class="toolbar">
+      <div class="filters" id="filters">
+        <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All</button>
+        <button class="filter-btn" data-filter="no-followback" onclick="setFilter('no-followback', this)">Not Following Back</button>
+        <button class="filter-btn" data-filter="not-verified" onclick="setFilter('not-verified', this)">✗ Not Verified</button>
+      </div>
+      <input class="search-input" id="searchInput" placeholder="Search..." oninput="renderList()" />
+    </div>
+
+    <div class="actions-bar">
+      <div class="select-info"><strong id="selectedCount">0</strong> selected &nbsp;·&nbsp; <strong id="visibleCount">0</strong> shown &nbsp;·&nbsp; <strong id="loadedCount2">0</strong> loaded</div>
+      <div class="actions-right">
+        <button class="select-all-btn" onclick="toggleSelectAll()">Select All</button>
+        <button class="unfollow-btn" id="unfollowBtn" onclick="doUnfollow()" disabled>
+          🗑 Unfollow Selected
+        </button>
+      </div>
+    </div>
+
+    <div class="user-list" id="userList"></div>
+
+    <div id="loadMoreWrap" style="text-align:center; padding: 20px 0; display:none;">
+      <button id="loadMoreBtn" onclick="loadMore()"
+        style="background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:50px;padding:10px 28px;font-size:14px;font-weight:600;cursor:pointer;">
+        Load Next 100
+      </button>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px;" id="loadedCount"></div>
+    </div>
+  </div>
+</main>
+
+<footer>✈ XGrowth — Built by <a href="https://x.com/investwithdoc" target="_blank">@InvestWithDoc</a></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+let allUsers      = [];
+let filtered      = [];
+let selected      = new Set();
+let currentFilter = 'all';
+let isUnfollowing = false;
+let nextCursor    = null;
+let isLoadingMore = false;
+let totalLoaded   = 0;
+let followerIds   = null; // null = not loaded yet
+
+function fmt(n) {
+  if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
+  if (n >= 1000) return (n/1000).toFixed(1)+'K';
+  return n?.toLocaleString() || '0';
+}
+
+function showToast(msg, ms = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), ms);
+}
+
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selected.clear();
+  renderList();
+}
+
+function getFiltered() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  return allUsers.filter(u => {
+    if (currentFilter === 'no-followback' && u.followsBack) return false;
+    if (currentFilter === 'not-verified' && u.verifiedType) return false;
+    if (q && !u.name.toLowerCase().includes(q) && !u.username.toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+function renderList() {
+  filtered = getFiltered();
+  document.getElementById('visibleCount').textContent = filtered.length;
+  document.getElementById('loadedCount2').textContent = totalLoaded;
+  document.getElementById('selectedCount').textContent = [...selected].filter(id => filtered.find(u => u.id === id)).length;
+
+  const list = document.getElementById('userList');
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="state-box"><span class="state-icon">✅</span><div class="state-title">No accounts match this filter</div></div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(u => `
+    <div class="user-row ${selected.has(u.id) ? 'selected' : ''} ${u.unfollowed ? 'unfollowed' : ''}"
+         id="row-${u.id}" onclick="toggleSelect('${u.id}')">
+      <div class="user-checkbox"></div>
+      <img class="user-avatar" src="${u.avatar || ''}" onerror="this.src=''" alt="" />
+      <div class="user-info">
+        <div class="user-name">
+          ${u.name}
+          ${u.verifiedType === 'blue'       ? '<span class="verified-badge verified-blue" title="X Premium">✓</span>' : ''}
+          ${u.verifiedType === 'business'   ? '<span class="verified-badge verified-gold" title="Verified Organization">✓</span>' : ''}
+          ${u.verifiedType === 'government' ? '<span class="verified-badge verified-grey" title="Government">✓</span>' : ''}
+        </div>
+        <div class="user-handle">@${u.username}</div>
+      </div>
+      <div class="user-meta">
+        <div class="meta-item"><strong>${fmt(u.followers)}</strong>followers</div>
+        <div style="margin-left:4px;">${
+          followerIds === null
+            ? '<span style="font-size:11px;color:var(--muted);">checking...</span>'
+            : u.followsBack
+              ? '<span class="follows-badge">Follows you</span>'
+              : '<span class="no-follow-badge">Doesn\'t follow</span>'
+        }</div>
+      </div>
+    </div>
+  `).join('');
+
+  updateUnfollowBtn();
+}
+
+function toggleSelect(id) {
+  if (selected.has(id)) selected.delete(id);
+  else selected.add(id);
+  renderList();
+}
+
+function toggleSelectAll() {
+  const filteredIds = filtered.map(u => u.id);
+  const allSelected = filteredIds.every(id => selected.has(id));
+  if (allSelected) filteredIds.forEach(id => selected.delete(id));
+  else filteredIds.forEach(id => selected.add(id));
+  renderList();
+}
+
+function updateUnfollowBtn() {
+  const count = [...selected].filter(id => filtered.find(u => u.id === id)).length;
+  const btn = document.getElementById('unfollowBtn');
+  btn.disabled = count === 0 || isUnfollowing;
+  btn.textContent = count > 0 ? `🗑 Unfollow ${count} Account${count > 1 ? 's' : ''}` : '🗑 Unfollow Selected';
+}
+
+async function doUnfollow() {
+  const toUnfollow = [...selected].filter(id => filtered.find(u => u.id === id && !u.unfollowed));
+  if (toUnfollow.length === 0) return;
+
+  isUnfollowing = true;
+  updateUnfollowBtn();
+  showToast(`Unfollowing ${toUnfollow.length} accounts...`, 10000);
+
+  // Process in batches of 50
+  let done = 0;
+  for (let i = 0; i < toUnfollow.length; i += 50) {
+    const batch = toUnfollow.slice(i, i + 50);
+    try {
+      const res = await fetch('/api/tools/unfollow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetIds: batch }),
+      });
+      const data = await res.json();
+      console.log('Unfollow response:', JSON.stringify(data));
+      data.success?.forEach(id => {
+        const u = allUsers.find(u => u.id === id);
+        if (u) u.unfollowed = true;
+        selected.delete(id);
+        done++;
+      });
+      if (data.failed?.length) console.warn('Failed unfollows:', JSON.stringify(data.failed));
+    } catch (e) {
+      console.error('Unfollow error:', e);
+    }
+    // Small delay between batches
+    if (i + 50 < toUnfollow.length) await new Promise(r => setTimeout(r, 2000));
+  }
+
+  isUnfollowing = false;
+  showToast(`✅ Unfollowed ${done} accounts`);
+  renderList();
+}
+
+async function fetchPage(cursor) {
+  const url = cursor ? `/api/tools/following?cursor=${encodeURIComponent(cursor)}` : '/api/tools/following';
+  const res  = await fetch(url);
+  const data = await res.json();
+  if (res.status === 401) throw Object.assign(new Error('auth'), { code: 401 });
+  if (!res.ok || data.error) throw new Error(data.detail ? JSON.stringify(data.detail) : data.error);
+  return data;
+}
+
+function updateFilterCounts() {
+  const notVerified  = allUsers.filter(u => !u.verifiedType).length;
+  document.querySelector('[data-filter="not-verified"]').textContent = `✗ Not Verified (${fmt(notVerified)})`;
+  document.getElementById('loadedCount').textContent = `${totalLoaded} accounts loaded`;
+
+  if (followerIds) {
+    const noFollowBack = allUsers.filter(u => !followerIds.has(u.id)).length;
+    document.querySelector('[data-filter="no-followback"]').textContent = `Not Following Back (${fmt(noFollowBack)})`;
+  } else {
+    document.querySelector('[data-filter="no-followback"]').textContent = `Not Following Back (loading...)`;
+  }
+}
+
+// Kick off followers fetch in background — updates badges when done
+async function enrichVerification(users) {
+  const toCheck = users.filter(u => u.verifiedType === null);
+  if (!toCheck.length) return;
+  // Batch into groups of 10, stagger requests
+  for (let i = 0; i < toCheck.length; i += 10) {
+    const batch = toCheck.slice(i, i + 10);
+    try {
+      const ids = batch.map(u => u.id).join(',');
+      const res = await fetch(`/api/tools/following?mode=verify&ids=${ids}`);
+      if (!res.ok) break;
+      const data = await res.json();
+      const map  = data.verified || {};
+      allUsers.forEach(u => { if (map[u.id] !== undefined) u.verifiedType = map[u.id]; });
+      updateFilterCounts();
+      renderList();
+    } catch {}
+    if (i + 10 < toCheck.length) await new Promise(r => setTimeout(r, 300));
+  }
+}
+
+async function loadFollowersBackground() {
+  try {
+    const res  = await fetch('/api/tools/followers');
+    const data = await res.json();
+    if (!res.ok) return;
+    followerIds = new Set(data.followerIds || []);
+    // Update followsBack on all users
+    allUsers.forEach(u => { u.followsBack = followerIds.has(u.id); });
+    updateFilterCounts();
+    renderList(); // re-render with correct badges
+  } catch {}
+}
+
+async function loadMore() {
+  if (isLoadingMore || !nextCursor) return;
+  isLoadingMore = true;
+  const btn = document.getElementById('loadMoreBtn');
+  btn.textContent = 'Loading...';
+  btn.disabled    = true;
+
+  try {
+    const data    = await fetchPage(nextCursor);
+    const newUsers = data.following || [];
+    // If followers are already loaded, set followsBack immediately for new users
+    if (followerIds !== null) {
+      newUsers.forEach(u => { u.followsBack = followerIds.has(u.id); });
+    }
+    allUsers.push(...newUsers);
+    totalLoaded += newUsers.length;
+    nextCursor   = data.nextCursor || null;
+    updateFilterCounts();
+    renderList();
+    document.getElementById('loadMoreWrap').style.display = nextCursor ? 'block' : 'none';
+    btn.textContent = 'Load Next 100';
+    btn.disabled    = false;
+    enrichVerification(newUsers); // fetch verified badges for new batch
+  } catch (e) {
+    btn.textContent = 'Retry';
+    btn.disabled    = false;
+  }
+  isLoadingMore = false;
+}
+
+async function init() {
+  const bar = document.getElementById('loadingBar');
+  let prog = 0;
+  const tick = setInterval(() => {
+    prog = Math.min(prog + 4, 85);
+    bar.style.width = prog + '%';
+  }, 150);
+
+  try {
+    const data = await fetchPage(null);
+    clearInterval(tick);
+    bar.style.width = '100%';
+
+    allUsers    = data.following || [];
+    nextCursor  = data.nextCursor || null;
+    totalLoaded = allUsers.length;
+
+    updateFilterCounts();
+
+    setTimeout(() => {
+      document.getElementById('stateLoading').style.display = 'none';
+      document.getElementById('stateContent').style.display = 'block';
+      document.getElementById('loadMoreWrap').style.display = nextCursor ? 'block' : 'none';
+      renderList();
+      loadFollowersBackground(); // fetch all followers in background for accurate "follows back"
+      enrichVerification(allUsers); // fetch verified badges in background
+    }, 300);
+
+  } catch (e) {
+    clearInterval(tick);
+    if (e.code === 401) {
+      document.getElementById('stateLoading').style.display = 'none';
+      document.getElementById('stateAuth').style.display    = 'block';
+      return;
+    }
+    document.getElementById('stateLoading').innerHTML = `
+      <span class="state-icon">⚠️</span>
+      <div class="state-title">Failed to load</div>
+      <div class="state-sub">${e.message}</div>
+      <div style="margin-top:16px;">
+        <a href="/api/auth/logout" style="background:var(--blue);color:#fff;text-decoration:none;border-radius:50px;padding:10px 24px;font-size:14px;font-weight:700;">Re-authorize App</a>
+      </div>
+    `;
+  }
+}
+
+init();
+</script>
+<script src="/sidebar.js"></script>
+<script>
+initLayout().then(user => {
+  if (!user) { window.location.href = "/api/auth/login"; return; }
+  if (!user.isPro) { window.location.href = "/pricing"; return; }
+});
+</script>
+</body>
+</html>

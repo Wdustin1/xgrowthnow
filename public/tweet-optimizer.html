@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Tweet Optimizer — XGrowthNow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --surface: #0f0f0f; --card: #16181c; --border: #2f3336;
+      --text: #e7e9ea; --muted: #71767b; --blue: #1d9bf0; --red: #f4212e;
+      --green: #00ba7c; --yellow: #ffd400; --radius: 16px;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+    main { max-width: 760px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .page-header p { font-size: 14px; color: var(--muted); }
+
+    .input-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px;
+      margin-bottom: 24px;
+    }
+    .input-label { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    textarea {
+      width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-family: inherit; font-size: 15px; line-height: 1.5;
+      padding: 14px 16px; resize: vertical; min-height: 120px; outline: none;
+      transition: border-color 0.15s;
+    }
+    textarea:focus { border-color: var(--blue); }
+    textarea::placeholder { color: var(--muted); }
+    .char-count { font-size: 12px; color: var(--muted); text-align: right; margin-top: 6px; }
+    .char-count.over { color: var(--red); }
+    .optimize-btn {
+      display: flex; align-items: center; gap: 8px; justify-content: center;
+      width: 100%; margin-top: 14px; padding: 13px 24px;
+      background: var(--blue); color: #fff; border: none; border-radius: 24px;
+      font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .optimize-btn:hover:not(:disabled) { background: #1a8cd8; }
+    .optimize-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.7s linear infinite; display: none;
+    }
+    .spinner.show { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .results-section { margin-top: 8px; }
+    .results-title { font-size: 14px; font-weight: 700; color: var(--muted); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .version-cards { display: flex; flex-direction: column; gap: 14px; }
+    .version-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px;
+      position: relative;
+    }
+    .version-num { font-size: 11px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+    .version-text { font-size: 15px; line-height: 1.55; margin-bottom: 12px; white-space: pre-wrap; word-break: break-word; }
+    .version-why { font-size: 13px; color: var(--muted); line-height: 1.4; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 4px; }
+    .version-why strong { color: var(--text); }
+    .copy-btn {
+      position: absolute; top: 14px; right: 16px;
+      background: transparent; border: 1px solid var(--border); color: var(--muted);
+      border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: all 0.15s;
+    }
+    .copy-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+    .coming-soon {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 48px 32px; text-align: center;
+    }
+    .coming-soon .icon { font-size: 48px; display: block; margin-bottom: 16px; }
+    .coming-soon h2 { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+    .coming-soon p { font-size: 14px; color: var(--muted); max-width: 360px; margin: 0 auto; line-height: 1.5; }
+
+    .error-msg { background: rgba(244,33,46,0.08); border: 1px solid rgba(244,33,46,0.25); color: var(--red); border-radius: 10px; padding: 12px 16px; font-size: 14px; margin-top: 16px; display: none; }
+    .error-msg.show { display: block; }
+  </style>
+  <script>const sidebarPage = 'tweet-optimizer';</script>
+</head>
+<body class="has-sidebar">
+
+<main>
+  <div class="page-header">
+    <h1>✍️ AI Tweet Optimizer</h1>
+    <p>Rewrite your draft 3 ways to maximize engagement — powered by GPT-4o</p>
+  </div>
+
+  <div id="mainContent">
+    <div class="input-card">
+      <div class="input-label">Your draft tweet</div>
+      <textarea id="draftInput" placeholder="Type your tweet draft here..." maxlength="1000"></textarea>
+      <div class="char-count" id="charCount">0 / 280</div>
+      <button class="optimize-btn" id="optimizeBtn" onclick="optimize()">
+        <div class="spinner" id="spinner"></div>
+        <span id="btnText">Optimize →</span>
+      </button>
+      <div class="error-msg" id="errorMsg"></div>
+    </div>
+
+    <div class="results-section" id="resultsSection" style="display:none;">
+      <div class="results-title">3 Optimized Versions</div>
+      <div class="version-cards" id="versionCards"></div>
+    </div>
+  </div>
+
+  <div id="comingSoon" class="coming-soon" style="display:none;">
+    <span class="icon">🔮</span>
+    <h2>Coming Soon</h2>
+    <p>OpenAI integration is pending configuration. Check back soon — this feature is almost ready!</p>
+  </div>
+</main>
+
+<script src="/sidebar.js"></script>
+<script>
+const textarea  = document.getElementById('draftInput');
+const charCount = document.getElementById('charCount');
+
+textarea.addEventListener('input', () => {
+  const len = textarea.value.length;
+  charCount.textContent = `${len} / 280`;
+  charCount.className   = 'char-count' + (len > 280 ? ' over' : '');
+});
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+async function optimize() {
+  const draft = textarea.value.trim();
+  if (!draft) { showError('Please enter a tweet draft first.'); return; }
+
+  const btn     = document.getElementById('optimizeBtn');
+  const spinner = document.getElementById('spinner');
+  const btnText = document.getElementById('btnText');
+  const errEl   = document.getElementById('errorMsg');
+
+  btn.disabled = true;
+  spinner.classList.add('show');
+  btnText.textContent = 'Optimizing...';
+  errEl.classList.remove('show');
+  document.getElementById('resultsSection').style.display = 'none';
+
+  try {
+    const r = await fetch('/api/tools/tweet-optimizer', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ draft }),
+    });
+
+    if (r.status === 401) { location.href = '/api/auth/login'; return; }
+
+    const data = await r.json();
+
+    if (data.error === 'OpenAI key not configured') {
+      document.getElementById('mainContent').style.display = 'none';
+      document.getElementById('comingSoon').style.display  = 'block';
+      return;
+    }
+
+    if (data.error) { showError(data.error); return; }
+
+    const versions = data.versions || [];
+    if (!versions.length) { showError('No versions returned — please try again.'); return; }
+
+    const cards = versions.map((v, i) => `
+      <div class="version-card">
+        <div class="version-num">Version ${i + 1}</div>
+        <button class="copy-btn" onclick="copyText(${JSON.stringify(v.text)}, this)">Copy</button>
+        <div class="version-text">${escHtml(v.text)}</div>
+        ${v.why ? `<div class="version-why"><strong>Why this works:</strong> ${escHtml(v.why)}</div>` : ''}
+      </div>
+    `).join('');
+
+    document.getElementById('versionCards').innerHTML = cards;
+    document.getElementById('resultsSection').style.display = 'block';
+  } catch (e) {
+    showError('Network error — please try again.');
+  } finally {
+    btn.disabled = false;
+    spinner.classList.remove('show');
+    btnText.textContent = 'Optimize →';
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+initLayout();
+</script>
+</body>
+</html>
