@@ -74,7 +74,7 @@ function buildSidebar(user) {
   return `
     <aside class="sidebar" id="appSidebar">
       <a class="sidebar-logo" href="/dashboard">
-        <div class="sidebar-logo-icon">✈</div>
+        <div class="sidebar-logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M6 6 L18 18"/><path d="M18 6 L6 18"/></svg></div>
         <span class="sidebar-logo-text">Dash<span>Board</span></span>
       </a>
       <nav class="sidebar-nav">${navItems}</nav>
@@ -89,7 +89,7 @@ function buildTopbar(user) {
     <header class="topbar" id="appTopbar">
       <button class="topbar-menu" onclick="toggleSidebar()" aria-label="Menu">☰</button>
       <a class="topbar-logo" href="/">
-        <div class="topbar-logo-icon">✈</div>
+        <div class="topbar-logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M6 6 L18 18"/><path d="M18 6 L6 18"/></svg></div>
         <span class="topbar-logo-text">X<span>Growth</span></span>
       </a>
       <div class="topbar-right">
@@ -138,6 +138,7 @@ async function initLayout() {
       display: flex; align-items: center; justify-content: center;
       font-size: 13px; font-weight: 700;
     }
+    .topbar-logo-icon svg { width: 16px; height: 16px; }
     .topbar-logo-text {
       font-family: 'Bricolage Grotesque', sans-serif;
       font-size: 17px; font-weight: 700; letter-spacing: -0.02em; color: var(--text);
@@ -172,6 +173,7 @@ async function initLayout() {
       display: flex; align-items: center; justify-content: center;
       font-size: 14px; font-weight: 700;
     }
+    .sidebar-logo-icon svg { width: 17px; height: 17px; }
     .sidebar-logo-text {
       font-family: 'Bricolage Grotesque', sans-serif;
       font-size: 17px; font-weight: 700; letter-spacing: -0.02em; color: var(--text);
