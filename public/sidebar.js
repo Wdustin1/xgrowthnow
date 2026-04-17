@@ -74,7 +74,7 @@ function buildSidebar(user) {
   return `
     <aside class="sidebar" id="appSidebar">
       <a class="sidebar-logo" href="/dashboard">
-        <div class="sidebar-logo-icon"><img src="/logo-icon.svg" alt="" /></div>
+        <div class="sidebar-logo-icon"><img src="/logo-icon.png" alt="" /></div>
         <span class="sidebar-logo-text">Dash<span>Board</span></span>
       </a>
       <nav class="sidebar-nav">${navItems}</nav>
@@ -89,7 +89,7 @@ function buildTopbar(user) {
     <header class="topbar" id="appTopbar">
       <button class="topbar-menu" onclick="toggleSidebar()" aria-label="Menu">☰</button>
       <a class="topbar-logo" href="/">
-        <div class="topbar-logo-icon"><img src="/logo-icon.svg" alt="" /></div>
+        <div class="topbar-logo-icon"><img src="/logo-icon.png" alt="" /></div>
         <span class="topbar-logo-text">X<span>Growth</span></span>
       </a>
       <div class="topbar-right">
