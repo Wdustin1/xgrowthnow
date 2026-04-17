@@ -830,10 +830,14 @@
     }
     .tool-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(29,155,240,0.12), 0 0 0 1px rgba(29,155,240,0.2);
-      border-color: rgba(29,155,240,0.3);
+      box-shadow: 0 12px 40px rgba(90,120,255,0.12), 0 0 0 1px rgba(90,120,255,0.2);
+      border-color: rgba(90,120,255,0.3);
     }
     .tool-card:hover .tool-arrow { opacity: 1; }
+    .tool-card:hover .tool-icon-wrap {
+      border-color: rgba(90,120,255,0.35);
+      background: rgba(90,120,255,0.12);
+    }
     /* Remove right border on last column */
     .tool-card:nth-child(3n) { border-right: none; }
     /* Remove bottom border on last row */
@@ -845,18 +849,17 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
       flex-shrink: 0;
+      background: var(--card-hi);
+      border: 1px solid var(--border-hi);
+      color: var(--accent);
+      transition: background 0.2s ease, border-color 0.2s ease;
     }
-    .icon-tracker { background: linear-gradient(135deg,#1d3a5c,var(--accent)); }
-    .icon-unfollow { background: linear-gradient(135deg,#3d1515,#f4212e); }
-    .icon-time { background: linear-gradient(135deg,#3d3000,#ffd400); }
-    .icon-unreplied { background: linear-gradient(135deg,#003d2a,#00ba7c); }
-    .icon-loyal { background: linear-gradient(135deg,#002a3d,#06b6d4); }
-    .icon-spy { background: linear-gradient(135deg,#1a1a3d,#6366f1); }
-    .icon-recycler { background: linear-gradient(135deg,#003d1a,#00ba7c); }
-    .icon-ai { background: linear-gradient(135deg,#2d1a4a,#ec4899); }
-    .icon-dashboard { background: linear-gradient(135deg,#001a3d,var(--accent)); }
+    .tool-icon-wrap svg {
+      width: 22px;
+      height: 22px;
+      stroke-width: 1.75;
+    }
     .tool-info { flex: 1; }
     .tool-name {
       font-size: 15px;
@@ -1384,7 +1387,7 @@
     </div>
     <div class="tools-grid">
       <a href="/followers" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-tracker">👀</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">Unfollow Tracker</div>
           <div class="tool-desc">See exactly who doesn't follow you back.</div>
@@ -1392,7 +1395,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/unfollow" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-unfollow">🧹</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="22" x2="16" y1="11" y2="11"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">Mass Unfollow</div>
           <div class="tool-desc">Clean your list fast. Unfollow hundreds in minutes.</div>
@@ -1400,7 +1403,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/best-time" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-time">⏰</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">Best Time to Post</div>
           <div class="tool-desc">Post when your audience is actually online.</div>
@@ -1408,7 +1411,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/unreplied" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-unreplied">💬</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">Unreplied Comments</div>
           <div class="tool-desc">Never miss an engagement opportunity again.</div>
@@ -1416,7 +1419,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/loyal-fans" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-loyal">💎</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">20 Most Loyal Fans</div>
           <div class="tool-desc">Know who your biggest supporters are.</div>
@@ -1424,7 +1427,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/competitor-spy" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-spy">🔍</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">Competitor Spy</div>
           <div class="tool-desc">See what's working for accounts in your niche.</div>
@@ -1432,7 +1435,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/viral-reposter" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-recycler">🔁</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">Tweet Recycler</div>
           <div class="tool-desc">Boost your best old tweets. Auto-clean after 24h.</div>
@@ -1440,7 +1443,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/tweet-optimizer" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-ai">✍️</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">AI Tweet Optimizer</div>
           <div class="tool-desc">Let AI rewrite your tweets for max engagement.</div>
@@ -1448,7 +1451,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/dashboard" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-dashboard">📊</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">Growth Dashboard</div>
           <div class="tool-desc">Your account stats at a glance.</div>
