@@ -138,7 +138,7 @@ async function initLayout() {
     }
     .topbar-logo-icon img { width: 18px; height: 18px; display: block; }
     .topbar-logo-text {
-      font-family: 'Bricolage Grotesque', sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 17px; font-weight: 700; letter-spacing: -0.02em; color: var(--text);
     }
     .topbar-logo-text span { color: var(--accent); }
@@ -171,7 +171,7 @@ async function initLayout() {
     }
     .sidebar-logo-icon img { width: 19px; height: 19px; display: block; }
     .sidebar-logo-text {
-      font-family: 'Bricolage Grotesque', sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 17px; font-weight: 700; letter-spacing: -0.02em; color: var(--text);
     }
     .sidebar-logo-text span { color: var(--accent); }
@@ -230,7 +230,7 @@ async function initLayout() {
     }
     .sidebar-user-info { flex: 1; min-width: 0; }
     .sidebar-username {
-      font-family: 'Geist Mono', monospace;
+      font-family: 'SF Mono', Menlo, Consolas, monospace;
       font-size: 12px; color: var(--text-mute);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }

@@ -3,7 +3,7 @@
    Visual polish pass, 2026-04-17.
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   --bg:          #0a0b10;
@@ -50,7 +50,7 @@ html, body {
   margin: 0; padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 15px; line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -58,7 +58,7 @@ html, body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Bricolage Grotesque', 'Geist', sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 700; line-height: 1.04;
   letter-spacing: -0.025em; color: var(--text); margin: 0;
 }
@@ -76,15 +76,15 @@ a { color: var(--accent); text-decoration: none; transition: color 0.15s; }
 a:hover { color: var(--accent-hi); }
 
 code, pre, .mono {
-  font-family: 'Geist Mono', 'SF Mono', Menlo, monospace;
-  font-feature-settings: "tnum" 1, "ss01" 1;
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  font-feature-settings: "tnum" 1;
 }
 
 /* ---------- Buttons ---------- */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 11px 18px; min-height: 40px;
-  font-family: 'Geist', sans-serif; font-size: 14px; font-weight: 600;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; font-weight: 600;
   line-height: 1; letter-spacing: -0.005em;
   border-radius: var(--radius); border: 1px solid transparent;
   cursor: pointer; white-space: nowrap; text-decoration: none;
@@ -130,7 +130,7 @@ code, pre, .mono {
 textarea.x-input, select.x-input {
   width: 100%; display: block;
   padding: 11px 14px; min-height: 40px;
-  font-family: 'Geist', sans-serif; font-size: 14px;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px;
   color: var(--text); background: var(--surface);
   border: 1px solid var(--border); border-radius: var(--radius);
   outline: none; transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
@@ -171,7 +171,7 @@ textarea.x-input, select.x-input {
 /* ---------- Eyebrow label ---------- */
 .eyebrow {
   display: inline-flex; align-items: center; gap: 10px;
-  font-family: 'Geist Mono', monospace;
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
   font-size: 11px; font-weight: 500;
   letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--text-faint);
@@ -186,7 +186,7 @@ textarea.x-input, select.x-input {
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
-.stat-value { font-family: 'Geist Mono', monospace; font-size: 28px; font-weight: 600; color: var(--text); font-feature-settings: "tnum" 1; }
+.stat-value { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 28px; font-weight: 600; color: var(--text); font-feature-settings: "tnum" 1; }
 .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-faint); }
 
 /* ---------- Hero glow (refined replacement for radial AI-slop gradient) ---------- */
