@@ -860,48 +860,63 @@
 
     /* ─── TOOLS GRID ─── */
     .tools-section {
-      padding: 100px 0;
+      padding: 120px 0;
       background: var(--surface);
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
     }
     .tools-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 20px;
       overflow: hidden;
+      background: var(--card);
+      max-width: 1200px;
+      margin: 0 auto;
     }
     .tool-card {
       display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      padding: 28px 24px;
+      flex-direction: column;
+      gap: 18px;
+      padding: 32px 28px;
       border-right: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       text-decoration: none;
       color: inherit;
       background: var(--card);
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      transition: background 0.2s ease;
       position: relative;
+      overflow: hidden;
+      min-height: 180px;
+    }
+    .tool-card::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--accent);
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 0.25s ease;
     }
     .tool-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(90,120,255,0.12), 0 0 0 1px rgba(90,120,255,0.2);
-      border-color: rgba(90,120,255,0.3);
+      background: var(--card-hi);
     }
-    .tool-card:hover .tool-arrow { opacity: 1; }
+    .tool-card:hover::before { transform: scaleY(1); }
+    .tool-card:hover .tool-arrow { opacity: 1; transform: translateX(0); }
     .tool-card:hover .tool-icon-wrap {
       border-color: rgba(90,120,255,0.35);
-      background: rgba(90,120,255,0.12);
+      background: rgba(90,120,255,0.14);
     }
-    /* Remove right border on last column */
+    .tool-card:hover .tool-name { color: var(--accent-hi); }
+    /* Remove right border on last column (3-col grid) */
     .tool-card:nth-child(3n) { border-right: none; }
     /* Remove bottom border on last row */
     .tool-card:nth-last-child(-n+3) { border-bottom: none; }
     .tool-icon-wrap {
-      width: 44px;
-      height: 44px;
+      width: 48px;
+      height: 48px;
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -913,43 +928,45 @@
       transition: background 0.2s ease, border-color 0.2s ease;
     }
     .tool-icon-wrap svg {
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
       stroke-width: 1.75;
     }
-    .tool-info { flex: 1; }
+    .tool-info { flex: 1; display: flex; flex-direction: column; }
     .tool-name {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       color: #fff;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      transition: color 0.2s ease;
     }
     .tool-desc {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.5;
+      font-size: 13.5px;
+      color: var(--text-mute);
+      line-height: 1.55;
     }
     .tool-arrow {
       position: absolute;
-      top: 28px;
-      right: 20px;
-      color: var(--blue);
-      font-size: 16px;
+      top: 32px;
+      right: 24px;
+      color: var(--accent);
+      font-size: 18px;
+      font-weight: 600;
       opacity: 0;
-      transition: opacity 0.2s;
+      transform: translateX(-4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
     }
-    @media (max-width: 800px) {
+    @media (max-width: 900px) {
       .tools-grid { grid-template-columns: repeat(2, 1fr); }
       .tool-card:nth-child(3n) { border-right: 1px solid var(--border); }
       .tool-card:nth-child(2n) { border-right: none; }
-      .tool-card:nth-last-child(-n+2) { border-bottom: none; }
       .tool-card:nth-last-child(-n+3) { border-bottom: 1px solid var(--border); }
+      .tool-card:nth-last-child(-n+2) { border-bottom: none; }
     }
-    @media (max-width: 520px) {
+    @media (max-width: 560px) {
       .tools-grid { grid-template-columns: 1fr; }
-      .tool-card { border-right: none !important; }
+      .tool-card { border-right: none !important; border-bottom: 1px solid var(--border) !important; }
       .tool-card:last-child { border-bottom: none !important; }
-      .tool-card:nth-last-child(-n+2) { border-bottom: 1px solid var(--border) !important; }
     }
 
     /* ─── PRICING TEASER ─── */
