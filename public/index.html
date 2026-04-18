@@ -1846,9 +1846,9 @@
     feed.querySelectorAll('.db-feed-time').forEach((el, i) => {
       el.textContent = i === 0 ? 'just now' : `${i}m ago`;
     });
-    // Max 4 items
+    // Max 3 items — keeps chart from getting squished
     const items = feed.querySelectorAll('.db-feed-item');
-    if (items.length > 4) items[items.length - 1].remove();
+    if (items.length > 3) items[items.length - 1].remove();
   }, 2500);
 </script>
 </body>
