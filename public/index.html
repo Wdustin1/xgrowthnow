@@ -1188,8 +1188,13 @@
       font-size: clamp(28px, 4vw, 52px);
       font-weight: 900;
       letter-spacing: -1.5px;
-      color: #fff;
       margin-bottom: 16px;
+      background: linear-gradient(172deg, #ffffff 0%, #e3e9ff 40%, #acb8de 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      filter: drop-shadow(0 3px 28px rgba(90,120,255,0.22));
     }
     .cta-banner p {
       font-size: 17px;
