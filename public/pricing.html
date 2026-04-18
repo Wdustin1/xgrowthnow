@@ -60,6 +60,52 @@
     }
     .hero p { font-size: 16px; color: var(--text-mute); max-width: 460px; margin: 0 auto; line-height: 1.65; }
 
+    /* ── ELIGIBILITY BANNER (inspired by X's "eligible to get paid" screen) ── */
+    .elig-banner {
+      padding: 64px 24px 56px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .elig-banner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(620px 340px at 50% 45%, rgba(90,120,255,0.09), transparent 65%);
+      pointer-events: none;
+    }
+    .elig-inner { position: relative; max-width: 640px; margin: 0 auto; }
+    .elig-badge {
+      width: 72px; height: 72px;
+      margin: 0 auto 26px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1px solid var(--border-hi);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent);
+      box-shadow: 0 0 40px rgba(90,120,255,0.22), inset 0 0 0 1px rgba(90,120,255,0.15);
+    }
+    .elig-badge svg { width: 36px; height: 36px; }
+    .elig-headline {
+      font-size: clamp(24px, 3.2vw, 38px);
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      line-height: 1.15;
+      margin: 0 0 12px;
+      background: linear-gradient(172deg, #ffffff 0%, #d2d9f0 40%, #8f9bc8 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      filter: drop-shadow(0 3px 24px rgba(90,120,255,0.18));
+    }
+    .elig-sub {
+      font-size: 16px;
+      color: var(--text-mute);
+      line-height: 1.6;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
     /* ── BILLING TOGGLE ── */
     .toggle-section { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 40px 0 0; position: relative; z-index: 1; }
     .toggle-label { font-size: 15px; font-weight: 600; color: var(--text-mute); transition: color 0.2s; cursor: pointer; }
@@ -222,6 +268,20 @@
   <p>Two plans. One goal — a bigger, more engaged audience on X. Most users recoup the cost within their first month of monetization.</p>
   <p class="pricing-stat">XGrowthNow users get monetized 5x <em>FASTER</em></p>
 </div>
+
+<!-- ELIGIBILITY BANNER -->
+<section class="elig-banner" aria-label="You're eligible">
+  <div class="elig-inner">
+    <div class="elig-badge" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
+        <path d="m9 12 2 2 4-4"/>
+      </svg>
+    </div>
+    <h2 class="elig-headline">You're eligible to grow faster on X</h2>
+    <p class="elig-sub">Enroll below to unlock the full toolkit — built to help creators hit monetization sooner.</p>
+  </div>
+</section>
 
 <!-- BILLING TOGGLE -->
 <div class="toggle-section" id="billing">
