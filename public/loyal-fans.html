@@ -4,52 +4,64 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Your 20 Most Loyal Fans — XGrowthNow</title>
+  <link rel="stylesheet" href="/theme.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #000; --surface: #0f0f0f; --card: #16181c; --border: #2f3336;
-      --text: #e7e9ea; --muted: #71767b; --blue: #1d9bf0; --red: #f4212e;
-      --green: #00ba7c; --yellow: #ffd400; --gold: #f5a623; --radius: 16px;
+      --red: var(--danger);
+      --green: var(--success);
+      --yellow: var(--warning);
+      --gold: var(--warning);
     }
-    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+    body { min-height: 100vh; }
     main { max-width: 760px; margin: 0 auto; padding: 40px 20px 80px; }
 
     .page-header { margin-bottom: 28px; }
     .page-header h1 { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 6px; }
-    .page-header p { font-size: 14px; color: var(--muted); }
+    .page-header p { font-size: 14px; color: var(--text-mute); }
 
     .state-box { text-align: center; padding: 60px 24px; }
     .state-icon { font-size: 48px; margin-bottom: 16px; display: block; }
     .state-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-    .state-sub { font-size: 14px; color: var(--muted); }
-    .progress-bar-wrap { height: 4px; background: var(--border); border-radius: 2px; margin-top: 20px; max-width: 300px; margin-inline: auto; overflow: hidden; }
-    .progress-bar { height: 100%; background: var(--blue); border-radius: 2px; animation: indeterminate 2s ease-in-out infinite; }
+    .state-sub { font-size: 14px; color: var(--text-mute); }
+    .progress-bar-wrap { height: 4px; background: var(--border-hi); border-radius: 2px; margin-top: 20px; max-width: 300px; margin-inline: auto; overflow: hidden; }
+    .progress-bar { height: 100%; background: var(--accent); border-radius: 2px; animation: indeterminate 2s ease-in-out infinite; }
     @keyframes indeterminate { 0% { transform: translateX(-100%) scaleX(0.4); } 50% { transform: translateX(0%) scaleX(0.6); } 100% { transform: translateX(100%) scaleX(0.4); } }
 
     .summary-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
-    .summary-card { flex: 1; min-width: 140px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; }
+    .summary-card { flex: 1; min-width: 140px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 20px; }
     .summary-num { font-size: 28px; font-weight: 900; }
-    .summary-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .summary-label { font-size: 12px; color: var(--text-mute); margin-top: 2px; }
 
-    .fan-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .fan-list { display: flex; flex-direction: column; gap: 1px; background: var(--border-hi); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
     .fan-row { display: flex; align-items: center; gap: 12px; background: var(--card); padding: 14px 18px; transition: background 0.15s; }
-    .fan-row:hover { background: var(--surface); }
-    .fan-rank { font-size: 15px; font-weight: 900; min-width: 28px; text-align: center; color: var(--muted); flex-shrink: 0; }
-    .fan-rank.top3 { color: var(--gold); }
-    .fan-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: var(--border); flex-shrink: 0; }
+    .fan-row:hover { background: var(--card-hi); }
+    .fan-rank {
+      font-family: 'SF Mono', Menlo, Consolas, monospace;
+      font-size: 20px; font-weight: 600; min-width: 36px; text-align: center;
+      color: var(--text-faint); flex-shrink: 0;
+      font-feature-settings: "tnum" 1;
+    }
+    .fan-rank.rank-1 { color: var(--warning); }
+    .fan-rank.rank-2 { color: var(--text-mute); }
+    .fan-rank.rank-3 { color: #cd7f32; }
+    .fan-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: var(--border-hi); flex-shrink: 0; }
     .fan-info { flex: 1; min-width: 0; }
     .fan-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .fan-handle { font-size: 12px; color: var(--muted); }
-    .fan-followers { font-size: 12px; color: var(--muted); margin-right: 8px; white-space: nowrap; flex-shrink: 0; }
+    .fan-handle { font-size: 12px; color: var(--text-mute); }
+    .fan-followers {
+      font-family: 'SF Mono', Menlo, Consolas, monospace;
+      font-size: 12px; color: var(--text-mute); margin-right: 8px; white-space: nowrap; flex-shrink: 0;
+      font-feature-settings: "tnum" 1;
+    }
     .interaction-badge {
-      background: rgba(29,155,240,0.12); color: var(--blue); border: 1px solid rgba(29,155,240,0.25);
+      background: var(--accent-soft); color: var(--accent-hi); border: 1px solid rgba(90,120,255,0.25);
       border-radius: 20px; font-size: 12px; font-weight: 700; padding: 4px 12px;
       white-space: nowrap; flex-shrink: 0;
     }
-    .interaction-badge.high { background: rgba(0,186,124,0.12); color: var(--green); border-color: rgba(0,186,124,0.25); }
-    .empty-state { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px; text-align: center; }
+    .interaction-badge.high { background: rgba(51,214,142,0.12); color: var(--success); border-color: rgba(51,214,142,0.25); }
+    .empty-state { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; text-align: center; }
     .empty-state .state-icon { font-size: 36px; }
-    .empty-state p { color: var(--muted); font-size: 14px; margin-top: 8px; }
+    .empty-state p { color: var(--text-mute); font-size: 14px; margin-top: 8px; }
   </style>
   <script>const sidebarPage = 'loyal-fans';</script>
 </head>
@@ -57,26 +69,28 @@
 
 <main>
   <div class="page-header">
-    <h1>💎 Your 20 Most Loyal Fans</h1>
+    <h1>Your 20 Most Loyal Fans</h1>
     <p>The accounts that engage with your content the most — make sure to return the favor!</p>
   </div>
 
   <div id="stateLoading" class="state-box">
-    <span class="state-icon">💎</span>
+    <span class="state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg></span>
     <div class="state-title">Finding your most loyal fans...</div>
     <div class="state-sub">Scanning your recent tweets and their likes — this takes a moment</div>
     <div class="progress-bar-wrap"><div class="progress-bar"></div></div>
   </div>
 
   <div id="stateError" class="state-box" style="display:none;">
-    <span class="state-icon">⚠️</span>
+    <span class="state-icon state-warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span>
     <div class="state-title" id="errMsg">Something went wrong</div>
     <div class="state-sub" style="margin-top:8px;">Try signing out and back in, then refresh this page.</div>
-    <a href="/api/auth/logout" style="display:inline-block;margin-top:16px;background:var(--blue);color:#fff;border-radius:20px;padding:10px 24px;font-size:14px;font-weight:600;text-decoration:none;">Sign Out & Back In</a>
+    <a class="btn btn-accent" style="margin-top:16px;" href="/api/auth/logout">Sign Out & Back In</a>
   </div>
 
   <div id="stateContent" style="display:none;"></div>
 </main>
+
+<footer class="app-footer"><img class="footer-mark" src="/logo-icon.png" alt="" aria-hidden="true"/> XGrowth — Built by <a href="https://x.com/investwithdoc" target="_blank">@InvestWithDoc</a></footer>
 
 <script src="/sidebar.js"></script>
 <script>
@@ -88,10 +102,7 @@ function fmt(n) {
 }
 
 function rankEmoji(i) {
-  if (i === 0) return '🥇';
-  if (i === 1) return '🥈';
-  if (i === 2) return '🥉';
-  return `#${i + 1}`;
+  return String(i + 1).padStart(2, '0');
 }
 
 async function load() {
@@ -121,27 +132,30 @@ async function load() {
   if (!fans.length) {
     content.innerHTML = `
       <div class="empty-state">
-        <span class="state-icon">🤔</span>
+        <span class="state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span>
         <div class="state-title">No fans found yet</div>
         <p>We couldn't find liked-by data for your recent tweets. Try again once your tweets have more likes!</p>
       </div>`;
     return;
   }
 
-  const rows = fans.map((fan, i) => `
+  const rows = fans.map((fan, i) => {
+    const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : '';
+    return `
     <div class="fan-row">
-      <div class="fan-rank ${i < 3 ? 'top3' : ''}">${rankEmoji(i)}</div>
+      <div class="fan-rank ${rankClass}">${rankEmoji(i)}</div>
       <img class="fan-avatar" src="${fan.avatar}" onerror="this.src=''" alt=""/>
       <div class="fan-info">
         <div class="fan-name">${fan.name || fan.username}</div>
         <div class="fan-handle">@${fan.username}</div>
       </div>
-      <div class="fan-followers">${fmt(fan.followersCount)} followers</div>
-      <div class="interaction-badge" style="display:none;">
+      <div class="fan-followers mono">${fmt(fan.followersCount)} followers</div>
+      <div class="interaction-badge mono" style="display:none;">
         ${fan.interactionCount}
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   content.innerHTML = `
     <div class="summary-bar">

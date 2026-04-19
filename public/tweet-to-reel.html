@@ -4,37 +4,24 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tweet To Video — XGrowthNow</title>
+  <link rel="stylesheet" href="/theme.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #000; --surface: #0f0f0f; --card: #16181c; --border: #2f3336;
-      --text: #e7e9ea; --muted: #71767b; --blue: #1d9bf0; --green: #00ba7c; --radius: 16px;
-    }
-    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
-
     main { max-width: 1140px; margin: 0 auto; padding: 36px 24px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
     @media (max-width: 800px) { main { grid-template-columns: 1fr; } }
 
     .left-panel h1 { font-size: 24px; font-weight: 900; margin-bottom: 4px; }
-    .left-panel p  { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+    .left-panel p  { font-size: 14px; color: var(--text-mute); margin-bottom: 24px; line-height: 1.5; }
 
-    .input-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .input-card { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
 
     /* Tweet URL import */
     .import-row { display: flex; gap: 8px; }
     .import-row input { flex: 1; }
-    .import-btn {
-      background: var(--blue); color: #fff; border: none; border-radius: 10px;
-      padding: 10px 16px; font-size: 13px; font-weight: 700; cursor: pointer;
-      white-space: nowrap; transition: background 0.2s; flex-shrink: 0;
-    }
-    .import-btn:hover { background: #1a8cd8; }
-    .import-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .import-status { font-size: 12px; color: var(--muted); min-height: 16px; }
-    .import-status.ok  { color: var(--green); }
-    .import-status.err { color: #f4212e; }
+    .import-status { font-size: 12px; color: var(--text-mute); min-height: 16px; }
+    .import-status.ok  { color: var(--success); }
+    .import-status.err { color: var(--danger); }
 
-    .divider { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
+    .divider { display: flex; align-items: center; gap: 10px; color: var(--text-mute); font-size: 12px; }
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
     .field { display: flex; flex-direction: column; gap: 6px; }
@@ -44,41 +31,30 @@
       color: var(--text); font-size: 14px; padding: 10px 14px; outline: none;
       transition: border-color 0.2s; font-family: inherit;
     }
-    .field input:focus, .field textarea:focus { border-color: var(--blue); }
+    .field input:focus, .field textarea:focus { border-color: var(--accent); }
     .field textarea { resize: vertical; min-height: 90px; }
 
     .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-    .theme-opt { border: 2px solid var(--border); border-radius: 10px; padding: 8px 4px; cursor: pointer; text-align: center; font-size: 11px; font-weight: 700; transition: all 0.15s; color: var(--muted); }
-    .theme-opt:hover { border-color: var(--blue); color: var(--text); }
-    .theme-opt.active { border-color: var(--blue); color: var(--text); background: rgba(29,155,240,0.08); }
+    .theme-opt { border: 2px solid var(--border); border-radius: 10px; padding: 8px 4px; cursor: pointer; text-align: center; font-size: 11px; font-weight: 700; transition: all 0.15s; color: var(--text-mute); }
+    .theme-opt:hover { border-color: var(--accent); color: var(--text); }
+    .theme-opt.active { border-color: var(--accent); color: var(--text); background: var(--accent-soft); }
     .theme-swatch { width: 100%; height: 24px; border-radius: 5px; margin-bottom: 5px; }
 
     /* Action buttons */
     .action-row { display: flex; gap: 10px; }
-    .btn-dl-img {
-      flex: 1; background: var(--card); color: var(--text); border: 1px solid var(--border);
-      border-radius: 12px; font-size: 14px; font-weight: 700; padding: 13px;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .btn-dl-img:hover { border-color: var(--blue); color: var(--blue); }
-    .btn-dl-vid {
-      flex: 2; background: var(--blue); color: #fff; border: none;
-      border-radius: 12px; font-size: 14px; font-weight: 700; padding: 13px;
-      cursor: pointer; transition: background 0.2s; position: relative; overflow: hidden;
-    }
-    .btn-dl-vid:hover:not(:disabled) { background: #1a8cd8; }
-    .btn-dl-vid:disabled { opacity: 0.7; cursor: not-allowed; }
+    .btn-dl-img { flex: 1; }
+    .btn-dl-vid { flex: 2; position: relative; overflow: hidden; }
 
     /* Recording progress */
     .record-progress { display: none; flex-direction: column; gap: 8px; }
     .record-progress.visible { display: flex; }
-    .progress-bar-wrap { background: var(--border); border-radius: 4px; height: 5px; overflow: hidden; }
-    .progress-bar-fill { height: 100%; background: var(--blue); width: 0%; transition: width 0.1s linear; border-radius: 4px; }
-    .progress-label { font-size: 12px; color: var(--muted); text-align: center; }
+    .progress-bar-wrap { background: var(--border-hi); border-radius: 4px; height: 5px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.1s linear; border-radius: 4px; }
+    .progress-label { font-size: 12px; color: var(--text-mute); text-align: center; }
 
     /* Right: preview */
     .right-panel { position: sticky; top: 80px; }
-    .preview-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+    .preview-label { font-size: 12px; font-weight: 700; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
     .reel-outer { width: 100%; max-width: 280px; margin: 0 auto; }
     .reel-wrap {
       width: 100%;
@@ -86,7 +62,7 @@
       position: relative;
       border-radius: 18px;
       overflow: hidden;
-      border: 1px solid #3a3d42;
+      border: 1px solid var(--border-hi);
       box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 20px 60px rgba(0,0,0,0.8);
     }
     .reel-wrap canvas {
@@ -98,7 +74,7 @@
 
     /* Platform badges */
     .platform-row { display: flex; justify-content: center; gap: 10px; margin-top: 14px; }
-    .plat-badge { font-size: 11px; color: var(--muted); background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; }
+    .plat-badge { font-size: 11px; color: var(--text-mute); background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; }
   </style>
 </head>
 <body class="has-sidebar">
@@ -106,17 +82,17 @@
 <main>
   <!-- LEFT -->
   <div class="left-panel">
-    <h1>🎬 Tweet To Video</h1>
+    <h1>Tweet To Video</h1>
     <p>Put your content on MULTIPLE PLATFORMS — Paste a tweet link to auto-import. Export as a 15-second 9:16 video ready for TikTok, Instagram Reels & YouTube Shorts.</p>
 
-    <div class="input-card">
+    <div class="input-card card">
 
       <!-- Tweet URL Import -->
       <div class="field">
         <label>Import from tweet URL</label>
         <div class="import-row">
           <input type="text" id="tweetUrl" placeholder="https://x.com/investwithdoc/status/..." oninput="clearImportStatus()" />
-          <button class="import-btn" id="importBtn" onclick="importTweet()">↓ Import</button>
+          <button class="btn btn-accent import-btn" id="importBtn" onclick="importTweet()">↓ Import</button>
         </div>
         <div class="import-status" id="importStatus"></div>
       </div>
@@ -146,13 +122,13 @@
           <div class="theme-opt active" onclick="setTheme('dark',this)"><div class="theme-swatch" style="background:#000;border:1px solid #2f3336;"></div>Dark</div>
           <div class="theme-opt" onclick="setTheme('midnight',this)"><div class="theme-swatch" style="background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);"></div>Midnight</div>
           <div class="theme-opt" onclick="setTheme('sunrise',this)"><div class="theme-swatch" style="background:linear-gradient(135deg,#f7971e,#ffd200);"></div>Sunrise</div>
-          <div class="theme-opt" onclick="setTheme('bitcoin',this)"><div class="theme-swatch" style="background:linear-gradient(135deg,#f7931a,#ff6b00);"></div>Bitcoin 🟠</div>
+          <div class="theme-opt" onclick="setTheme('bitcoin',this)"><div class="theme-swatch" style="background:linear-gradient(135deg,#f7931a,#ff6b00);"></div>Bitcoin</div>
         </div>
       </div>
 
       <div class="action-row">
-        <button class="btn-dl-img" onclick="downloadImage()">⬇ Image</button>
-        <button class="btn-dl-vid" id="vidBtn" onclick="startRecording()">🎬 Export 15s Video</button>
+        <button class="btn btn-secondary btn-dl-img" onclick="downloadImage()">⬇ Image</button>
+        <button class="btn btn-primary btn-lg btn-dl-vid" id="vidBtn" onclick="startRecording()">Export 15s Video</button>
       </div>
 
       <div class="record-progress" id="recordProgress">
@@ -162,13 +138,13 @@
 
       <!-- Post-recording export options -->
       <div id="exportOptions" style="display:none; flex-direction:column; gap:10px;">
-        <div style="font-size:12px;color:var(--muted);text-align:center;">Recording complete — choose your format:</div>
+        <div style="font-size:12px;color:var(--text-mute);text-align:center;">Recording complete — choose your format:</div>
         <div style="display:flex;gap:8px;">
-          <button class="btn-dl-img" style="flex:1;" id="dlWebm" onclick="downloadWebm()">⬇ WebM <span style="font-size:10px;opacity:0.6;">(YouTube)</span></button>
-          <button class="btn-dl-vid" style="flex:2;background:linear-gradient(135deg,#e1306c,#833ab4,#fd1d1d);" id="dlMp4" onclick="convertToMp4()">🔄 Convert → MP4 <span style="font-size:10px;opacity:0.8;">(TikTok · Reels)</span></button>
+          <button class="btn btn-secondary btn-dl-img" style="flex:1;" id="dlWebm" onclick="downloadWebm()">⬇ WebM <span style="font-size:10px;opacity:0.6;">(YouTube)</span></button>
+          <button class="btn btn-accent btn-dl-vid" style="flex:2;" id="dlMp4" onclick="convertToMp4()">Convert → MP4 <span style="font-size:10px;opacity:0.8;">(TikTok · Reels)</span></button>
         </div>
-        <div id="convertStatus" style="font-size:12px;color:var(--muted);text-align:center;min-height:16px;"></div>
-        <div class="progress-bar-wrap" id="convertProgressWrap" style="display:none;"><div class="progress-bar-fill" id="convertFill" style="background:linear-gradient(90deg,#e1306c,#833ab4);"></div></div>
+        <div id="convertStatus" style="font-size:12px;color:var(--text-mute);text-align:center;min-height:16px;"></div>
+        <div class="progress-bar-wrap" id="convertProgressWrap" style="display:none;"><div class="progress-bar-fill" id="convertFill"></div></div>
       </div>
 
     </div>
@@ -177,7 +153,7 @@
   <!-- RIGHT -->
   <div class="right-panel">
     <div class="preview-label">Live Preview · 9:16 Portrait</div>
-    <div class="reel-outer">
+    <div class="reel-outer card surface">
       <div class="reel-wrap">
         <canvas id="reelCanvas" width="1080" height="1920"></canvas>
       </div>
@@ -189,6 +165,8 @@
     </div>
   </div>
 </main>
+
+<footer class="app-footer"><img class="footer-mark" src="/logo-icon.png" alt="" aria-hidden="true"/> XGrowth — Built by <a href="https://x.com/investwithdoc" target="_blank">@InvestWithDoc</a></footer>
 
 <script>
 // ─── State ───────────────────────────────────────────────────────────────────
@@ -509,7 +487,7 @@ function startRecording() {
 
     isRecording     = false;
     btn.disabled    = false;
-    btn.textContent = '🔁 Record Again';
+    btn.textContent = 'Record Again';
     prog.classList.remove('visible');
     exports.style.display = 'flex';
   };
@@ -557,7 +535,7 @@ let ffmpegInst   = null;
 function setConvertStatus(msg, color) {
   const el = document.getElementById('convertStatus');
   el.textContent  = msg;
-  el.style.color  = color || 'var(--muted)';
+  el.style.color  = color || 'var(--text-mute)';
 }
 
 async function convertToMp4() {
@@ -647,9 +625,9 @@ async function convertToMp4() {
     URL.revokeObjectURL(url);
 
     fill.style.width = '100%';
-    setConvertStatus('✓ MP4 downloaded! Ready for TikTok & Instagram.', 'var(--green)');
+    setConvertStatus('✓ MP4 downloaded! Ready for TikTok & Instagram.', 'var(--success)');
   } catch (e) {
-    setConvertStatus('Conversion failed: ' + e.message, '#f4212e');
+    setConvertStatus('Conversion failed: ' + e.message, 'var(--danger)');
     console.error(e);
   } finally {
     btn.disabled = false;

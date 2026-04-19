@@ -7,32 +7,16 @@
   <meta name="description" content="XGrowthNow gives you the exact tools to unfollow dead weight, post at the right time, spy on competitors, and recycle your best content — all in one place." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/theme.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #000;
-      --surface: #0a0a0a;
-      --card: #111;
-      --border: #1f1f1f;
-      --blue: #1d9bf0;
-      --purple: #7b61ff;
       --green: #00ba7c;
       --red: #f4212e;
-      --text: #e7e9ea;
-      --muted: #71767b;
-      --muted2: #888;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 16px;
-      line-height: 1.6;
       overflow-x: hidden;
     }
 
@@ -45,9 +29,6 @@
       pointer-events: none;
       z-index: 0;
     }
-
-    /* ─── TYPOGRAPHY ─── */
-    h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -1px; }
 
     /* ─── FADE-IN ─── */
     .fade-in {
@@ -84,7 +65,7 @@
     .nav-logo {
       font-size: 28px;
       font-weight: 900;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       color: #fff;
       text-decoration: none;
       letter-spacing: -1px;
@@ -109,47 +90,6 @@
       transition: color 0.2s;
     }
     .nav-links a:hover { color: #fff; }
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 28px;
-      border-radius: 100px;
-      background: linear-gradient(135deg, #1d9bf0, #7b61ff);
-      box-shadow: 0 0 24px rgba(29,155,240,0.3);
-      color: #fff;
-      font-size: 15px;
-      font-weight: 700;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: inherit;
-      white-space: nowrap;
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 40px rgba(29,155,240,0.5);
-    }
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 28px;
-      border-radius: 100px;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .btn-secondary:hover {
-      border-color: rgba(29,155,240,0.4);
-      background: rgba(29,155,240,0.05);
-    }
     .nav-mobile-toggle {
       display: none;
       background: none;
@@ -193,7 +133,7 @@
     }
     .orb-2 {
       width: 608px; height: 608px;
-      background: radial-gradient(circle, rgba(123,97,255,0.59) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(90,120,255,0.35) 0%, transparent 70%);
       top: 60px; right: -100px;
       animation-duration: 17s;
       animation-delay: -5s;
@@ -258,19 +198,17 @@
       font-weight: 600;
       margin-bottom: 28px;
     }
-    .hero h1 em { font-style: normal; -webkit-text-fill-color: #1d9bf0; color: #1d9bf0; }
+    .hero h1 em { font-style: normal; }
     .hero h1 {
-      font-size: 46px;
-      font-weight: 900;
-      line-height: 1.15;
-      letter-spacing: -2px;
-      background: linear-gradient(135deg, #fff 0%, #a8d4f8 60%, #1d9bf0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
       max-width: 800px;
       margin: 0 0 24px;
       text-align: left;
+      background: linear-gradient(172deg, #ffffff 0%, #d2d9f0 40%, #8f9bc8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      filter: drop-shadow(0 3px 28px rgba(90,120,255,0.18));
     }
     @media (max-width: 900px) {
       .hero h1 { margin: 0 auto 24px; text-align: center; font-size: clamp(22px, 6.5vw, 36px) !important; max-width: 100% !important; letter-spacing: -0.5px; }
@@ -284,13 +222,37 @@
     }
     /* Nav handle input */
     .hero-sub-p { font-size: 16px; color: var(--muted2); margin-bottom: 0; }
-    .hero-stars { font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-    .hero-stars span { font-weight: 600; color: #fff; }
+    .hero-proof {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-bottom: 24px;
+      padding: 5px 14px 5px 5px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 999px;
+      font-size: 13px;
+      max-width: 100%;
+    }
+    .hero-proof-avatar {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-hi));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: #fff;
+      flex-shrink: 0; letter-spacing: -0.02em;
+    }
+    .hero-proof-quote { color: rgba(255,255,255,0.88); font-weight: 500; }
+    .hero-proof-handle {
+      color: var(--accent-hi); font-weight: 600;
+      font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 12px;
+      white-space: nowrap;
+    }
+    @media (max-width: 560px) {
+      .hero-proof { flex-wrap: wrap; row-gap: 4px; }
+    }
     .hero-testimonial { margin-top: 32px; max-width: 460px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px 28px; }
     .testimonial-text { font-size: 16px; color: rgba(255,255,255,0.9); line-height: 1.6; font-style: italic; margin-bottom: 20px; font-weight: 500; }
     .testimonial-byline { display: flex; align-items: center; gap: 14px; }
-    .testimonial-accent { width: 32px; height: 3px; background: linear-gradient(90deg, #1d9bf0, #7b61ff); border-radius: 2px; flex-shrink: 0; }
-    .testimonial-avatar-circle { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #1d9bf0, #7b61ff); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .testimonial-accent { width: 32px; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-hi)); border-radius: 2px; flex-shrink: 0; }
+    .testimonial-avatar-circle { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-hi)); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #fff; flex-shrink: 0; }
     .testimonial-name { font-size: 15px; font-weight: 800; color: #fff; }
     .testimonial-handle { font-size: 13px; color: var(--blue); font-weight: 500; }
 
@@ -320,174 +282,204 @@
     .db-stat:last-child { border-right: none; }
     .db-stat-val { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 4px; }
     .db-stat-label { font-size: 10px; color: rgba(255,255,255,0.4); font-weight: 500; }
-    .db-chart-wrap { margin-bottom: 14px; border-radius: 10px; overflow: hidden; background: rgba(29,155,240,0.04); border: 1px solid rgba(29,155,240,0.1); flex: 1; min-height: 0; }
-    .db-chart { width: 100%; height: 100%; display: block; min-height: 200px; }
+    .db-chart-wrap { margin-bottom: 14px; border-radius: 10px; overflow: hidden; background: rgba(90,120,255,0.04); border: 1px solid rgba(90,120,255,0.12); flex: 1; min-height: 0; }
+    .db-chart { width: 100%; height: 100%; display: block; }
     .db-chart-line { stroke-dasharray: 900; stroke-dashoffset: 900; animation: drawLine 2.5s ease forwards; }
     .db-chart-fill { opacity: 0; animation: fadeIn 2.5s ease forwards; }
+    .db-chart-pill { opacity: 0; animation: fadeIn 2.5s ease 0.8s forwards; }
     @keyframes drawLine { to { stroke-dashoffset: 0; } }
     @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
     .db-feed-title { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
     .db-feed { display: flex; flex-direction: column; gap: 6px; }
     .db-feed-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; background: rgba(255,255,255,0.03); transition: opacity 0.3s ease, transform 0.3s ease; }
-    .db-feed-avatar { width: 24px; height: 24px; border-radius: 50%; background: #1d9bf0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .db-feed-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0; }
     .db-feed-name { flex: 1; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.85); }
     .db-feed-name span { font-weight: 400; color: rgba(255,255,255,0.4); }
     .db-feed-time { font-size: 10px; color: rgba(255,255,255,0.3); white-space: nowrap; }
 
-    /* ─── IPHONE MOCKUP (PathSocial style) ─── */
+    /* ─── IPHONE 15 PRO MOCKUP ─── */
     .iphone-frame {
       position: absolute;
       right: -30px;
       bottom: -120px;
       z-index: 3;
-      width: 210px;
-      height: 430px;
-      border-radius: 36px;
-      background: linear-gradient(145deg, #2a3a4a, #1a2535);
-      border: 1px solid rgba(255,255,255,0.15);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.5), inset 0 0 0 2px rgba(255,255,255,0.08), 0 30px 80px rgba(0,0,0,0.8);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      width: 215px;
+      height: 455px;
+      border-radius: 44px;
+      padding: 6px;
+      background:
+        linear-gradient(135deg,
+          #4a4a4a 0%,
+          #1a1a1a 8%,
+          #2f2f2f 18%,
+          #0d0d0d 42%,
+          #1f1f1f 62%,
+          #0a0a0a 100%);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.08),
+        inset 0 0 0 2px #0a0a0a,
+        inset 0 1px 0 rgba(255,255,255,0.18),
+        0 0 0 1px rgba(0,0,0,0.8),
+        0 40px 80px rgba(0,0,0,0.7),
+        0 10px 30px rgba(0,0,0,0.5);
     }
-    /* Side buttons */
+    /* Side buttons — milled titanium look */
     .iphone-btn-silent {
       position: absolute;
-      left: -3px;
-      top: 90px;
+      left: -2.5px;
+      top: 82px;
       width: 3px;
-      height: 26px;
-      background: #1a2535;
-      border-radius: 3px 0 0 3px;
+      height: 28px;
+      background: linear-gradient(90deg, #0a0a0a 0%, #3a3a3a 50%, #0a0a0a 100%);
+      border-radius: 2px 0 0 2px;
+      box-shadow: -1px 0 2px rgba(0,0,0,0.7);
     }
     .iphone-btn-vol-up {
       position: absolute;
-      left: -3px;
-      top: 130px;
+      left: -2.5px;
+      top: 128px;
       width: 3px;
-      height: 44px;
-      background: #1a2535;
-      border-radius: 3px 0 0 3px;
+      height: 48px;
+      background: linear-gradient(90deg, #0a0a0a 0%, #3a3a3a 50%, #0a0a0a 100%);
+      border-radius: 2px 0 0 2px;
+      box-shadow: -1px 0 2px rgba(0,0,0,0.7);
     }
     .iphone-btn-vol-dn {
       position: absolute;
-      left: -3px;
-      top: 184px;
+      left: -2.5px;
+      top: 188px;
       width: 3px;
-      height: 44px;
-      background: #1a2535;
-      border-radius: 3px 0 0 3px;
+      height: 48px;
+      background: linear-gradient(90deg, #0a0a0a 0%, #3a3a3a 50%, #0a0a0a 100%);
+      border-radius: 2px 0 0 2px;
+      box-shadow: -1px 0 2px rgba(0,0,0,0.7);
     }
     .iphone-btn-power {
       position: absolute;
-      right: -3px;
-      top: 140px;
+      right: -2.5px;
+      top: 150px;
       width: 3px;
-      height: 60px;
-      background: #1a2535;
-      border-radius: 0 3px 3px 0;
+      height: 70px;
+      background: linear-gradient(270deg, #0a0a0a 0%, #3a3a3a 50%, #0a0a0a 100%);
+      border-radius: 0 2px 2px 0;
+      box-shadow: 1px 0 2px rgba(0,0,0,0.7);
     }
-    /* Notch */
+    /* Dynamic Island — modern iPhone pill */
     .iphone-notch {
       position: absolute;
-      top: 0;
+      top: 11px;
       left: 50%;
       transform: translateX(-50%);
-      width: 100px;
-      height: 24px;
-      border-radius: 0 0 16px 16px;
-      background: #0d1117;
+      width: 72px;
+      height: 22px;
+      border-radius: 999px;
+      background: #000;
       z-index: 10;
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.03);
     }
     /* Inner screen */
     .iphone-screen {
-      position: absolute;
-      inset: 6px;
+      position: relative;
+      width: 100%;
+      height: 100%;
       border-radius: 38px;
       overflow: hidden;
       background:
-        radial-gradient(ellipse 90% 75% at 88% 8%, rgba(65, 105, 220, 0.9) 0%, rgba(40, 70, 180, 0.45) 40%, transparent 65%),
-        radial-gradient(ellipse 85% 90% at 8% 92%, rgba(18, 155, 115, 0.9) 0%, rgba(10, 110, 90, 0.45) 40%, transparent 65%),
-        radial-gradient(ellipse 55% 45% at 50% 48%, rgba(25, 45, 95, 0.6) 0%, transparent 70%),
-        linear-gradient(175deg, #040c18 0%, #060f1e 40%, #050c16 100%);
+        radial-gradient(ellipse 85% 55% at 85% 15%, rgba(120, 60, 200, 0.5) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 60% at 15% 90%, rgba(30, 80, 180, 0.55) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 50% 50%, rgba(20, 30, 80, 0.3) 0%, transparent 70%),
+        linear-gradient(175deg, #08061a 0%, #04040f 50%, #0a0420 100%);
       display: flex;
       flex-direction: column;
     }
+    /* Fine subsurface grain on screen */
+    .iphone-screen::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.015) 0px, transparent 1px),
+        radial-gradient(circle at 70% 70%, rgba(255,255,255,0.01) 0px, transparent 1px);
+      background-size: 3px 3px;
+      pointer-events: none;
+      mix-blend-mode: overlay;
+    }
+    /* Status bar icons (wifi + battery only — lock screen style) */
+    .iphone-status {
+      position: relative;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 17px 12px 0 24px;
+      gap: 5px;
+      z-index: 5;
+    }
+    .iphone-status svg { display: block; }
     /* Home indicator */
     .iphone-home-bar {
       position: absolute;
-      bottom: 14px;
+      bottom: 8px;
       left: 50%;
       transform: translateX(-50%);
-      width: 80px;
+      width: 108px;
       height: 4px;
-      background: rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.75);
       border-radius: 2px;
       z-index: 10;
     }
-    /* Lock screen content */
+    /* Lock screen clock */
+    .phone-date {
+      font-size: 13px;
+      font-weight: 500;
+      color: #fff;
+      text-align: center;
+      margin-top: 16px;
+      letter-spacing: -0.01em;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+      flex-shrink: 0;
+    }
     .phone-time {
-      font-size: 38px;
+      font-size: 66px;
       font-weight: 300;
       color: #fff;
       text-align: center;
-      margin-top: 28px;
-      letter-spacing: -2px;
+      margin-top: 2px;
+      margin-bottom: 14px;
+      letter-spacing: -3px;
+      line-height: 1;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      font-family: -apple-system, "SF Pro Display", "Helvetica Neue", sans-serif;
       flex-shrink: 0;
     }
-    .phone-date {
-      font-size: 11px;
-      color: rgba(255,255,255,0.7);
-      text-align: center;
-      margin-bottom: 10px;
-      flex-shrink: 0;
-    }
-    /* Notification center panel */
+    /* Notification stack (no center-header wrapper) */
     .notif-center {
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 16px;
-      margin: 0 10px;
-      padding: 0;
-      overflow: hidden;
+      margin: 0 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
       flex-shrink: 0;
     }
-    .notif-center-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 14px;
-      font-size: 12px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.55);
-      letter-spacing: 0.2px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-    .notif-close {
-      font-size: 12px;
-      color: rgba(255,255,255,0.5);
-      cursor: pointer;
-    }
-    /* Notification cards inside the center */
+    /* iOS notification cards */
     .notif-card {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      background: rgba(255,255,255,0.04);
+      gap: 9px;
+      padding: 9px 11px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.16);
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 1px 8px rgba(0,0,0,0.15);
       transition: opacity 0.4s ease, transform 0.4s ease;
     }
     .notif-app-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
       background: #000;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 15px;
       flex-shrink: 0;
       color: #fff;
       font-weight: 900;
@@ -497,32 +489,34 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
     .notif-app-name {
-      font-size: 10px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.6);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.75);
+      letter-spacing: -0.01em;
+      font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif;
     }
-    .notif-time { font-size: 10px; color: rgba(255,255,255,0.4); }
+    .notif-time { font-size: 10px; color: rgba(255,255,255,0.55); font-weight: 400; }
     .notif-body {
       font-size: 12px;
-      color: rgba(255,255,255,0.9);
+      color: #fff;
       font-weight: 500;
-      line-height: 1.3;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif;
     }
     /* Phone glow */
     .phone-glow {
       position: absolute;
-      bottom: -20px;
+      bottom: -25px;
       left: 50%;
       transform: translateX(-50%);
-      width: 180px;
-      height: 50px;
-      background: rgba(29,155,240,0.4);
-      filter: blur(24px);
+      width: 185px;
+      height: 55px;
+      background: rgba(90,120,255,0.35);
+      filter: blur(28px);
       border-radius: 50%;
       pointer-events: none;
     }
@@ -542,12 +536,12 @@
     }
     .nav-handle-input::placeholder { color: #555; }
     .nav-handle-btn {
-      background: linear-gradient(135deg, #1d9bf0, #7b61ff); color: #fff;
+      background: var(--accent); color: #fff;
       border: none; border-radius: 100px; font-size: 15px; font-weight: 700;
       padding: 12px 22px; cursor: pointer; font-family: inherit; white-space: nowrap;
       transition: all 0.15s; flex-shrink: 0;
     }
-    .nav-handle-btn:hover { opacity: 0.9; }
+    .nav-handle-btn:hover { background: var(--accent-hi); opacity: 0.9; }
     @media (max-width: 1080px) { .nav-handle-form { display: none; } }
 
     /* Hero buttons */
@@ -620,25 +614,39 @@
       padding: 0 24px;
     }
     .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--blue);
-      margin-bottom: 16px;
+      margin-bottom: 18px;
+    }
+    .section-label::before {
+      content: "";
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent), 0 0 3px var(--accent-hi);
     }
     .section-title {
       font-size: clamp(28px, 4vw, 48px);
       font-weight: 800;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       letter-spacing: -1px;
-      color: #fff;
       line-height: 1.15;
+      background: linear-gradient(172deg, #ffffff 0%, #c3cceb 35%, #8692be 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      filter: drop-shadow(0 2px 20px rgba(90,120,255,0.12));
     }
     .section-subtitle {
       font-size: 17px;
       color: var(--muted);
-      margin-top: 12px;
+      margin-top: 14px;
     }
     .section-header {
       text-align: center;
@@ -651,9 +659,11 @@
     }
     .steps {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 0;
       position: relative;
+      max-width: 1080px;
+      margin: 0 auto;
     }
     .steps::before {
       content: '';
@@ -662,7 +672,7 @@
       left: calc(16.66% + 20px);
       right: calc(16.66% + 20px);
       height: 1px;
-      border-top: 2px dashed rgba(29,155,240,0.25);
+      border-top: 2px dashed rgba(90,120,255,0.25);
       z-index: 0;
     }
     .step {
@@ -687,16 +697,17 @@
       width: 64px;
       height: 64px;
       background: var(--card);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-hi);
       border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      color: var(--accent);
       margin: 0 auto 20px;
       position: relative;
       z-index: 2;
     }
+    .step-icon svg { width: 28px; height: 28px; stroke-width: 1.75; }
     .step h3 {
       font-size: 18px;
       font-weight: 700;
@@ -732,9 +743,13 @@
       font-size: clamp(24px, 3vw, 36px);
       font-weight: 800;
       letter-spacing: -1px;
-      color: #fff;
       line-height: 1.2;
       margin-bottom: 16px;
+      background: linear-gradient(172deg, #ffffff 0%, #c8d0ec 40%, #8c98c5 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
     }
     .feature-text p {
       color: var(--muted);
@@ -869,99 +884,143 @@
 
     /* ─── TOOLS GRID ─── */
     .tools-section {
-      padding: 100px 0;
+      padding: 120px 0;
       background: var(--surface);
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
     }
+    .tools-section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(600px 360px at 15% 0%, rgba(90,120,255,0.07), transparent 60%),
+        radial-gradient(500px 300px at 85% 100%, rgba(123,146,255,0.05), transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .tools-section > * { position: relative; z-index: 1; }
     .tools-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 20px;
       overflow: hidden;
+      background: var(--card);
+      max-width: 1200px;
+      margin: 0 auto;
     }
     .tool-card {
       display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      padding: 28px 24px;
+      flex-direction: column;
+      gap: 18px;
+      padding: 32px 28px;
       border-right: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       text-decoration: none;
       color: inherit;
       background: var(--card);
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      transition: background 0.2s ease;
       position: relative;
+      overflow: hidden;
+      min-height: 180px;
+    }
+    .tool-card::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--accent);
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 0.25s ease;
     }
     .tool-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(29,155,240,0.12), 0 0 0 1px rgba(29,155,240,0.2);
-      border-color: rgba(29,155,240,0.3);
+      background: var(--card-hi);
     }
-    .tool-card:hover .tool-arrow { opacity: 1; }
-    /* Remove right border on last column */
+    .tool-card:hover::before { transform: scaleY(1); }
+    .tool-card:hover .tool-arrow { opacity: 1; transform: translateX(0); }
+    .tool-card:hover .tool-icon-wrap {
+      border-color: rgba(90,120,255,0.35);
+      background: rgba(90,120,255,0.14);
+    }
+    .tool-card:hover .tool-name { color: var(--accent-hi); }
+    /* Remove right border on last column (3-col grid) */
     .tool-card:nth-child(3n) { border-right: none; }
     /* Remove bottom border on last row */
     .tool-card:nth-last-child(-n+3) { border-bottom: none; }
     .tool-icon-wrap {
-      width: 44px;
-      height: 44px;
+      width: 48px;
+      height: 48px;
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
       flex-shrink: 0;
+      background: var(--card-hi);
+      border: 1px solid var(--border-hi);
+      color: var(--accent);
+      transition: background 0.2s ease, border-color 0.2s ease;
     }
-    .icon-tracker { background: linear-gradient(135deg,#1d3a5c,#1d9bf0); }
-    .icon-unfollow { background: linear-gradient(135deg,#3d1515,#f4212e); }
-    .icon-time { background: linear-gradient(135deg,#3d3000,#ffd400); }
-    .icon-unreplied { background: linear-gradient(135deg,#003d2a,#00ba7c); }
-    .icon-loyal { background: linear-gradient(135deg,#002a3d,#06b6d4); }
-    .icon-spy { background: linear-gradient(135deg,#1a1a3d,#6366f1); }
-    .icon-recycler { background: linear-gradient(135deg,#003d1a,#00ba7c); }
-    .icon-ai { background: linear-gradient(135deg,#2d1a4a,#ec4899); }
-    .icon-dashboard { background: linear-gradient(135deg,#001a3d,#1d9bf0); }
-    .tool-info { flex: 1; }
+    .tool-icon-wrap svg {
+      width: 24px;
+      height: 24px;
+      stroke-width: 1.75;
+    }
+    .tool-info { flex: 1; display: flex; flex-direction: column; }
     .tool-name {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       color: #fff;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      transition: color 0.2s ease;
     }
     .tool-desc {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.5;
+      font-size: 13.5px;
+      color: var(--text-mute);
+      line-height: 1.55;
     }
     .tool-arrow {
       position: absolute;
-      top: 28px;
-      right: 20px;
-      color: var(--blue);
-      font-size: 16px;
+      top: 32px;
+      right: 24px;
+      color: var(--accent);
+      font-size: 18px;
+      font-weight: 600;
       opacity: 0;
-      transition: opacity 0.2s;
+      transform: translateX(-4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
     }
-    @media (max-width: 800px) {
+    @media (max-width: 900px) {
       .tools-grid { grid-template-columns: repeat(2, 1fr); }
       .tool-card:nth-child(3n) { border-right: 1px solid var(--border); }
       .tool-card:nth-child(2n) { border-right: none; }
-      .tool-card:nth-last-child(-n+2) { border-bottom: none; }
       .tool-card:nth-last-child(-n+3) { border-bottom: 1px solid var(--border); }
+      .tool-card:nth-last-child(-n+2) { border-bottom: none; }
     }
-    @media (max-width: 520px) {
+    @media (max-width: 560px) {
       .tools-grid { grid-template-columns: 1fr; }
-      .tool-card { border-right: none !important; }
+      .tool-card { border-right: none !important; border-bottom: 1px solid var(--border) !important; }
       .tool-card:last-child { border-bottom: none !important; }
-      .tool-card:nth-last-child(-n+2) { border-bottom: 1px solid var(--border) !important; }
     }
 
     /* ─── PRICING TEASER ─── */
     .pricing-teaser {
       padding: 100px 0;
+      position: relative;
+      overflow: hidden;
     }
+    .pricing-teaser::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(800px 500px at 50% 50%, rgba(90,120,255,0.09), transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .pricing-teaser > * { position: relative; z-index: 1; }
     .pricing-teaser .section-inner {
       text-align: center;
     }
@@ -981,13 +1040,39 @@
       color: #fff;
       font-size: 15px;
       font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.18s, border-color 0.18s, background 0.18s;
+      cursor: pointer;
+    }
+    .plan-pill::after {
+      content: "→";
+      font-size: 14px;
+      color: var(--text-mute);
+      transition: transform 0.18s, color 0.18s;
+    }
+    .plan-pill:hover {
+      border-color: var(--border-hi);
+      background: var(--card-hi);
+      transform: translateY(-1px);
+      color: #fff;
+    }
+    .plan-pill:hover::after {
+      color: var(--accent);
+      transform: translateX(3px);
     }
     .plan-pill span {
       color: var(--blue);
     }
     .plan-pill.featured {
-      border-color: rgba(29,155,240,0.4);
-      background: rgba(29,155,240,0.08);
+      border-color: rgba(90,120,255,0.4);
+      background: rgba(90,120,255,0.08);
+    }
+    .plan-pill.featured:hover {
+      border-color: rgba(90,120,255,0.6);
+      background: rgba(90,120,255,0.14);
     }
     .pricing-note {
       margin-top: 20px;
@@ -1000,7 +1085,20 @@
       padding: 100px 0;
       background: var(--surface);
       border-top: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
     }
+    .faq-section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(500px 350px at 85% 20%, rgba(90,120,255,0.06), transparent 60%),
+        radial-gradient(500px 350px at 15% 80%, rgba(123,146,255,0.05), transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .faq-section > * { position: relative; z-index: 1; }
     .faq-list {
       max-width: 720px;
       margin: 0 auto;
@@ -1030,9 +1128,22 @@
       font-size: 15px;
       font-weight: 600;
       font-family: inherit;
-      transition: background 0.2s;
+      transition: background 0.2s, color 0.2s;
+      position: relative;
     }
-    .faq-question:hover { background: rgba(255,255,255,0.03); }
+    .faq-question::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--accent);
+      transform: scaleY(0);
+      transform-origin: center;
+      transition: transform 0.25s ease;
+    }
+    .faq-question:hover { background: rgba(90,120,255,0.05); }
+    .faq-item.open .faq-question::before { transform: scaleY(1); }
+    .faq-item.open .faq-question { color: var(--accent-hi); }
     .faq-chevron {
       flex-shrink: 0;
       width: 20px;
@@ -1069,16 +1180,21 @@
     .cta-banner {
       padding: 100px 24px;
       text-align: center;
-      background: linear-gradient(135deg, rgba(29,155,240,0.12) 0%, rgba(123,97,255,0.1) 50%, rgba(29,155,240,0.06) 100%);
-      box-shadow: 0 0 60px rgba(29,155,240,0.08);
-      border-top: 1px solid rgba(29,155,240,0.12);
+      background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent-glow) 50%, var(--accent-soft) 100%);
+      box-shadow: 0 0 60px var(--accent-soft);
+      border-top: 1px solid var(--accent-soft);
     }
     .cta-banner h2 {
       font-size: clamp(28px, 4vw, 52px);
       font-weight: 900;
       letter-spacing: -1.5px;
-      color: #fff;
       margin-bottom: 16px;
+      background: linear-gradient(172deg, #ffffff 0%, #e3e9ff 40%, #acb8de 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      filter: drop-shadow(0 3px 28px rgba(90,120,255,0.22));
     }
     .cta-banner p {
       font-size: 17px;
@@ -1097,7 +1213,7 @@
     /* ─── SECTION DIVIDER ─── */
     .section-divider {
       height: 1px;
-      background: linear-gradient(90deg, transparent 0%, rgba(29,155,240,0.2) 30%, rgba(123,97,255,0.2) 70%, transparent 100%);
+      background: linear-gradient(90deg, transparent 0%, var(--accent-glow) 50%, transparent 100%);
       margin: 0;
       border: none;
     }
@@ -1106,7 +1222,7 @@
     footer { border-top: 1px solid var(--border); background: #050505; padding: 60px 40px 32px; }
     .footer-inner { max-width: 1400px; margin: 0 auto 48px; display: flex; gap: 64px; flex-wrap: wrap; }
     .footer-brand { flex: 0 0 240px; }
-    .footer-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800; color: var(--text); text-decoration: none; }
+    .footer-logo { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 20px; font-weight: 800; color: var(--text); text-decoration: none; }
     .footer-logo span { color: var(--blue); }
     .footer-tagline { font-size: 13px; color: var(--muted2); margin-top: 10px; line-height: 1.6; }
     .footer-social { margin-top: 16px; }
@@ -1145,7 +1261,7 @@
       <li><a href="/pricing">Pricing</a></li>
       <li><a href="/dashboard">Dashboard</a></li>
       <li>
-        <a href="/api/auth/login" class="btn-primary">Sign in with 𝕏</a>
+        <a href="/api/auth/login" class="btn btn-primary">Sign in with 𝕏</a>
       </li>
     </ul>
     <button class="nav-mobile-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
@@ -1153,15 +1269,19 @@
 </nav>
 
 <!-- ─── HERO ─── -->
-<section class="hero" style="position:relative;z-index:1;">
+<section class="hero hero-glow" style="position:relative;z-index:1;">
   <!-- Left column: text + CTA -->
   <div class="hero-text">
-    <div class="hero-stars fade-in">⭐⭐⭐⭐⭐ <span>Trusted by 500+ X creators</span></div>
-    <h1 class="fade-in">Grow on X Organically<br/>&amp; Get Monetized <em>FASTER</em></h1>
+    <div class="hero-proof fade-in">
+      <div class="hero-proof-avatar">MC</div>
+      <div class="hero-proof-quote">"2k → 18k in 4 months."</div>
+      <div class="hero-proof-handle">— @marcusbuilds</div>
+    </div>
+    <h1 class="fade-in">Grow on X Organically<br/>&amp; Get Monetized <em class="text-gradient">FASTER</em></h1>
     <p class="fade-in hero-sub-p">No bots. Just real growth through proven tools to help get monetized.</p>
     <div class="hero-buttons fade-in">
-      <a href="/pricing" class="btn-primary">Get Started →</a>
-      <a href="/growth-predictor" class="btn-secondary">Preview My Growth →</a>
+      <a href="/pricing" class="btn btn-primary">Get Started →</a>
+      <a href="/growth-predictor" class="btn btn-secondary">Preview My Growth →</a>
     </div>
     <div class="hero-testimonial fade-in">
       <div class="testimonial-text">"Gained 800 followers in my first month and hit monetization within 60 days."</div>
@@ -1195,7 +1315,7 @@
           <div class="db-stat-label">Growth Rate</div>
         </div>
         <div class="db-stat">
-          <div class="db-stat-val" style="color:#1d9bf0">82</div>
+          <div class="db-stat-val" style="color:var(--accent)">82</div>
           <div class="db-stat-label">Score</div>
         </div>
       </div>
@@ -1204,17 +1324,40 @@
         <svg class="db-chart" viewBox="0 0 380 120" preserveAspectRatio="none">
           <defs>
             <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="rgba(29,155,240,0.35)"/>
-              <stop offset="100%" stop-color="rgba(29,155,240,0)"/>
+              <stop offset="0%" stop-color="rgba(90,120,255,0.32)"/>
+              <stop offset="100%" stop-color="rgba(90,120,255,0)"/>
             </linearGradient>
           </defs>
-          <path class="db-chart-fill" d="M0,110 C30,105 60,95 100,78 C140,61 160,80 200,62 C240,44 270,32 310,20 C340,12 360,8 380,5 L380,120 L0,120 Z" fill="url(#chartGrad)"/>
-          <path class="db-chart-line" d="M0,110 C30,105 60,95 100,78 C140,61 160,80 200,62 C240,44 270,32 310,20 C340,12 360,8 380,5" fill="none" stroke="#1d9bf0" stroke-width="2.5" stroke-linecap="round"/>
-          <text x="0" y="118" font-size="9" fill="rgba(255,255,255,0.3)">Jan</text>
-          <text x="88" y="118" font-size="9" fill="rgba(255,255,255,0.3)">Feb</text>
-          <text x="185" y="118" font-size="9" fill="rgba(255,255,255,0.3)">Mar</text>
-          <text x="280" y="118" font-size="9" fill="rgba(255,255,255,0.3)">Apr</text>
-          <text x="358" y="118" font-size="9" fill="rgba(255,255,255,0.3)">May</text>
+          <!-- Grid lines -->
+          <g stroke="rgba(255,255,255,0.05)" stroke-width="0.5">
+            <line x1="26" y1="28" x2="380" y2="28"/>
+            <line x1="26" y1="58" x2="380" y2="58"/>
+            <line x1="26" y1="88" x2="380" y2="88"/>
+          </g>
+          <!-- Y-axis labels -->
+          <g font-family="'SF Mono', Menlo, monospace" font-size="7" fill="rgba(255,255,255,0.35)">
+            <text x="2" y="31">15K</text>
+            <text x="2" y="61">10K</text>
+            <text x="2" y="91">5K</text>
+          </g>
+          <!-- Area fill -->
+          <path class="db-chart-fill" d="M26,110 C56,105 86,95 126,78 C166,61 186,80 226,62 C266,44 296,32 336,20 C356,12 370,8 380,5 L380,120 L26,120 Z" fill="url(#chartGrad)"/>
+          <!-- Line -->
+          <path class="db-chart-line" d="M26,110 C56,105 86,95 126,78 C166,61 186,80 226,62 C266,44 296,32 336,20 C356,12 370,8 380,5" fill="none" stroke="#5a78ff" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Milestone pill + pointer -->
+          <g class="db-chart-pill">
+            <line x1="186" y1="78" x2="186" y2="52" stroke="rgba(123,146,255,0.45)" stroke-width="0.8" stroke-dasharray="2 2"/>
+            <rect x="148" y="36" width="76" height="15" rx="7.5" fill="rgba(90,120,255,0.18)" stroke="rgba(123,146,255,0.5)" stroke-width="0.5"/>
+            <text x="186" y="46" text-anchor="middle" font-family="'SF Mono', Menlo, monospace" font-size="8" fill="#a5b4ff" font-weight="600">+800 in 30d</text>
+          </g>
+          <!-- Month labels -->
+          <g font-size="9" fill="rgba(255,255,255,0.35)">
+            <text x="26" y="118">Jan</text>
+            <text x="112" y="118">Feb</text>
+            <text x="205" y="118">Mar</text>
+            <text x="295" y="118">Apr</text>
+            <text x="362" y="118">May</text>
+          </g>
         </svg>
       </div>
       <!-- Recent activity feed -->
@@ -1243,17 +1386,26 @@
       <div class="iphone-btn-vol-up"></div>
       <div class="iphone-btn-vol-dn"></div>
       <div class="iphone-btn-power"></div>
-      <!-- Notch -->
-      <div class="iphone-notch"></div>
       <!-- Screen -->
       <div class="iphone-screen">
-        <div class="phone-time">9:41</div>
+        <!-- Dynamic Island -->
+        <div class="iphone-notch"></div>
+        <!-- Status bar icons (wifi, battery) -->
+        <div class="iphone-status">
+          <svg width="15" height="11" viewBox="0 0 15 11" fill="#fff" aria-hidden="true">
+            <path d="M7.5 10.5a1 1 0 100-2 1 1 0 000 2zM4 7.7c.97-.83 2.17-1.3 3.5-1.3s2.53.47 3.5 1.3l.97-.97C10.78 5.62 9.2 4.9 7.5 4.9s-3.28.72-4.47 1.83l.97.97zM1.6 5.3C3.2 3.7 5.25 2.9 7.5 2.9s4.3.8 5.9 2.4l.97-.97C12.56 2.47 10.13 1.4 7.5 1.4S2.44 2.47.63 4.33l.97.97z"/>
+          </svg>
+          <svg width="26" height="12" viewBox="0 0 26 12" fill="none" aria-hidden="true">
+            <rect x="0.5" y="0.5" width="22" height="11" rx="3" stroke="#fff" stroke-opacity="0.5"/>
+            <rect x="2" y="2" width="17" height="8" rx="1.5" fill="#fff"/>
+            <rect x="23.25" y="4" width="1.5" height="4" rx="0.5" fill="#fff" fill-opacity="0.5"/>
+          </svg>
+        </div>
+        <!-- Lock screen clock -->
         <div class="phone-date">Wednesday, April 8</div>
+        <div class="phone-time">9:41</div>
+        <!-- Notifications -->
         <div class="notif-center">
-          <div class="notif-center-header">
-            <span>Notification Center</span>
-            <span class="notif-close">✕</span>
-          </div>
           <div id="notifCards"></div>
         </div>
       </div>
@@ -1280,19 +1432,19 @@
     <div class="steps">
       <div class="step fade-in">
         <div class="step-number">1</div>
-        <div class="step-icon">🔗</div>
+        <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></svg></div>
         <h3>Connect your X account</h3>
         <p>Sign in securely with X OAuth. No passwords stored, ever.</p>
       </div>
       <div class="step fade-in">
         <div class="step-number">2</div>
-        <div class="step-icon">🛠️</div>
+        <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></div>
         <h3>Pick your tools</h3>
         <p>Unfollow inactive accounts, find your best posting time, spy on competitors, and more.</p>
       </div>
       <div class="step fade-in">
         <div class="step-number">3</div>
-        <div class="step-icon">📈</div>
+        <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
         <h3>Watch your growth</h3>
         <p>Cleaner following list, better engagement, and a growing audience.</p>
       </div>
@@ -1450,7 +1602,7 @@
     </div>
     <div class="tools-grid">
       <a href="/followers" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-tracker">👀</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">Unfollow Tracker</div>
           <div class="tool-desc">See exactly who doesn't follow you back.</div>
@@ -1458,7 +1610,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/unfollow" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-unfollow">🧹</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="22" x2="16" y1="11" y2="11"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">Mass Unfollow</div>
           <div class="tool-desc">Clean your list fast. Unfollow hundreds in minutes.</div>
@@ -1466,7 +1618,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/best-time" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-time">⏰</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">Best Time to Post</div>
           <div class="tool-desc">Post when your audience is actually online.</div>
@@ -1474,7 +1626,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/unreplied" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-unreplied">💬</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">Unreplied Comments</div>
           <div class="tool-desc">Never miss an engagement opportunity again.</div>
@@ -1482,7 +1634,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/loyal-fans" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-loyal">💎</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">20 Most Loyal Fans</div>
           <div class="tool-desc">Know who your biggest supporters are.</div>
@@ -1490,7 +1642,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/competitor-spy" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-spy">🔍</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">Competitor Spy</div>
           <div class="tool-desc">See what's working for accounts in your niche.</div>
@@ -1498,7 +1650,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/viral-reposter" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-recycler">🔁</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">Tweet Recycler</div>
           <div class="tool-desc">Boost your best old tweets. Auto-clean after 24h.</div>
@@ -1506,7 +1658,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/tweet-optimizer" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-ai">✍️</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">AI Tweet Optimizer</div>
           <div class="tool-desc">Let AI rewrite your tweets for max engagement.</div>
@@ -1514,7 +1666,7 @@
         <span class="tool-arrow">→</span>
       </a>
       <a href="/dashboard" class="tool-card fade-in">
-        <div class="tool-icon-wrap icon-dashboard">📊</div>
+        <div class="tool-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></div>
         <div class="tool-info">
           <div class="tool-name">Growth Dashboard</div>
           <div class="tool-desc">Your account stats at a glance.</div>
@@ -1535,11 +1687,11 @@
     <h2 class="section-title">Simple pricing. Serious results.</h2>
     <p class="section-subtitle">Upgrade anytime. Cancel anytime.</p>
     <div class="plan-pills">
-      <div class="plan-pill">X Growth Core</div>
-      <div class="plan-pill featured">X Growth Elite</div>
-      <div class="plan-pill">Monthly or Annual</div>
+      <a href="/pricing#core" class="plan-pill">X Growth Core</a>
+      <a href="/pricing#elite" class="plan-pill featured">X Growth Elite</a>
+      <a href="/pricing#billing" class="plan-pill">Monthly or Annual</a>
     </div>
-    <a href="/pricing" class="btn-primary" style="padding:16px 40px;font-size:16px;border-radius:100px;">View All Plans →</a>
+    <a href="/pricing" class="btn btn-primary" style="padding:16px 40px;font-size:16px;border-radius:100px;">View All Plans →</a>
     <p class="pricing-note">All paid plans include every tool + all future tools</p>
   </div>
 </section>
@@ -1610,7 +1762,7 @@
 <section class="cta-banner fade-in">
   <h2>Ready to grow smarter on X?</h2>
   <p>Join thousands of creators who use XGrowthNow to build a real audience.</p>
-  <a href="/api/auth/login" class="btn-primary">Sign in with 𝕏 →</a>
+  <a href="/api/auth/login" class="btn btn-primary">Sign in with 𝕏 →</a>
 </section>
 
 <!-- ─── FOOTER ─── -->
@@ -1790,9 +1942,9 @@
     feed.querySelectorAll('.db-feed-time').forEach((el, i) => {
       el.textContent = i === 0 ? 'just now' : `${i}m ago`;
     });
-    // Max 4 items
+    // Max 3 items — keeps chart from getting squished
     const items = feed.querySelectorAll('.db-feed-item');
-    if (items.length > 4) items[items.length - 1].remove();
+    if (items.length > 3) items[items.length - 1].remove();
   }, 2500);
 </script>
 </body>

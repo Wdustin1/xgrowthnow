@@ -4,43 +4,35 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Unfollow Tracker — XGrowthNow</title>
+  <link rel="stylesheet" href="/theme.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #000; --surface: #0f0f0f; --card: #16181c; --border: #2f3336;
-      --text: #e7e9ea; --muted: #71767b; --blue: #1d9bf0;
-      --blue-dim: rgba(29,155,240,0.1); --red: #f4212e; --green: #00ba7c;
-      --radius: 16px;
+      --blue-dim: var(--accent-soft);
+      --red: var(--danger);
+      --green: var(--success);
     }
-    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; }
+    body { min-height: 100vh; }
 
     main { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
 
     .page-header { margin-bottom: 28px; }
     .page-header h1 { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 6px; }
-    .page-header p { font-size: 14px; color: var(--muted); }
+    .page-header p { font-size: 14px; color: var(--text-mute); }
 
     .state-box { text-align: center; padding: 60px 24px; }
     .state-icon { font-size: 48px; margin-bottom: 16px; display: block; }
     .state-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-    .state-sub { font-size: 14px; color: var(--muted); line-height: 1.6; }
-    .progress-bar-wrap { height: 4px; background: var(--border); border-radius: 2px; margin-top: 20px; max-width: 300px; margin-inline: auto; overflow: hidden; }
-    .progress-bar { height: 100%; background: var(--blue); border-radius: 2px; transition: width 0.3s; }
+    .state-sub { font-size: 14px; color: var(--text-mute); line-height: 1.6; }
+    .progress-bar-wrap { height: 4px; background: var(--border-hi); border-radius: 2px; margin-top: 20px; max-width: 300px; margin-inline: auto; overflow: hidden; }
+    .progress-bar { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s; }
 
     .snapshot-banner {
       background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 20px 24px; margin-bottom: 28px;
+      border-radius: var(--radius-lg); padding: 20px 24px; margin-bottom: 28px;
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
     }
-    .snapshot-info { font-size: 13px; color: var(--muted); }
+    .snapshot-info { font-size: 13px; color: var(--text-mute); }
     .snapshot-info strong { color: var(--text); }
-    .rescan-btn {
-      background: var(--blue); color: #fff; border: none; border-radius: 20px;
-      padding: 8px 18px; font-size: 13px; font-weight: 700; cursor: pointer;
-      font-family: inherit; transition: background 0.15s;
-    }
-    .rescan-btn:hover { background: #1a8cd8; }
-    .rescan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .section-header {
       display: flex; align-items: center; gap: 10px;
@@ -48,47 +40,47 @@
     }
     .section-title { font-size: 17px; font-weight: 800; }
     .section-count {
-      background: rgba(244,33,46,0.12); color: var(--red);
-      border: 1px solid rgba(244,33,46,0.2); border-radius: 20px;
+      background: rgba(255,95,95,0.12); color: var(--danger);
+      border: 1px solid rgba(255,95,95,0.25); border-radius: 20px;
       font-size: 12px; font-weight: 700; padding: 2px 10px;
     }
-    .section-note { font-size: 13px; color: var(--muted); margin-left: auto; }
+    .section-note { font-size: 13px; color: var(--text-mute); margin-left: auto; }
 
-    .user-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .user-list { display: flex; flex-direction: column; gap: 1px; background: var(--border-hi); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
     .user-row {
       display: flex; align-items: center; gap: 12px;
       background: var(--card); padding: 14px 18px;
       transition: background 0.15s;
     }
-    .user-row:hover { background: var(--surface); }
-    .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--border); flex-shrink: 0; }
+    .user-row:hover { background: var(--card-hi); }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--border-hi); flex-shrink: 0; }
     .user-info { flex: 1; min-width: 0; }
     .user-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .user-handle { font-size: 12px; color: var(--muted); }
-    .user-followers { font-size: 12px; color: var(--muted); margin-left: auto; white-space: nowrap; }
+    .user-handle { font-size: 12px; color: var(--text-mute); }
+    .user-followers { font-size: 12px; color: var(--text-mute); margin-left: auto; white-space: nowrap; }
     .view-btn {
       background: transparent; border: 1px solid var(--border);
-      color: var(--muted); border-radius: 20px; padding: 5px 14px;
+      color: var(--text-mute); border-radius: 20px; padding: 5px 14px;
       font-size: 12px; font-weight: 600; cursor: pointer;
       text-decoration: none; transition: all 0.15s; flex-shrink: 0;
     }
-    .view-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .view-btn:hover { border-color: var(--accent); color: var(--accent-hi); }
 
     .empty-section {
       background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 28px; text-align: center;
-      font-size: 14px; color: var(--muted);
+      border-radius: var(--radius-lg); padding: 28px; text-align: center;
+      font-size: 14px; color: var(--text-mute);
     }
 
     .first-scan-box {
-      background: var(--card); border: 1px solid rgba(29,155,240,0.25);
-      border-radius: var(--radius); padding: 36px; text-align: center;
+      background: var(--card); border: 1px solid var(--accent-soft);
+      border-radius: var(--radius-lg); padding: 36px; text-align: center;
     }
     .first-scan-box h2 { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
-    .first-scan-box p { font-size: 14px; color: var(--muted); line-height: 1.65; max-width: 420px; margin: 0 auto; }
+    .first-scan-box p { font-size: 14px; color: var(--text-mute); line-height: 1.65; max-width: 420px; margin: 0 auto; }
     .first-scan-steps { list-style: none; display: flex; flex-direction: column; gap: 10px; margin: 20px auto; max-width: 380px; text-align: left; }
-    .first-scan-steps li { font-size: 13px; color: var(--muted); display: flex; align-items: flex-start; gap: 10px; }
-    .first-scan-steps li span { color: var(--blue); font-weight: 700; flex-shrink: 0; }
+    .first-scan-steps li { font-size: 13px; color: var(--text-mute); display: flex; align-items: flex-start; gap: 10px; }
+    .first-scan-steps li span { color: var(--accent-hi); font-weight: 700; flex-shrink: 0; }
   </style>
   <script>const sidebarPage = 'unfollow-tracker';</script>
 </head>
@@ -96,27 +88,29 @@
 
 <main>
   <div class="page-header">
-    <h1>👀 Unfollow Tracker</h1>
+    <h1>Unfollow Tracker</h1>
     <p>See who stopped following you. Snapshots are stored locally and compared each scan.</p>
   </div>
 
   <div id="stateLoading" class="state-box">
-    <span class="state-icon">🔍</span>
+    <span class="state-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
     <div class="state-title">Scanning your followers...</div>
     <div class="state-sub">Fetching your current follower list and comparing with previous snapshots</div>
     <div class="progress-bar-wrap"><div class="progress-bar" id="loadingBar" style="width:0%"></div></div>
   </div>
 
   <div id="stateError" class="state-box" style="display:none;">
-    <span class="state-icon">⚠️</span>
+    <span class="state-icon state-warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span>
     <div class="state-title" id="errorMsg">Something went wrong</div>
-    <button onclick="init()" style="margin-top:16px;background:var(--blue);color:#fff;border:none;border-radius:20px;padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Try Again</button>
+    <button class="btn btn-accent" onclick="init()" style="margin-top:16px;">Try Again</button>
   </div>
 
   <div id="stateContent" style="display:none;"></div>
 
 <div id="inactive-follows-content"></div>
 </main>
+
+<footer class="app-footer"><img class="footer-mark" src="/logo-icon.png" alt="" aria-hidden="true"/> XGrowth — Built by <a href="https://x.com/investwithdoc" target="_blank">@InvestWithDoc</a></footer>
 
 <script src="/sidebar.js"></script>
 <script>
@@ -186,7 +180,7 @@ function renderUserRow(u) {
 function renderUnknownRow(id) {
   return `
     <div class="user-row">
-      <div class="user-avatar" style="background:var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;">👤</div>
+      <div class="user-avatar" style="background:var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-mute);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
       <div class="user-info">
         <div class="user-name" style="color:var(--muted)">Deleted / Suspended Account</div>
         <div class="user-handle">ID: ${id}</div>
@@ -195,19 +189,18 @@ function renderUnknownRow(id) {
   `;
 }
 
-function renderSection(title, icon, unfollowerUsers, unknownIds, snapshotTs, isFirstEntry) {
+function renderSection(title, unfollowerUsers, unknownIds, snapshotTs, isFirstEntry) {
   const total = unfollowerUsers.length + unknownIds.length;
   const daysAgo = Math.round((Date.now() - snapshotTs) / 86400000);
 
   let html = `<div class="section-header">
-    <span style="font-size:20px;">${icon}</span>
     <span class="section-title">${title}</span>
     ${total > 0 ? `<span class="section-count">-${total}</span>` : ''}
     <span class="section-note">vs snapshot ${daysAgo}d ago · ${new Date(snapshotTs).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
   </div>`;
 
   if (total === 0) {
-    html += `<div class="empty-section">✅ Nobody unfollowed you in this period</div>`;
+    html += `<div class="empty-section">Nobody unfollowed you in this period</div>`;
   } else {
     html += `<div class="user-list">`;
     html += unfollowerUsers.map(renderUserRow).join('');
@@ -287,7 +280,7 @@ async function renderResults(userId, currentIds, snaps, totalFollowers) {
         Tracking for <strong>${trackingDays} days</strong> &nbsp;·&nbsp;
         <strong>${snaps.length}</strong> snapshot${snaps.length!==1?'s':''}
       </div>
-      <button class="rescan-btn" onclick="rescan()" id="rescanBtn">🔄 Rescan Now</button>
+      <button class="btn btn-sm btn-accent" onclick="rescan()" id="rescanBtn">Rescan Now</button>
     </div>
     <div id="sections"></div>
   `;
@@ -297,11 +290,11 @@ async function renderResults(userId, currentIds, snaps, totalFollowers) {
   if (realSnaps.length <= 1) {
     document.getElementById('sections').innerHTML = `
       <div class="first-scan-box">
-        <h2>📸 Baseline set — you're ready!</h2>
+        <h2>Baseline set — you're ready!</h2>
         <p>We've saved your <strong>${fmt(totalFollowers)} followers</strong> as your starting point, and created baselines going back 7, 14, and 60 days.</p>
         <p style="margin-top:10px;color:var(--muted);font-size:14px;">Come back tomorrow and hit <strong>Rescan</strong> — anyone who unfollows you from this point forward will show up here.</p>
         <ul class="first-scan-steps">
-          <li><span>✅ Ready</span> 7-day, 14-day & 60-day baselines created</li>
+          <li><span>Ready</span> 7-day, 14-day &amp; 60-day baselines created</li>
           <li><span>Next step</span> Rescan tomorrow to see real unfollow data</li>
           <li><span>Tip</span> Visit daily for the most accurate tracking</li>
         </ul>
@@ -323,24 +316,24 @@ async function renderResults(userId, currentIds, snaps, totalFollowers) {
     const prev = snaps[snaps.length - 2];
     const prevSet = new Set(prev.ids);
     const recentUnfollowers = prev.ids.filter(id => !currentIds.has(id));
-    sections.push({ title: 'Since Last Scan', icon: '⚡', unfollowerIds: recentUnfollowers, snap: prev });
+    sections.push({ title: 'Since Last Scan', unfollowerIds: recentUnfollowers, snap: prev });
   }
 
   // 2 weeks
   if (snap2w && snap2w !== snaps[snaps.length-2]) {
     const prevSet = new Set(snap2w.ids);
     const unfollowers = snap2w.ids.filter(id => !currentIds.has(id));
-    sections.push({ title: 'Past 2 Weeks', icon: '📅', unfollowerIds: unfollowers, snap: snap2w });
+    sections.push({ title: 'Past 2 Weeks', unfollowerIds: unfollowers, snap: snap2w });
   } else if (!snap2w) {
-    sections.push({ title: 'Past 2 Weeks', icon: '📅', unfollowerIds: null, snap: null, daysLeft: 14 - trackingDays });
+    sections.push({ title: 'Past 2 Weeks', unfollowerIds: null, snap: null, daysLeft: 14 - trackingDays });
   }
 
   // 2 months
   if (snap2m) {
     const unfollowers = snap2m.ids.filter(id => !currentIds.has(id));
-    sections.push({ title: 'Past 2 Months', icon: '🗓️', unfollowerIds: unfollowers, snap: snap2m });
+    sections.push({ title: 'Past 2 Months', unfollowerIds: unfollowers, snap: snap2m });
   } else {
-    sections.push({ title: 'Past 2 Months', icon: '🗓️', unfollowerIds: null, snap: null, daysLeft: 60 - trackingDays });
+    sections.push({ title: 'Past 2 Months', unfollowerIds: null, snap: null, daysLeft: 60 - trackingDays });
   }
 
   // Gather all IDs to lookup
@@ -357,15 +350,14 @@ async function renderResults(userId, currentIds, snaps, totalFollowers) {
     if (s.unfollowerIds === null) {
       // Not enough history yet
       html += `<div class="section-header">
-        <span style="font-size:20px;">${s.icon}</span>
         <span class="section-title">${s.title}</span>
         <span class="section-note" style="margin-left:0;margin-left:8px;">Not enough data yet</span>
       </div>
-      <div class="empty-section" style="color:var(--muted);">⏳ ${s.daysLeft} more day${s.daysLeft!==1?'s':''} of tracking needed</div>`;
+      <div class="empty-section" style="color:var(--muted);">${s.daysLeft} more day${s.daysLeft!==1?'s':''} of tracking needed</div>`;
     } else {
       const known   = s.unfollowerIds.filter(id => userMap[id]).map(id => userMap[id]);
       const unknown = s.unfollowerIds.filter(id => !userMap[id]);
-      html += renderSection(s.title, s.icon, known, unknown, s.snap.timestamp, false);
+      html += renderSection(s.title, known, unknown, s.snap.timestamp, false);
     }
   }
   document.getElementById('sections').innerHTML = html;
