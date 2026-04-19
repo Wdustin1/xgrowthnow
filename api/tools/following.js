@@ -1,4 +1,5 @@
 const { getSession } = require('../../utils/session');
+const { refreshIfNeeded } = require('../../utils/refresh-token');
 
 const RAPIDAPI_KEY  = process.env.RAPIDAPI_KEY;
 const RAPIDAPI_HOST = 'twitter-v24.p.rapidapi.com';
@@ -44,8 +45,9 @@ function parseUsers(data) {
 
 module.exports = async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
-  const session = getSession(req);
+  let session = getSession(req);
   if (!session) { res.writeHead(401); return res.end(JSON.stringify({ error: 'Not authenticated' })); }
+  session = await refreshIfNeeded(req, res, session);
 
   const url  = new URL(req.url, 'https://xgrowthnow.com');
   const mode = url.searchParams.get('mode');

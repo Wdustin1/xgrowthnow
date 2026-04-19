@@ -29,6 +29,7 @@
     { "src": "/api/auth/callback",    "dest": "/api/auth/callback.js" },
     { "src": "/api/auth/logout",      "dest": "/api/auth/logout.js" },
     { "src": "/api/auth/me",          "dest": "/api/auth/me.js" },
+    { "src": "/api/tools/debug-session",     "dest": "/api/tools/debug-session.js" },
     { "src": "/api/tools/inactive-follows",  "dest": "/api/tools/inactive-follows.js" },
     { "src": "/inactive-follows",               "dest": "/public/inactive-follows.html" },
     { "src": "/api/tools/loyal-fans",        "dest": "/api/tools/loyal-fans.js" },

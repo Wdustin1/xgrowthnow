@@ -1,22 +1,27 @@
 const { getSession } = require('../../utils/session');
+const { refreshIfNeeded } = require('../../utils/refresh-token');
 
 module.exports = async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
-  const session = getSession(req);
+  let session = getSession(req);
   if (!session) { res.writeHead(401); return res.end(JSON.stringify({ error: 'Not authenticated' })); }
+
+  session = await refreshIfNeeded(req, res, session);
 
   const { userId, accessToken } = session;
   const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
+  // deep=1 scans up to 2000 accounts, default scans 500
+  const url = new URL(req.url, 'https://xgrowthnow.com');
+  const deep = url.searchParams.get('deep') === '1';
+  const maxPages = deep ? 20 : 5;
+
   try {
-    // ── Step 1: Fetch all followed accounts with their most recent tweet date ──
-    // The `most_recent_tweet_id` expansion gets last tweet date in ONE request
-    // instead of making individual calls per user (avoids rate limits)
     const allFollowing = [];
     let nextToken = null;
 
-    for (let page = 0; page < 20; page++) {
+    for (let page = 0; page < maxPages; page++) {
       const params = new URLSearchParams({
         max_results: '100',
         'user.fields': 'name,username,profile_image_url,public_metrics,most_recent_tweet_id,verified,verified_type',
@@ -32,11 +37,17 @@ module.exports = async (req, res) => {
       const d = await r.json();
 
       if (!r.ok || !d.data) {
-        const apiErr = d.errors?.[0]?.message || d.error || d.title || `HTTP ${r.status}`;
-        return res.end(JSON.stringify({ error: `Twitter API error: ${apiErr}`, notTweeted: [], notEngaged: [] }));
+        const apiErr = d.errors?.[0]?.message || d.error_description || d.error || d.title || d.detail || `HTTP ${r.status}`;
+        const isRateLimit = r.status === 429;
+        const isAuth = r.status === 401 || r.status === 403;
+        const errMsg = isRateLimit
+          ? 'Twitter rate limit hit — please wait 15 minutes and try again.'
+          : isAuth
+          ? 'Session expired — please sign out and sign back in.'
+          : `Twitter API error: ${apiErr}`;
+        return res.end(JSON.stringify({ error: errMsg, notTweeted: [], notEngaged: [] }));
       }
 
-      // Map tweet id → created_at from the includes block
       const tweetDates = {};
       for (const t of d.includes?.tweets || []) {
         tweetDates[t.id] = t.created_at;
@@ -66,16 +77,13 @@ module.exports = async (req, res) => {
       }));
     }
 
-    // ── Step 2: Who hasn't tweeted in the last month? ──────────────────────────
     const notTweeted = allFollowing.filter(u =>
       !u.lastTweetAt || new Date(u.lastTweetAt) < new Date(oneMonthAgo)
     );
 
-    // ── Step 3: Your engagement in the last 30 days ───────────────────────────
-    // Checks: likes, retweets, and replies — all within the last month
+    // Engagement check — skip if no inactive found to save API calls
     const engagedAuthorIds = new Set();
 
-    // Likes (last 100 — API doesn't support start_time filter here)
     try {
       const lr = await fetch(
         `https://api.twitter.com/2/users/${userId}/liked_tweets?max_results=100&tweet.fields=author_id,created_at`,
@@ -83,14 +91,12 @@ module.exports = async (req, res) => {
       );
       const ld = await lr.json();
       for (const t of ld.data || []) {
-        // Only count likes within the last month
         if (t.author_id && t.created_at && new Date(t.created_at) >= new Date(oneMonthAgo)) {
           engagedAuthorIds.add(t.author_id);
         }
       }
     } catch {}
 
-    // Retweets + replies from your own tweets in the last month
     try {
       const rr = await fetch(
         `https://api.twitter.com/2/users/${userId}/tweets?max_results=100&tweet.fields=referenced_tweets,in_reply_to_user_id,created_at&expansions=referenced_tweets.id&start_time=${oneMonthAgo}`,
@@ -98,20 +104,13 @@ module.exports = async (req, res) => {
       );
       const rd = await rr.json();
       for (const t of rd.data || []) {
-        // Replies — in_reply_to_user_id tells us who you replied to
-        if (t.in_reply_to_user_id) {
-          engagedAuthorIds.add(t.in_reply_to_user_id);
-        }
-        // Retweets/quotes
+        if (t.in_reply_to_user_id) engagedAuthorIds.add(t.in_reply_to_user_id);
         for (const ref of t.referenced_tweets || []) {
-          if (ref.type === 'retweeted' || ref.type === 'quoted') {
-            engagedAuthorIds.add(ref.id); // ref.id is tweet id — best we can do without author lookup
-          }
+          if (ref.type === 'retweeted' || ref.type === 'quoted') engagedAuthorIds.add(ref.id);
         }
       }
     } catch {}
 
-    // ── Step 4: Accounts with recent tweets you haven't liked or retweeted ────
     const notEngaged = allFollowing.filter(u =>
       u.lastTweetAt &&
       new Date(u.lastTweetAt) >= new Date(oneMonthAgo) &&
@@ -120,8 +119,11 @@ module.exports = async (req, res) => {
 
     res.end(JSON.stringify({
       total: allFollowing.length,
-      notTweeted,   // haven't posted in 30 days
-      notEngaged,   // active but you haven't liked/RT'd their stuff
+      scannedAll: !nextToken || deep,
+      hasMore: !!nextToken && !deep,
+      notTweeted,
+      notEngaged,
+      cachedAt: Date.now(),
     }));
 
   } catch (e) {
