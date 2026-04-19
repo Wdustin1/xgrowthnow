@@ -33,7 +33,6 @@
     { "src": "/api/tools/inactive-follows",  "dest": "/api/tools/inactive-follows.js" },
     { "src": "/inactive-follows",               "dest": "/public/inactive-follows.html" },
     { "src": "/api/tools/loyal-fans",        "dest": "/api/tools/loyal-fans.js" },
-    { "src": "/pricing",                     "dest": "/public/pricing.html" },
     { "src": "/loyal-fans",                  "dest": "/public/loyal-fans.html" },
     { "src": "/api/tools/tweet-optimizer",   "dest": "/api/tools/tweet-optimizer.js" },
     { "src": "/tweet-optimizer",             "dest": "/public/tweet-optimizer.html" },
